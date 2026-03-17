@@ -1,19 +1,19 @@
 from django import forms
+from django.contrib.auth.hashers import make_password
 from .models import (
     User, Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
 )
 
-from django.contrib.auth.forms import UserCreationForm
-
-# Formulario de registro de usuario basado en UserCreationForm, con campos extra de Profile
-class RegistroUsuarioForm(UserCreationForm):
-    class Meta(UserCreationForm.Meta):
-        model = User
-        fields = ('name', 'email', 'password1', 'password2', 'display_name', 'nivel_guitarra', 'pais')
-        widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}),
-            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo electrónico'}),
-        }
+# Formulario de registro de usuario compatible con modelo User propio
+class RegistroUsuarioForm(forms.ModelForm):
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}),
+        label='Contraseña'
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Repite la contraseña'}),
+        label='Repite la contraseña'
+    )
 
     NIVEL_CHOICES = [
         ('principiante', 'Principiante'),
@@ -37,6 +37,14 @@ class RegistroUsuarioForm(UserCreationForm):
         label='País'
     )
 
+    class Meta:
+        model = User
+        fields = ('name', 'email')
+        widgets = {
+            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}),
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo electrónico'}),
+        }
+
     def clean_email(self):
         email = self.cleaned_data.get('email')
         if User.objects.filter(email=email).exists():
@@ -52,6 +60,13 @@ class RegistroUsuarioForm(UserCreationForm):
             if len(password1) < 8:
                 raise forms.ValidationError('La contraseña debe tener al menos 8 caracteres.')
         return password2
+
+    def save(self, commit=True):
+        user = super().save(commit=False)
+        user.password = make_password(self.cleaned_data['password1'])
+        if commit:
+            user.save()
+        return user
 
 class ProfileForm(forms.ModelForm):
     class Meta:
