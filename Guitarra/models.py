@@ -161,7 +161,7 @@ class ClasePrivada(models.Model):
     alumno = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clases_tomadas')
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
-    palo_flamenco = models.ForeignKey(PaloFlamenco, on_delete=models.CASCADE, related_name='clases')
+    palo_flamenco = models.CharField(max_length=100, choices=PaloFlamenco.NOMBRE_CHOICES)
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField()
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')

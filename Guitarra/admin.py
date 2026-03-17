@@ -113,7 +113,7 @@ class DisponibilidadProfesorAdmin(admin.ModelAdmin):
 @admin.register(ClasePrivada)
 class ClasePrivadaAdmin(admin.ModelAdmin):
     list_display = ('profesor', 'alumno', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco', 'estado')
-    search_fields = ('profesor__name', 'alumno__name', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco__nombre', 'estado')
+    search_fields = ('profesor__name', 'alumno__name', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco', 'estado')
     list_filter = ('profesor', 'alumno', 'palo_flamenco', 'estado')
 
     fieldsets = [
