@@ -52,25 +52,25 @@ class VideoAdmin(admin.ModelAdmin):
 
 @admin.register(Like)
 class LikeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'video', 'fecha')
-    search_fields = ('user__name', 'video__titulo', 'fecha')
-    list_filter = ('user', 'video')
+    list_display = ('usuario', 'video', 'fecha')
+    search_fields = ('usuario__name', 'video__titulo', 'fecha')
+    list_filter = ('usuario', 'video')
 
     fieldsets = [
         ('Like', {
-            'fields': ['user', 'video', 'fecha'],
+            'fields': ['usuario', 'video', 'fecha'],
         })
     ]
 
 @admin.register(Comentario)
 class ComentarioAdmin(admin.ModelAdmin):
-    list_display = ('user', 'video', 'texto', 'fecha_creacion')
-    search_fields = ('user__name', 'video__titulo', 'texto', 'fecha_creacion')
-    list_filter = ('user', 'video')
+    list_display = ('usuario', 'video', 'texto', 'fecha_creacion')
+    search_fields = ('usuario__name', 'video__titulo', 'texto', 'fecha_creacion')
+    list_filter = ('usuario', 'video')
 
     fieldsets = [
         ('Comentario', {
-            'fields': ['user', 'video', 'texto', 'fecha_creacion'],
+            'fields': ['usuario', 'video', 'texto', 'fecha_creacion'],
         })
     ]
 
@@ -88,13 +88,13 @@ class ChatRoomAdmin(admin.ModelAdmin):
 
 @admin.register(ChatMessage)
 class ChatMessageAdmin(admin.ModelAdmin):
-    list_display = ('chat_room', 'user', 'mensaje', 'timestamp')
-    search_fields = ('chat_room__nombre', 'user__name', 'mensaje', 'timestamp')
-    list_filter = ('chat_room', 'user', 'timestamp')
+    list_display = ('chatroom', 'usuario', 'mensaje', 'timestamp')
+    search_fields = ('chatroom__nombre', 'usuario__name', 'mensaje', 'timestamp')
+    list_filter = ('chatroom', 'usuario', 'timestamp')
 
     fieldsets = [
         ('Chat Message', {
-            'fields': ['chat_room', 'user', 'mensaje', 'timestamp'],
+            'fields': ['chatroom', 'usuario', 'mensaje', 'timestamp'],
         })
     ]
 
@@ -112,13 +112,13 @@ class DisponibilidadProfesorAdmin(admin.ModelAdmin):
 
 @admin.register(ClasePrivada)
 class ClasePrivadaAdmin(admin.ModelAdmin):
-    list_display = ('profesor', 'alumno', 'titulo', 'fecha_hora', 'palo_flamenco', 'estado')
-    search_fields = ('profesor__name', 'alumno__name', 'titulo', 'fecha_hora', 'palo_flamenco__nombre', 'estado')
+    list_display = ('profesor', 'alumno', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco', 'estado')
+    search_fields = ('profesor__name', 'alumno__name', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco__nombre', 'estado')
     list_filter = ('profesor', 'alumno', 'palo_flamenco', 'estado')
 
     fieldsets = [
         ('Clase Privada', {
-            'fields': ['profesor', 'alumno', 'titulo', 'fecha_hora', 'palo_flamenco', 'estado'],
+            'fields': ['profesor', 'alumno', 'titulo', 'fecha_inicio', 'fecha_fin', 'palo_flamenco', 'estado'],
         })
     ]
 
@@ -142,7 +142,7 @@ class ArticuloFlamencoAdmin(admin.ModelAdmin):
 
     fieldsets = [
         ('Artículo Flamenco', {
-            'fields': ['titulo', 'contenido', 'categoria', 'fecha_publicacion'],
+            'fields': ['titulo', 'contenido', 'categoria', 'slug'],
         })
     ]
 
