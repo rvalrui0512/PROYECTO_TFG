@@ -3,7 +3,9 @@ from django.db import models
 # Autenticación y perfil
 class User(models.Model):
     name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
+    email = models.EmailField(unique=True, error_messages={
+        'unique': 'Ya existe un usuario registrado con este email.'
+    })
     password = models.CharField(max_length=100)
 
     def __str__(self):
