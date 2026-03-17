@@ -58,7 +58,7 @@ class PaloFlamenco(models.Model):
 class Video(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
-    palo_flamenco = models.ForeignKey(PaloFlamenco, on_delete=models.CASCADE, related_name='videos')
+    palo_flamenco = models.CharField(max_length=20, choices=PaloFlamenco.NOMBRE_CHOICES)
     autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
     miniatura = models.ImageField(upload_to='miniaturas/', blank=True, null=True)
     duracion = models.DurationField()
@@ -67,7 +67,7 @@ class Video(models.Model):
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return f"Título: {self.titulo} | Palo: {self.palo_flamenco.nombre} | Autor: {self.autor.name} | duración: {self.duracion} | Fecha: {self.fecha_publicacion}"
+        return f"Título: {self.titulo} | Palo: {self.palo_flamenco} | Autor: {self.autor.name} | duración: {self.duracion} | Fecha: {self.fecha_publicacion}"
 
     class Meta:
         verbose_name = 'Video'
