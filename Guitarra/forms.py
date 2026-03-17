@@ -1,10 +1,7 @@
 from django import forms
 from .models import (
-    User, Profile, PaloFlamenco, Video, Like, Comentario, ChatRoom, ChatMessage,
-    DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
+    User, Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
 )
-
-
 
 from django.contrib.auth.forms import UserCreationForm
 
