@@ -108,7 +108,7 @@ Personalización del panel de administración para gestionar contenidos y usuari
 
 - **RegistroUsuarioForm**: Basado en `UserCreationForm`, con campos extra de Profile (nivel, país). Validación de emails únicos y contraseñas fuertes.
 - **PerfilForm**: Edición de bio, avatar y nivel de guitarra.
-- **VideoForm**: Validación de tamaño máximo de archivo y extensiones permitidas (mp4, webm, etc.).
+- **VideoForm**
 - **ComentarioForm**: Validación de longitud mínima y filtro de lenguaje ofensivo.
 - **ClasePrivadaForm**: Validación de fechas (no en el pasado), solapamiento de clases y disponibilidad del profesor.
 - **GuitarraForm (solo admin)**: Validar que el precio sea positivo.

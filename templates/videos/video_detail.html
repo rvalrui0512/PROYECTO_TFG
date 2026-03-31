@@ -1,0 +1,9 @@
+{% extends 'base.html' %}
+{% block title %}Detalle video{% endblock %}
+{% block content %}
+<h1 class="h3">{{ video.titulo }}</h1>
+<p>{{ video.descripcion }}</p>
+<p><strong>Palo:</strong> {{ video.palo_flamenco }}</p>
+<p><strong>Autor:</strong> {{ video.autor }}</p>
+<a class="btn btn-secondary" href="{% url 'guitarra:video_list' %}">Volver</a>
+{% endblock %}

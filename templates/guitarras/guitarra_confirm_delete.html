@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Eliminar guitarra{% endblock %}
+{% block content %}
+<h1 class="h3">Eliminar guitarra</h1>
+<p>¿Seguro que quieres eliminar {{ object.marca }} {{ object.modelo }}?</p>
+<form method="post">
+    {% csrf_token %}
+    <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+    <a class="btn btn-secondary" href="{% url 'guitarra:guitarra_list' %}">Cancelar</a>
+</form>
+{% endblock %}

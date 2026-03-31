@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Videos{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Videos</h1>
+    <a class="btn btn-primary" href="{% url 'guitarra:video_create' %}">Nuevo video</a>
+</div>
+<ul class="list-group">
+    {% for video in videos %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'guitarra:video_detail' video.pk %}">{{ video.titulo }}</a>
+            <div>
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'guitarra:video_update' video.pk %}">Editar</a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'guitarra:video_delete' video.pk %}">Eliminar</a>
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No hay videos.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

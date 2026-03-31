@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block title %}Usuarios{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="h3">Usuarios</h1>
+    <a class="btn btn-primary" href="{% url 'guitarra:user_create' %}">Nuevo usuario</a>
+</div>
+<ul class="list-group">
+    {% for u in users %}
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+            <a href="{% url 'guitarra:user_detail' u.pk %}">{{ u.name }}</a>
+            <div>
+                <a class="btn btn-sm btn-outline-secondary" href="{% url 'guitarra:user_update' u.pk %}">Editar</a>
+                <a class="btn btn-sm btn-outline-danger" href="{% url 'guitarra:user_delete' u.pk %}">Eliminar</a>
+            </div>
+        </li>
+    {% empty %}
+        <li class="list-group-item">No hay usuarios.</li>
+    {% endfor %}
+</ul>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Formulario clase privada{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Clase privada</h1>
+<form method="post" class="card card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'base.html' %}
+{% block title %}Formulario guitarra{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Guitarra</h1>
+<form method="post" enctype="multipart/form-data" class="card card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

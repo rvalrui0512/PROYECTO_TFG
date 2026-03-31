@@ -1,0 +1,11 @@
+{% extends 'base.html' %}
+{% block title %}Detalle usuario{% endblock %}
+{% block content %}
+<h1 class="h3">{{ user.name }}</h1>
+<p><strong>Email:</strong> {{ user.email }}</p>
+{% if user.profile %}
+    <p><strong>Nombre visible:</strong> {{ user.profile.display_name }}</p>
+    <p><strong>País:</strong> {{ user.profile.pais }}</p>
+{% endif %}
+<a class="btn btn-secondary" href="{% url 'guitarra:user_list' %}">Volver</a>
+{% endblock %}

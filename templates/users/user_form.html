@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block title %}Formulario usuario{% endblock %}
+{% block content %}
+<h1 class="h3 mb-3">Usuario</h1>
+<form method="post" enctype="multipart/form-data" class="card card-body">
+    {% csrf_token %}
+    {{ form.as_p }}
+    {% if profile_form %}
+        <hr>
+        <h2 class="h5">Perfil</h2>
+        {{ profile_form.as_p }}
+    {% endif %}
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}

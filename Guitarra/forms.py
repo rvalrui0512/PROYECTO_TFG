@@ -4,7 +4,6 @@ from .models import (
     User, Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
 )
 
-# Formulario de registro de usuario compatible con modelo User propio
 class RegistroUsuarioForm(forms.ModelForm):
     password1 = forms.CharField(
         widget=forms.PasswordInput(attrs={'class': 'form-control', 'placeholder': 'Contraseña'}),
