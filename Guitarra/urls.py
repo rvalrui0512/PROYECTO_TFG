@@ -3,7 +3,9 @@ from .views import UserListView, UserDetailView, UserCreateView, UserUpdateView,
 from .views import VideoListView, VideoDetailView, VideoCreateView, VideoUpdateView, VideoDeleteView
 from .views import GuitarraListView, GuitarraDetailView, GuitarraCreateView, GuitarraUpdateView, GuitarraDeleteView
 from .views import ClasePrivadaListView, ClasePrivadaDetailView, ClasePrivadaCreateView, ClasePrivadaUpdateView, ClasePrivadaDeleteView
-from .views import IABusquedaView
+from .views import IABusquedaView, NotificationListView, NotificationPopupView
+from .views import toggle_favorito, add_to_cart, cart_view, remove_from_cart
+from .views import *
 
 app_name = 'guitarra'
 
@@ -34,4 +36,9 @@ urlpatterns = [
     path('clases/<int:pk>/eliminar/', ClasePrivadaDeleteView.as_view(), name='claseprivada_delete'),
 
     path('ia/', IABusquedaView.as_view(), name='ia_busqueda'),
+    path('notificaciones/', NotificationPopupView.as_view(), name='notification_list'),
+    path('favorito/toggle/', toggle_favorito, name='toggle_favorito'),
+    path('carrito/', cart_view, name='cart_view'),
+    path('carrito/agregar/<int:guitarra_id>/', add_to_cart, name='add_to_cart'),
+    path('carrito/eliminar/<int:guitarra_id>/', remove_from_cart, name='remove_from_cart'),
 ]
