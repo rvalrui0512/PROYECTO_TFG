@@ -1,26 +1,52 @@
 from django.db import models
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
+from django import template
+register = template.Library()
 
-# Autenticación y perfil
-class User(models.Model):
-    name = models.CharField(max_length=100)
-    email = models.EmailField(unique=True, error_messages={
-        'unique': 'Ya existe un usuario registrado con este email.'
-    })
-    password = models.CharField(max_length=100)
+
+
+
+# Modelo de favoritos genérico
+class Favorito(models.Model):
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favoritos')
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+    fecha = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'content_type', 'object_id')
+        verbose_name = 'Favorito'
+        verbose_name_plural = 'Favoritos'
 
     def __str__(self):
-        return self.name
-    
-    class Meta:
-        verbose_name = 'User'
-        verbose_name_plural = 'Users'
+        return f"Favorito de {self.usuario} - {self.content_object}"  
 
+# Perfil extendido
 class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     display_name = models.CharField(max_length=100)
     bio = models.TextField(blank=True)
     avatar = models.ImageField(upload_to='avatars/', blank=True, null=True)
-    pais = models.CharField(max_length=100, blank=True)
+    COUNTRY_CHOICES = [
+        ('España', 'España'), ('Argentina', 'Argentina'), ('México', 'México'), ('Estados Unidos', 'Estados Unidos'), ('Colombia', 'Colombia'),
+        ('Chile', 'Chile'), ('Perú', 'Perú'), ('Venezuela', 'Venezuela'), ('Uruguay', 'Uruguay'), ('Paraguay', 'Paraguay'),
+        ('Brasil', 'Brasil'), ('Francia', 'Francia'), ('Italia', 'Italia'), ('Alemania', 'Alemania'), ('Reino Unido', 'Reino Unido'),
+        ('Portugal', 'Portugal'), ('Rusia', 'Rusia'), ('China', 'China'), ('Japón', 'Japón'), ('India', 'India'),
+        ('Canadá', 'Canadá'), ('Australia', 'Australia'), ('Marruecos', 'Marruecos'), ('Egipto', 'Egipto'), ('Sudáfrica', 'Sudáfrica'),
+        ('Nigeria', 'Nigeria'), ('Turquía', 'Turquía'), ('Grecia', 'Grecia'), ('Suecia', 'Suecia'), ('Noruega', 'Noruega'),
+        ('Finlandia', 'Finlandia'), ('Dinamarca', 'Dinamarca'), ('Polonia', 'Polonia'), ('Países Bajos', 'Países Bajos'),
+        ('Bélgica', 'Bélgica'), ('Suiza', 'Suiza'), ('Austria', 'Austria'), ('Hungría', 'Hungría'), ('Rumanía', 'Rumanía'),
+        ('Bulgaria', 'Bulgaria'), ('Serbia', 'Serbia'), ('Croacia', 'Croacia'), ('Eslovenia', 'Eslovenia'), ('Eslovaquia', 'Eslovaquia'),
+        ('República Checa', 'República Checa'), ('Ucrania', 'Ucrania'), ('Bielorrusia', 'Bielorrusia'), ('Lituania', 'Lituania'),
+        ('Letonia', 'Letonia'), ('Estonia', 'Estonia'), ('Irlanda', 'Irlanda'), ('Islandia', 'Islandia'), ('Luxemburgo', 'Luxemburgo'),
+        ('Mónaco', 'Mónaco'), ('Andorra', 'Andorra'), ('San Marino', 'San Marino'), ('Malta', 'Malta'), ('Chipre', 'Chipre'),
+        ('Otros', 'Otros'),
+    ]
+    pais = models.CharField(max_length=100, blank=True, choices=COUNTRY_CHOICES)
 
     def __str__(self):
         return f"Name: {self.display_name} | pais: {self.pais}"
@@ -59,15 +85,16 @@ class Video(models.Model):
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
     palo_flamenco = models.CharField(max_length=20, choices=PaloFlamenco.NOMBRE_CHOICES)
-    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='videos')
+    autor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='videos')
     miniatura = models.ImageField(upload_to='miniaturas/', blank=True, null=True)
+    archivo = models.FileField(upload_to='videos/', blank=True, null=True, help_text='Archivo de video (mp4, webm, etc)')
     duracion = models.DurationField()
     fecha_publicacion = models.DateTimeField(auto_now_add=True)
     visibilidad = models.BooleanField(default=True)
     slug = models.SlugField(unique=True)
 
     def __str__(self):
-        return f"Título: {self.titulo} | Palo: {self.palo_flamenco} | Autor: {self.autor.name} | duración: {self.duracion} | Fecha: {self.fecha_publicacion}"
+        return f"Título: {self.titulo} | Palo: {self.palo_flamenco} | Autor: {self.autor.username} | duración: {self.duracion} | Fecha: {self.fecha_publicacion}"
 
     class Meta:
         verbose_name = 'Video'
@@ -76,7 +103,7 @@ class Video(models.Model):
 
 # Interacción social
 class Like(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='likes')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='likes')
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='likes')
     fecha = models.DateTimeField(auto_now_add=True)
 
@@ -86,7 +113,7 @@ class Like(models.Model):
         verbose_name_plural = 'Likes'
 
 class Comentario(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comentarios')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='comentarios')
     video = models.ForeignKey(Video, on_delete=models.CASCADE, related_name='comentarios')
     texto = models.TextField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -95,6 +122,7 @@ class Comentario(models.Model):
 
     def __str__(self):
         return f"Comentario de {self.usuario.name} en {self.video.titulo}: {self.texto[:30]}..."
+
 
     class Meta:
         verbose_name = 'Comentario'
@@ -114,7 +142,7 @@ class ChatRoom(models.Model):
 
 class ChatMessage(models.Model):
     chatroom= models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages')
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='chat_messages')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='chat_messages')
     mensaje = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
 
@@ -130,7 +158,7 @@ class ChatMessage(models.Model):
 
 # Disponibilidad de profesores para clases privadas
 class DisponibilidadProfesor(models.Model):
-    profesor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='disponibilidades')
+    profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='disponibilidades')
     dia_semana = models.CharField(max_length=10, choices=[
         ('Lunes', 'Lunes'),
         ('Martes', 'Martes'),
@@ -157,8 +185,8 @@ class ClasePrivada(models.Model):
         ('realizada', 'Realizada'),
         ('cancelada', 'Cancelada'),
     ]
-    profesor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clases_impartidas')
-    alumno = models.ForeignKey(User, on_delete=models.CASCADE, related_name='clases_tomadas')
+    profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clases_impartidas')
+    alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clases_tomadas')
     titulo = models.CharField(max_length=200)
     descripcion = models.TextField(blank=True)
     palo_flamenco = models.CharField(max_length=100, choices=PaloFlamenco.NOMBRE_CHOICES)
@@ -201,6 +229,19 @@ class Guitarra(models.Model):
 
 
 #IA y Contenido Flamenco
+class Notification(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='notifications')
+    message = models.CharField(max_length=255)
+    url = models.CharField(max_length=255, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
+
+    def __str__(self):
+        return f"Notificación para {self.user}: {self.message[:30]}..."
+
+    class Meta:
+        verbose_name = 'Notificación'
+        verbose_name_plural = 'Notificaciones'
 class ArticuloFlamenco(models.Model):
     CATEGORIA_CHOICES = [
         ('historia', 'Historia'),
@@ -221,7 +262,7 @@ class ArticuloFlamenco(models.Model):
         verbose_name_plural = 'Artículos Flamencos'
 
 class PreguntaIA(models.Model):
-    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='preguntas_ia')
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='preguntas_ia')
     pregunta = models.TextField()
     respuesta = models.TextField(blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
@@ -232,4 +273,4 @@ class PreguntaIA(models.Model):
     class Meta:
         verbose_name = 'Pregunta IA'
         verbose_name_plural = 'Preguntas IA'
-    
+
