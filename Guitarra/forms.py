@@ -1,8 +1,10 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
 from .models import (
-    User, Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
+    Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
 )
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 class RegistroUsuarioForm(forms.ModelForm):
     password1 = forms.CharField(
@@ -38,9 +40,9 @@ class RegistroUsuarioForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('name', 'email')
+        fields = ('username', 'email')
         widgets = {
-            'name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}),
+            'username': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre de usuario'}),
             'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Correo electrónico'}),
         }
 
@@ -62,7 +64,7 @@ class RegistroUsuarioForm(forms.ModelForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.password = make_password(self.cleaned_data['password1'])
+        user.set_password(self.cleaned_data['password1'])
         if commit:
             user.save()
         return user
@@ -70,26 +72,26 @@ class RegistroUsuarioForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['user', 'display_name', 'bio', 'avatar', 'pais']
+        fields = ['display_name', 'bio', 'avatar', 'pais']
         widgets = {
-            'user': forms.Select(attrs={'class': 'form-control'}),
             'display_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Nombre visible'}),
             'bio': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Biografía', 'rows': 3}),
             'avatar': forms.ClearableFileInput(attrs={'class': 'form-control'}),
-            'pais': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'País'}),
+            'pais': forms.Select(attrs={'class': 'form-control'}),
         }
 
 
 class VideoForm(forms.ModelForm):
     class Meta:
         model = Video
-        fields = ['titulo', 'descripcion', 'palo_flamenco', 'autor', 'miniatura', 'duracion', 'visibilidad', 'slug']
+        fields = ['titulo', 'descripcion', 'palo_flamenco', 'autor', 'miniatura', 'archivo', 'duracion', 'visibilidad', 'slug']
         widgets = {
             'titulo': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Título'}),
             'descripcion': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Descripción', 'rows': 3}),
             'palo_flamenco': forms.Select(attrs={'class': 'form-control'}),
             'autor': forms.Select(attrs={'class': 'form-control'}),
             'miniatura': forms.ClearableFileInput(attrs={'class': 'form-control'}),
+            'archivo': forms.ClearableFileInput(attrs={'class': 'form-control'}),
             'duracion': forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}),
             'visibilidad': forms.CheckboxInput(attrs={'class': 'form-check-input'}),
             'slug': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Slug'}),
@@ -98,27 +100,67 @@ class VideoForm(forms.ModelForm):
 class ComentarioForm(forms.ModelForm):
     class Meta:
         model = Comentario
-        fields = ['usuario', 'video', 'texto', 'padre']
+        fields = ['texto']
         widgets = {
-            'usuario': forms.Select(attrs={'class': 'form-control'}),
-            'video': forms.Select(attrs={'class': 'form-control'}),
-            'texto': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Comentario', 'rows': 3}),
-            'padre': forms.Select(attrs={'class': 'form-control'}),
+            'texto': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Escribe tu comentario...', 'rows': 3}),
         }
 
     PALABRAS_PROHIBIDAS = [
-        'tonto', 'idiota', 'gilipollas', 'imbécil', 'cabrón', 'cabrona', 'estúpido', 'estúpida',
-        'subnormal', 'retrasado', 'retrasada', 'inútil', 'payaso', 'payasa', 'asqueroso', 'asquerosa',
-        'cerdo', 'cerda', 'bastardo', 'bastarda', 'malnacido', 'malnacida', 'mierda', 'joder',
-        'puta', 'puto', 'zorra', 'maricón', 'marica', 'pendejo', 'pendeja', 'mamón', 'mamona',
-        'huevón', 'huevona', 'cagón', 'cagada', 'coño', 'hostia', 'carajo', 'chinga', 'chingada',
-        'pelotudo', 'boludo', 'gil', 'soplapollas', 'capullo', 'pringado', 'pringada', 'petardo', 'petarda'
+        # Variantes con y sin tilde
+        'tonto', 'tonta', 'idiota', 'gilipollas', 'imbecil', 'imbécil', 'cabron', 'cabrón', 'cabrona',
+        'estupido', 'estúpido', 'estupida', 'estúpida', 'subnormal', 'retrasado', 'retrasada', 'inutil', 'inútil',
+        'payaso', 'payasa', 'asqueroso', 'asquerosa', 'cerdo', 'cerda', 'bastardo', 'bastarda', 'malnacido', 'malnacida',
+        'mierda', 'joder', 'puta', 'puto', 'zorra', 'maricon', 'maricón', 'marica', 'pendejo', 'pendeja', 'mamon', 'mamón', 'mamona',
+        'huevon', 'huevón', 'huevona', 'cagon', 'cagón', 'cagada', 'cono', 'coño', 'hostia', 'carajo', 'chinga', 'chingada',
+        'pelotudo', 'boludo', 'gil', 'soplapollas', 'capullo', 'pringado', 'pringada', 'petardo', 'petarda', 'perro', 'perra',
+        'zopenco', 'zopenca', 'tusco', 'tusca', 'hijo de puta', 'hija de puta', 'maldito', 'maldita',
+        # Más insultos y variantes
+        'baboso', 'babosa',
+        'anormal', 'bestia', 'burro', 'burra', 'cacho', 'cacho de carne', 'cacho de mierda',
+        'cacho de tonto', 'cacho de tonta', 'cacho de gilipollas', 'cacho de subnormal', 'cacho de inutil', 'cacho de inútil',
+        'cacho de payaso', 'cacho de payasa', 'cacho de asqueroso', 'cacho de asquerosa', 'cacho de cerdo', 'cacho de cerda',
+        'cacho de bastardo', 'cacho de bastarda', 'cacho de malnacido', 'cacho de malnacida', 'cacho de mierda',
+        'cacho de joder', 'cacho de puta', 'cacho de puto', 'cacho de zorra', 'cacho de maricon', 'cacho de maricón',
+        'cacho de marica', 'cacho de pendejo', 'cacho de pendeja', 'cacho de mamon', 'cacho de mamón', 'cacho de mamona',
+        'cacho de huevon', 'cacho de huevón', 'cacho de huevona', 'cacho de cagon', 'cacho de cagón', 'cacho de cagada',
+        'cacho de cono', 'cacho de coño', 'cacho de hostia', 'cacho de carajo', 'cacho de chinga', 'cacho de chingada',
+        'cacho de pelotudo', 'cacho de boludo', 'cacho de gil', 'cacho de soplapollas', 'cacho de capullo',
+        'cacho de pringado', 'cacho de pringada', 'cacho de petardo', 'cacho de petarda', 'cacho de perro', 'cacho de perra',
+        'cacho de zopenco', 'cacho de zopenca', 'cacho de tusco', 'cacho de tusca', 'cacho de hijo de puta', 'cacho de hija de puta',
+        'cacho de maldito', 'cacho de maldita',
+        # Insultos internacionales y variantes
+        'asshole', 'bastard', 'bitch', 'dick', 'dumb', 'fuck', 'fucker', 'shit', 'stupid', 'moron', 'jerk', 'retard',
+        'idiot', 'loser', 'sucker', 'twat', 'wanker', 'slut', 'whore', 'cunt', 'arsehole', 'bollocks', 'bugger', 'git',
+        'prick', 'tosser', 'wank', 'wanker', 'arse', 'arsewipe', 'arsehead', 'arseface', 'arsehole', 'arselicker',
+        'arsewipe', 'arse', 'arsehole', 'arsehead', 'arseface', 'arsewipe', 'arselicker',
+        # Variantes sin espacios
+        'hijodeputa', 'hijaputa', 'malparido', 'malparida', 'cabronazo', 'cabroncete', 'cabronazo', 'cabroncete',
+        'mierdoso', 'mierdosa', 'mierdecilla', 'mierdilla', 'mierdoso', 'mierdosa',
+        # Diminutivos y aumentativos
+        'tontito', 'tontita', 'tontazo', 'tontaza', 'idiotita', 'idiotazo', 'gilipollitas', 'gilipollita', 'gilipollazo',
+        'imbecilito', 'imbecilita', 'imbecilazo', 'imbecilaza', 'payasete', 'payaseta', 'payasazo', 'payasaza',
+        'asquerosito', 'asquerosita', 'asquerosazo', 'asquerosaza', 'cerdito', 'cerdita', 'cerdazo', 'cerdaza',
+        'bastardito', 'bastardita', 'bastardazo', 'bastardaza', 'malnacidito', 'malnacidita', 'malnacidazo', 'malnacidaza',
+        'mierdecita', 'mierdecito', 'mierdecilla', 'mierdecillo', 'mierdecazo', 'mierdecaza',
+        # Otros
+        'mongol', 'mongolo', 'mongolica', 'mongólica', 'mongolico', 'mongólico', 'mongolita', 'mongolita',
+        'tarado', 'tarada', 'taradito', 'taradita', 'taradazo', 'taradaza',
+        'imbecil', 'imbécil', 'anormal', 'bestia', 'burro', 'burra', 'animal', 'animalito', 'animalazo',
+        'bobo', 'boba', 'bobito', 'bobita', 'bobazo', 'bobaza',
+        'lerdo', 'lerda', 'lerdito', 'lerdita', 'lerdazo', 'lerdaza',
+        'memo', 'memito', 'memazo', 'memaza',
+        'necio', 'necia', 'neciito', 'neciaza',
+        'tontoelculo', 'tontolculo', 'tontolaba', 'tontolaba',
+        'subnormalito', 'subnormalazo', 'subnormalaza',
+        'gilipuertas', 'gilipuertas', 'gilipuertas',
+        'caraculo', 'caraculo', 'caraculo',
+        'carapolla', 'carapolla', 'carapolla',
+        'caraculo', 'caraculo', 'caraculo',
+        'carapene', 'carapene', 'carapene',
     ]
 
     def clean_texto(self):
         texto = self.cleaned_data.get('texto', '')
-        if len(texto.strip()) < 10:
-            raise forms.ValidationError('El comentario debe tener al menos 10 caracteres.')
         texto_lower = texto.lower()
         for palabra in self.PALABRAS_PROHIBIDAS:
             if palabra in texto_lower:
