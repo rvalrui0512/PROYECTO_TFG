@@ -1,18 +1,31 @@
 from django.contrib import admin
-from .models import Like, User, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
+from .models import Favorito, Like, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Notification
 
-# Register your models here.
-@admin.register(User)
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('name', 'email')
-    search_fields = ('name', 'email')
-    list_filter = ('name',)
-
+# Favoritos admin
+@admin.register(Favorito)
+class FavoritoAdmin(admin.ModelAdmin):
+    list_display = ('usuario', 'content_object', 'fecha')
+    search_fields = ('usuario__username',)
+    list_filter = ('usuario', 'content_type')
     fieldsets = [
-        ('User', {
-            'fields': ['name', 'email', 'password'],
+        ('Favorito', {
+            'fields': ['usuario', 'content_type', 'object_id', 'fecha'],
         })
     ]
+
+# Notification admin
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('user', 'message', 'url', 'created_at', 'read')
+    search_fields = ('user__username', 'message', 'url')
+    list_filter = ('read', 'created_at', 'user')
+    fieldsets = [
+        ('Notification', {
+            'fields': ['user', 'message', 'url', 'created_at', 'read'],
+        })
+    ]
+
+# Register your models here.
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
@@ -157,3 +170,4 @@ class PreguntaIAAdmin(admin.ModelAdmin):
             'fields': ['usuario', 'pregunta', 'respuesta', 'timestamp'],
         })
     ]
+
