@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block title %}Notificaciones{% endblock %}
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Notificaciones</h2>
+    {% if notifications %}
+        <ul class="list-group">
+            {% for notification in notifications %}
+            <li class="list-group-item d-flex justify-content-between align-items-center {% if not notification.read %}list-group-item-info{% endif %}">
+                <div>
+                    {{ notification.message }}
+                    {% if notification.url %}
+                        <a href="{{ notification.url }}" class="ms-2">Ver</a>
+                    {% endif %}
+                </div>
+                <small class="text-muted">{{ notification.created_at|date:'d/m/Y H:i' }}</small>
+            </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="alert alert-info">No tienes notificaciones.</div>
+    {% endif %}
+</div>
+{% endblock %}

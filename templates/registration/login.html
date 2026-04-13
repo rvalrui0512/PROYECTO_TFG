@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block title %}Iniciar sesión{% endblock %}
+{% block content %}
+<div class="container d-flex justify-content-center align-items-center py-5 bg-light" style="min-height: 60vh;">
+    <div class="card shadow-lg p-3 border-0" style="max-width: 400px; width: 100%; margin-top: 2.5rem; margin-bottom: 2.5rem;">
+        <div class="text-center mb-3">
+            <span class="rounded-circle bg-primary bg-gradient d-inline-flex align-items-center justify-content-center mb-2" style="width:60px;height:60px;">
+                <i class="fa-solid fa-user-lock fa-2x text-white"></i>
+            </span>
+            <h2 class="mb-1 mt-1">Bienvenido</h2>
+            <small class="text-muted">Accede a tu cuenta para continuar</small>
+        </div>
+        <form method="post" novalidate autocomplete="off">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+            <div class="mb-3">
+                <label for="id_username" class="form-label">Usuario</label>
+                {{ form.username }}
+            </div>
+            <div class="mb-3">
+                <label for="id_password" class="form-label">Contraseña</label>
+                {{ form.password }}
+            </div>
+                <button class="btn w-100" type="submit" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;">Entrar <i class="fa-solid fa-arrow-right ms-1"></i></button>
+        </form>
+        <div class="text-center mt-3">
+            <span class="text-muted">¿No tienes cuenta?</span>
+            <a href="{% url 'guitarra:user_create' %}" class="btn btn-outline-primary btn-sm ms-2">Regístrate</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

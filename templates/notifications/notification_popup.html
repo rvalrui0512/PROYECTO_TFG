@@ -1,0 +1,12 @@
+{% for notification in notifications %}
+<div style="padding: 8px 0; border-bottom: 1px solid #eee; display: flex; align-items: center; font-size: 1em;">
+    <span style="flex:1; white-space: normal;">
+        {{ notification.message|striptags }}
+    </span>
+    {% if notification.url %}
+        <a href="{{ notification.url }}" style="margin-left: 8px; color: #007bff; text-decoration: underline;">Ver</a>
+    {% endif %}
+</div>
+{% empty %}
+<div style="text-align:center; color:#888; padding:16px 0;">No tienes notificaciones.</div>
+{% endfor %}
