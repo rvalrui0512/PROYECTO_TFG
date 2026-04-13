@@ -1,142 +1,83 @@
-# Estructura Detallada del Proyecto TFG Flamenco
 
-Este documento describe de forma detallada y extensa la estructura y los pasos clave para el desarrollo de una plataforma web de guitarra flamenca basada en Django. Incluye la organización de modelos, administración, formularios, vistas, funcionalidades, tecnologías y apartados recomendados para la memoria del TFG.
+# Estructura Detallada del Proyecto TFG Flamenco (Actualizada)
+
+Este documento describe la estructura real y las funcionalidades implementadas en la plataforma web de guitarra flamenca basada en Django.
 
 ---
 
 ## 1. Modelos (`models.py`)
 
 ### 1.1. Autenticación y Perfil
-- **User**: Utilizar el modelo de usuario de Django o un `AbstractUser` personalizado para mayor flexibilidad.
-- **Profile**: Modelo extendido con los siguientes campos:
+- **User**: Modelo de usuario estándar de Django.
+- **Profile**: Extiende al usuario con:
   - `user` (OneToOneField a User)
-  - `display_name`
-  - `bio`
-  - `avatar` (imagen)
-  - `nivel_guitarra` (opciones: principiante, intermedio, avanzado)
-  - `pais`
+  - `display_name`, `bio`, `avatar`, `pais`
 
 ### 1.2. Palos y Vídeos
-- **PaloFlamenco**:
-  - `nombre` (bulería, tangos, alegrías, etc.)
-  - `descripcion`
-  - `slug`
-- **Video**:
-  - `titulo`
-  - `descripcion`
-  - `palo` (ForeignKey a PaloFlamenco)
-  - `autor` (ForeignKey a User)
-  - `archivo_video` o `url_video`
-  - `miniatura`
-  - `duracion`
-  - `fecha_publicacion`
-  - `visibilidad` (público/privado)
-  - `slug`
+- **PaloFlamenco**: `nombre`, `descripcion`, `slug`
+- **Video**: `titulo`, `descripcion`, `palo_flamenco`, `autor`, `miniatura`, `archivo`, `duracion`, `fecha_publicacion`, `visibilidad`, `slug`
 
 ### 1.3. Interacción Social
-- **Like**:
-  - `usuario` (ForeignKey a User)
-  - `video` (ForeignKey a Video)
-  - `created_at`
-  - Restricción de unicidad (`usuario`, `video`)
-- **Comentario**:
-  - `video`
-  - `usuario`
-  - `texto`
-  - `created_at`, `updated_at`
-  - `parent` (ForeignKey opcional para hilos)
-- **ChatRoom**:
-  - `nombre`
-  - `video` (ForeignKey opcional)
-  - `is_public`
-- **ChatMessage**:
-  - `room` (ForeignKey a ChatRoom)
-  - `usuario`
-  - `mensaje`
-  - `timestamp`
+- **Like**: `usuario`, `video`, `fecha` (único por usuario y vídeo)
+- **Comentario**: `usuario`, `video`, `texto`, `fecha_creacion`, `fecha_actualizacion`, `padre` (para hilos)
+- **ChatRoom**: `nombre`, `video`, `es_publico`
+- **ChatMessage**: `chatroom`, `usuario`, `mensaje`, `timestamp`
+- **Favorito**: genérico para vídeos y otros objetos
+
 
 ### 1.4. Clases y Reservas
-- **ClasePrivada**:
-  - `profesor` (User)
-  - `alumno` (User)
-  - `titulo`, `descripcion`
-  - `palo_principal` (ForeignKey a PaloFlamenco)
-  - `fecha_hora_inicio`, `fecha_hora_fin`
-  - `estado` (pendiente, confirmada, realizada, cancelada)
-- **DisponibilidadProfesor**:
-  - `profesor`
-  - `dia_semana`
-  - `hora_inicio`, `hora_fin`
+- **ClasePrivada**: `profesor`, `alumno`, `titulo`, `descripcion`, `palo_flamenco`, `fecha_inicio`, `fecha_fin`, `estado`
+- **DisponibilidadProfesor**: `profesor`, `dia_semana`, `hora_inicio`, `hora_fin`
 
 ### 1.5. Catálogo de Guitarras
-- **Guitarra**:
-  - `nombre`, `fabricante`, `descripcion`
-  - `precio_aproximado`
-  - `imagen`
-  - `tipo_madera`
-  - `nivel_recomendado`
-  - `stock_simulado`
+- **Guitarra**: `marca`, `modelo`, `tipo`, `descripcion`, `precio`, `stock`, `imagen`
 
 ### 1.6. IA y Contenido Histórico
-- **ArticuloFlamenco**:
-  - `titulo`, `contenido`
-  - `categoria` (historia, guitarras, palos, artistas)
-  - `slug`
-- **PreguntaIA**:
-  - `usuario`
-  - `texto_pregunta`
-  - `respuesta_generada`
-  - `timestamp`
+- **ArticuloFlamenco**: `titulo`, `contenido`, `categoria`, `slug`
+- **PreguntaIA**: `usuario`, `pregunta`, `respuesta`, `timestamp`
 
 ---
 
 ## 2. Administración (`admin.py`)
 
-Personalización del panel de administración para gestionar contenidos y usuarios avanzados:
-
-- **PaloFlamencoAdmin**: `list_display = ("nombre", "slug")`, `prepopulated_fields = {"slug": ("nombre",)}`
-- **VideoAdmin**: `list_display = ("titulo", "palo", "autor", "fecha_publicacion")`, filtros por palo y fecha, búsqueda por título.
-- **ComentarioAdmin**: Moderación, filtro por video, usuario, fecha; acción para marcar como “aprobado/eliminado lógicamente”.
-- **ClasePrivadaAdmin**: Filtros por profesor, alumno, estado; listado para ver la agenda de clases.
-- **GuitarraAdmin**: `list_display = ("nombre", "fabricante", "precio_aproximado", "nivel_recomendado")`
-- **ArticuloFlamencoAdmin**: Editor enriquecido (si usas plugin) y prepopulación de slug.
-- **Opcional**: Añadir `InlineModelAdmin` para mostrar comentarios dentro del detalle de un vídeo.
+Panel de administración personalizado para gestionar todos los modelos principales, con filtros, búsquedas y acciones rápidas.
 
 ---
 
 ## 3. Formularios (`forms.py`) y Validaciones
 
-- **RegistroUsuarioForm**: Basado en `UserCreationForm`, con campos extra de Profile (nivel, país). Validación de emails únicos y contraseñas fuertes.
-- **PerfilForm**: Edición de bio, avatar y nivel de guitarra.
-- **VideoForm**
-- **ComentarioForm**: Validación de longitud mínima y filtro de lenguaje ofensivo.
-- **ClasePrivadaForm**: Validación de fechas (no en el pasado), solapamiento de clases y disponibilidad del profesor.
-- **GuitarraForm (solo admin)**: Validar que el precio sea positivo.
+- **RegistroUsuarioForm**: Registro de usuario con validación de email único y contraseña fuerte.
+- **ProfileForm**: Edición de perfil.
+- **VideoForm**: Creación/edición de vídeos.
+- **ComentarioForm**: Validación de longitud mínima y lenguaje ofensivo.
+- **ClasePrivadaForm**: Validación de fechas y solapamiento de clases.
+- **GuitarraForm**: Solo admin, valida precio positivo.
 
 ---
 
 ## 4. Vistas (`views.py`) y Funcionalidad
 
 ### 4.1. Sección Vídeos
-- Listado de vídeos por palo (paginado)
-- Detalle de vídeo con reproductor, lista de comentarios, formulario para comentar, botón de like/unlike (AJAX), enlace a sala de chat en tiempo real
+- Listado de vídeos por palo (paginado y filtrado)
+- Detalle de vídeo con reproductor, comentarios, likes, favoritos y miniatura
+- Subida de vídeos (solo admin)
 
 ### 4.2. Sección Chat en Tiempo Real
-- Uso de Django Channels para WebSockets
-- Vista de sala: lista de mensajes, frontend JS para WebSocket
+- Chat por vídeo usando Django Channels (WebSockets)
 
 ### 4.3. Sección Clases Privadas
-- Vista calendario/listado de próximas clases
-- Vista para solicitar clase (formulario, email de confirmación, calendario)
+- Listado y detalle de clases privadas
+- Solicitud y gestión de clases (solo admin/profesor)
 
 ### 4.4. Sección Guitarras
-- Listado con filtros (fabricante, nivel, precio)
-- Detalle con foto y descripción
+- Listado con filtros (modelo, tipo, precio)
+- Detalle con foto, descripción y stock
+- Añadir al carrito (simulado)
 
 ### 4.5. Sección IA Flamenca
 - Buscador tipo “haz una pregunta”
-- Busca primero en ArticuloFlamenco, si no hay info llama a backend IA y guarda en PreguntaIA
-- Muestra respuestas formateadas
+- Responde con información de guitarras, historia, palos y artículos
+- Guarda preguntas y respuestas en la base de datos
 
 ---
 
@@ -146,7 +87,7 @@ Personalización del panel de administración para gestionar contenidos y usuari
 - Django Templates + Bootstrap
 - Gestión de ficheros multimedia (`MEDIA_URL`, `MEDIA_ROOT`)
 - Django Channels + Redis para chat
-- Integración IA (API real o backend simulado)
+- Integración IA (backend propio)
 
 ---
 
@@ -162,4 +103,4 @@ Personalización del panel de administración para gestionar contenidos y usuari
 
 ---
 
-Este documento sirve como guía detallada para el desarrollo y documentación de la plataforma TFG Flamenco, asegurando que cada aspecto funcional y técnico esté bien definido y estructurado.
+Este documento refleja la estructura y funcionamiento real del proyecto TFG Flamenco, incluyendo la gestión de vídeos, IA, catálogo de guitarras, clases privadas, interacción social y administración. Puedes añadir vídeos grabados y mejorar la presentación según lo necesites.
