@@ -1,17 +1,5 @@
 from django.contrib import admin
-from .models import Favorito, Like, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Notification
-
-# Favoritos admin
-@admin.register(Favorito)
-class FavoritoAdmin(admin.ModelAdmin):
-    list_display = ('usuario', 'content_object', 'fecha')
-    search_fields = ('usuario__username',)
-    list_filter = ('usuario', 'content_type')
-    fieldsets = [
-        ('Favorito', {
-            'fields': ['usuario', 'content_type', 'object_id', 'fecha'],
-        })
-    ]
+from .models import Like, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Notification
 
 # Notification admin
 @admin.register(Notification)

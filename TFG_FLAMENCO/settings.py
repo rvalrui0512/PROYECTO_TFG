@@ -108,9 +108,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es-es'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Europe/Madrid'
 
 USE_I18N = True
 
@@ -127,3 +127,7 @@ STATICFILES_DIRS = [ BASE_DIR / 'static' ]
 # Media files (user uploads, avatars)
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+# Jitsi Meet configuration for embedded private classes
+JITSI_MEET_DOMAIN = 'meet.jit.si'
+JITSI_MEET_EXTERNAL_API_URL = f'https://{JITSI_MEET_DOMAIN}/external_api.js'

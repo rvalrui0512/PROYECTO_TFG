@@ -1,3 +1,55 @@
+# Vista para la videollamada embebida de la clase privada
+from django.utils import timezone
+from django.contrib.auth.decorators import login_required
+from django.http import HttpResponseForbidden
+from django.shortcuts import redirect
+
+@login_required
+def claseprivada_videollamada(request, pk):
+    from .models import ClasePrivada
+    from django.urls import reverse
+    clase = get_object_or_404(ClasePrivada, pk=pk)
+    user = request.user
+    if not clase.puede_acceder(user):
+        return HttpResponseForbidden("No tienes permiso para acceder a esta videollamada.")
+    if clase.estado == 'cancelada':
+        return render(request, 'clases/videollamada_cancelada.html', {'clase': clase})
+
+    ahora = timezone.now()
+    if clase.fecha_inicio > ahora:
+        return render(request, 'clases/videollamada_espera.html', {'clase': clase})
+    if clase.fecha_fin <= ahora:
+        return render(
+            request,
+            'clases/videollamada_caducada.html',
+            {'clase': clase},
+            status=403,
+        )
+
+    if request.GET.get('redirigir') != '0':
+        return redirect(clase.get_jitsi_join_url())
+
+    from django.conf import settings
+
+    profile = getattr(user, 'profile', None)
+    display_name = (
+        getattr(profile, 'display_name', None)
+        or user.get_full_name().strip()
+        or user.get_username()
+    )
+    jitsi_domain = getattr(settings, 'JITSI_MEET_DOMAIN', 'meet.jit.si')
+    jitsi_api_url = getattr(settings, 'JITSI_MEET_EXTERNAL_API_URL', f'https://{jitsi_domain}/external_api.js')
+    return_url = request.GET.get('return_url') or reverse('guitarra:claseprivada_detail', kwargs={'pk': clase.pk})
+
+    context = {
+        'clase': clase,
+        'jitsi_room_name': clase.get_jitsi_room_name(),
+        'jitsi_display_name': display_name,
+        'jitsi_domain': jitsi_domain,
+        'jitsi_api_url': jitsi_api_url,
+        'return_url': return_url,
+    }
+    return render(request, 'clases/videollamada.html', context)
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import AdminRequiredLoginMixin, OwnerOrAdminRequiredMixin
 from django.views.generic import ListView
@@ -7,16 +59,9 @@ from django.http import JsonResponse
 from django.template.loader import render_to_string
 from django.views import View
 from django.utils import timezone
-from django.contrib.contenttypes.models import ContentType
-from django.http import JsonResponse, HttpResponseForbidden
 from django.views.decorators.http import require_POST
-from django.contrib.auth.decorators import login_required
-from .models import Favorito
 from django.db import models
 from django.shortcuts import render, redirect, get_object_or_404
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
-from .models import Comentario
 
 # List view for user notifications
 class NotificationListView(LoginRequiredMixin, ListView):
@@ -27,9 +72,6 @@ class NotificationListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')
-
-# Vista para el buscador de IA
-from django.contrib.auth.mixins import LoginRequiredMixin
 
 class IABusquedaView(LoginRequiredMixin, View):
     template_name = 'IA/ia_busqueda.html'
@@ -417,19 +459,38 @@ class GuitarraDeleteView(AdminRequiredLoginMixin, DeleteView):
 
 class ClasePrivadaListView(LoginRequiredMixin, ListView):
     model = ClasePrivada
-    template_name = 'clases_privadas/claseprivada_list.html'
+    template_name = 'clases/claseprivada_list.html'
     context_object_name = 'clases'
-    paginate_by = 5
+
+    def get_queryset(self):
+        user = self.request.user
+        # El admin ve todas las clases, el usuario solo las suyas
+        if user.is_staff or user.is_superuser:
+            return ClasePrivada.objects.all().order_by('fecha_inicio')
+        return ClasePrivada.objects.filter(models.Q(alumno=user) | models.Q(profesor=user)).order_by('fecha_inicio')
 
 class ClasePrivadaDetailView(LoginRequiredMixin, DetailView):
     model = ClasePrivada
-    template_name = 'clases_privadas/claseprivada_detail.html'
+    template_name = 'clases/claseprivada_detail.html'
     context_object_name = 'clase'
 
-    def get(self, request, *args, **kwargs):
-        response = super().get(request, *args, **kwargs)
-        # HistorialItem eliminado
-        return response
+    def get_queryset(self):
+        user = self.request.user
+        # El admin ve todas las clases, el usuario solo las suyas
+        if user.is_staff or user.is_superuser:
+            return ClasePrivada.objects.all()
+        return ClasePrivada.objects.filter(models.Q(alumno=user) | models.Q(profesor=user))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        clase = self.object
+        ahora = timezone.now()
+        context['estado_videollamada'] = clase.proximo_estado_videollamada(ahora)
+        context['puede_unirse_ahora'] = clase.esta_activa(ahora)
+        context['jitsi_join_url'] = clase.get_jitsi_join_url()
+        return context
+
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 class ClasePrivadaCreateView(AdminRequiredLoginMixin, CreateView):
     model = ClasePrivada
@@ -440,24 +501,22 @@ class ClasePrivadaCreateView(AdminRequiredLoginMixin, CreateView):
     def form_valid(self, form):
         response = super().form_valid(form)
         clase = self.object
-        # Notificar a profesor y alumno
         from .models import Notification
-        # Mensaje para el profesor
         alumno_nombre = getattr(clase.alumno, 'username', None) or getattr(clase.alumno, 'get_username', lambda: None)() or getattr(getattr(clase.alumno, 'profile', None), 'display_name', None) or 'alumno'
         profesor_nombre = getattr(clase.profesor, 'username', None) or getattr(clase.profesor, 'get_username', lambda: None)() or getattr(getattr(clase.profesor, 'profile', None), 'display_name', None) or 'profesor'
         Notification.objects.create(
             user=clase.profesor,
             message=f'Se ha creado una nueva clase privada: "{clase.titulo}" con el alumno {alumno_nombre}.',
-            url=f'/clases/{clase.id}/'
+            url=f'/clases/{clase.pk}/'
         )
-        # Mensaje para el alumno
         if clase.profesor != clase.alumno:
             Notification.objects.create(
                 user=clase.alumno,
                 message=f'Se ha creado una nueva clase privada: "{clase.titulo}" con el profesor {profesor_nombre}.',
-                url=f'/clases/{clase.id}/'
+                url=f'/clases/{clase.pk}/'
             )
         return response
+
 
 class ClasePrivadaUpdateView(AdminRequiredLoginMixin, UpdateView):
     model = ClasePrivada
@@ -465,27 +524,81 @@ class ClasePrivadaUpdateView(AdminRequiredLoginMixin, UpdateView):
     template_name = 'clases_privadas/claseprivada_form.html'
     success_url = reverse_lazy('guitarra:claseprivada_list')
 
+
 class ClasePrivadaDeleteView(AdminRequiredLoginMixin, DeleteView):
     model = ClasePrivada
     template_name = 'clases_privadas/claseprivada_confirm_delete.html'
     success_url = reverse_lazy('guitarra:claseprivada_list')
 
 
-# Documentación y Presentación
-# Documentación técnica y de usuario: Incluye un README profesional, diagramas de arquitectura, y manual de usuario.
-# Tests automatizados: Añade tests unitarios y de integración para las vistas y formularios principales.
-# Despliegue profesional: Prepara el proyecto para despliegue en un servidor real (Docker, CI/CD, configuración de producción segura).
-# Nuevas Secciones Sugeridas
-# Blog o sección de noticias: Para novedades del mundo flamenco o del propio sitio.
-# Foro o comunidad: Espacio para que los usuarios debatan, pregunten y compartan recursos.
-# Galería multimedia: Fotos y vídeos destacados de eventos, conciertos, etc.
-# Marketplace: Si es relevante, permite la compraventa de guitarras o accesorios entre usuarios.
+@login_required
+def cambiar_estado_clase(request, pk):
+    """Cambiar el estado de una clase privada con validación de permisos."""
+    from django.http import JsonResponse
+    from django.shortcuts import get_object_or_404
+    
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+    clase = get_object_or_404(ClasePrivada, pk=pk)
+    user = request.user
+    nuevo_estado = request.POST.get('estado')
+    
+    # Validar que el nuevo estado sea válido
+    valid_estados = dict(ClasePrivada.ESTADO_CHOICES)
+    if nuevo_estado not in valid_estados:
+        return JsonResponse({'error': 'Estado no válido'}, status=400)
+    
+    # Validar permisos
+    es_admin = user.is_staff or user.is_superuser
+    es_usuario_clase = (user == clase.profesor or user == clase.alumno)
+    
+    if not (es_admin or es_usuario_clase):
+        return JsonResponse({'error': 'No tienes permiso para cambiar este estado'}, status=403)
+    
+    # Validar transiciones permitidas
+    estado_actual = clase.estado
+    
+    # Si la clase está en estado final (realizada o cancelada), no permitir cambios
+    if estado_actual in ['realizada', 'cancelada']:
+        return JsonResponse({'error': 'No se puede cambiar el estado de una clase finalizada'}, status=403)
+    
+    # Admins pueden hacer cualquier transición
+    if es_admin:
+        # Permiso verificado
+        pass
+    # Usuarios solo pueden confirmar (pendiente -> confirmada)
+    elif es_usuario_clase:
+        if not (estado_actual == 'pendiente' and nuevo_estado == 'confirmada'):
+            return JsonResponse({'error': 'Transición no permitida para usuario'}, status=403)
+    
+    # Aplicar cambio
+    clase.estado = nuevo_estado
+    clase.save()
+    
+    # Crear notificación si el estado cambió
+    if estado_actual != nuevo_estado:
+        from .models import Notification
+        
+        estado_display = dict(ClasePrivada.ESTADO_CHOICES).get(nuevo_estado, nuevo_estado)
+        
+        # Notificar a ambas partes
+        for notif_user in [clase.profesor, clase.alumno]:
+            if notif_user != user:  # No notificar al que hizo el cambio
+                mensaje = f'El estado de la clase "{clase.titulo}" ha sido actualizado a {estado_display}.'
+                Notification.objects.create(
+                    user=notif_user,
+                    message=mensaje,
+                    url=f'/clases/{clase.pk}/'
+                )
+    
+    return JsonResponse({'success': True, 'estado': nuevo_estado})
+
 
 class NotificationPopupView(LoginRequiredMixin, ListView):
     model = Notification
     template_name = 'notifications/notification_popup.html'
     context_object_name = 'notifications'
-    paginate_by = 10
 
     def get_queryset(self):
         return Notification.objects.filter(user=self.request.user).order_by('-created_at')[:10]
@@ -495,29 +608,11 @@ class NotificationPopupView(LoginRequiredMixin, ListView):
             if request.GET.get('count') == '1':
                 count = Notification.objects.filter(user=request.user, read=False).count()
                 return JsonResponse({'count': count})
+            # Renderizar HTML del popup
             notifications = self.get_queryset()
-            # Renderizar solo el texto plano y enlaces, sin HTML extra ni saltos
-            items = []
-            for n in notifications:
-                msg = n.message.strip()
-                if n.url:
-                    msg += f' <a href="{n.url}" style="color:#007bff;text-decoration:underline;">Ver</a>'
-                items.append(msg)
-            return JsonResponse({'notificaciones': items})
+            html = render_to_string('notifications/notification_popup.html', {'notifications': notifications})
+            return JsonResponse({'html': html})
         return super().get(request, *args, **kwargs)
-
-@login_required
-@require_POST
-def toggle_favorito(request):
-    model = request.POST.get('model')
-    object_id = request.POST.get('object_id')
-    if model != 'video' or not object_id:
-        return JsonResponse({'ok': False, 'error': 'Petición inválida'}, status=400)
-    ct = ContentType.objects.get(app_label='Guitarra', model='video')
-    fav, created = Favorito.objects.get_or_create(usuario=request.user, content_type=ct, object_id=object_id)
-    if not created:
-        fav.delete()
-    return JsonResponse({'ok': True})
 
 @require_POST
 def add_to_cart(request, guitarra_id):

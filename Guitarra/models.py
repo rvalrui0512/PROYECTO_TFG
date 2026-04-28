@@ -1,29 +1,9 @@
+from django.utils import timezone
+import hashlib
+
 from django.db import models
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey
-from django.contrib.contenttypes.models import ContentType
-from django import template
-register = template.Library()
-
-
-
-
-# Modelo de favoritos genérico
-class Favorito(models.Model):
-    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='favoritos')
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-    fecha = models.DateTimeField(auto_now_add=True)
-
-    class Meta:
-        unique_together = ('usuario', 'content_type', 'object_id')
-        verbose_name = 'Favorito'
-        verbose_name_plural = 'Favoritos'
-
-    def __str__(self):
-        return f"Favorito de {self.usuario} - {self.content_object}"  
 
 # Perfil extendido
 class Profile(models.Model):
@@ -185,6 +165,7 @@ class ClasePrivada(models.Model):
         ('realizada', 'Realizada'),
         ('cancelada', 'Cancelada'),
     ]
+
     profesor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clases_impartidas')
     alumno = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='clases_tomadas')
     titulo = models.CharField(max_length=200)
@@ -193,6 +174,37 @@ class ClasePrivada(models.Model):
     fecha_inicio = models.DateTimeField()
     fecha_fin = models.DateTimeField()
     estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    def puede_acceder(self, user):
+        if not user or not user.is_authenticated:
+            return False
+        return user.is_staff or user.is_superuser or user == self.profesor or user == self.alumno
+
+    def esta_activa(self, ahora=None):
+        ahora = ahora or timezone.now()
+        return self.fecha_inicio <= ahora < self.fecha_fin and self.estado != 'cancelada'
+
+    def esta_caducada(self, ahora=None):
+        ahora = ahora or timezone.now()
+        return ahora >= self.fecha_fin
+
+    def proximo_estado_videollamada(self, ahora=None):
+        ahora = ahora or timezone.now()
+        if self.estado == 'cancelada':
+            return 'cancelada'
+        if self.esta_caducada(ahora):
+            return 'caducada'
+        if ahora < self.fecha_inicio:
+            return 'pendiente'
+        return 'activa'
+
+    def get_jitsi_room_name(self):
+        seed = f"{settings.SECRET_KEY}:{self.pk}"
+        digest = hashlib.sha256(seed.encode('utf-8')).hexdigest()
+        return f"clase-{digest[:32]}"
+
+    def get_jitsi_join_url(self):
+        domain = getattr(settings, 'JITSI_MEET_DOMAIN', 'meet.jit.si')
+        return f"https://{domain}/{self.get_jitsi_room_name()}"
 
     def __str__(self):
         return f"Clase: {self.titulo} | Profesor: {self.profesor.name} | Alumno: {self.alumno.name} | Estado: {self.estado}"
