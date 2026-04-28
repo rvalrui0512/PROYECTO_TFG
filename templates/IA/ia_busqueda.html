@@ -4,15 +4,10 @@
 <h1 class="h3 mb-3">Asistente IA Flamenca</h1>
 <form method="post" class="card card-body mb-3">
     {% csrf_token %}
-    <label class="form-label" for="pregunta">Haz una pregunta</label>
     <textarea id="pregunta" name="pregunta" class="form-control" rows="4" required>{{ pregunta }}</textarea>
-    <button type="submit" class="btn btn-primary mt-3">Consultar</button>
 </form>
 
 {% if respuesta %}
-<div class="card card-body">
-    <h2 class="h5">Respuesta</h2>
-    <p class="mb-0">{{ respuesta }}</p>
-</div>
+<textarea id="respuesta" class="form-control mt-2" rows="4" readonly style="background:#fff8f0;color:#222;">{{ respuesta }}</textarea>
 {% endif %}
 {% endblock %}

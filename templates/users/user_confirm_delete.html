@@ -2,7 +2,7 @@
 {% block title %}Eliminar usuario{% endblock %}
 {% block content %}
 <h1 class="h3">Eliminar usuario</h1>
-<p>¿Seguro que quieres eliminar a {{ object.name }}?</p>
+<p>¿Seguro que quieres eliminar a <strong>{{ object.username }}</strong>?</p>
 <form method="post">
     {% csrf_token %}
     <button class="btn btn-danger" type="submit">Sí, eliminar</button>

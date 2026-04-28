@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block content %}
+{% include 'clases/class_access_popup.html' with modal_title='Videollamada aún no disponible' modal_message='La videollamada estará disponible a partir de la fecha y hora de inicio de la clase.' modal_variant='warning' modal_cta_url='' modal_cta_label='' %}
+<script>
+(function () {
+    const startTime = new Date("{{ clase.fecha_inicio|date:'c' }}").getTime();
+    const check = () => {
+        if (Date.now() >= startTime) {
+            window.location.href = "{% url 'guitarra:claseprivada_videollamada' clase.pk %}?redirigir=1";
+        }
+    };
+    check();
+    window.setInterval(check, 15000);
+})();
+</script>
+{% endblock %}

@@ -7,11 +7,14 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
       </div>
       <div class="modal-body">
-        ¿Seguro que quieres eliminar este elemento? Esta acción no se puede deshacer.
+        ¿Seguro que quieres eliminar <strong id="deleteTargetName">este elemento</strong>? Esta acción no se puede deshacer.
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <a href="#" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</a>
+        <form id="confirmDeleteForm" method="post" action="#" class="d-inline">
+          {% csrf_token %}
+          <button type="submit" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+        </form>
       </div>
     </div>
   </div>
@@ -21,14 +24,19 @@
 document.addEventListener('DOMContentLoaded', function() {
   var deleteLinks = document.querySelectorAll('.btn-delete-dark, .btn-danger[href*="eliminar"], .btn-danger[href*="delete"]');
   var confirmDeleteModal = document.getElementById('confirmDeleteModal');
-  var confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+  var confirmDeleteForm = document.getElementById('confirmDeleteForm');
+  var deleteTargetName = document.getElementById('deleteTargetName');
   var bsModal;
 
   deleteLinks.forEach(function(link) {
     link.addEventListener('click', function(e) {
       e.preventDefault();
       var href = this.getAttribute('href');
-      confirmDeleteBtn.setAttribute('href', href);
+      var label = this.getAttribute('data-delete-label') || 'este elemento';
+      confirmDeleteForm.setAttribute('action', href);
+      if (deleteTargetName) {
+        deleteTargetName.textContent = label;
+      }
       if (window.bootstrap) {
         bsModal = new bootstrap.Modal(confirmDeleteModal);
         bsModal.show();
@@ -36,10 +44,6 @@ document.addEventListener('DOMContentLoaded', function() {
         confirmDeleteModal.style.display = 'block';
       }
     });
-  });
-
-  confirmDeleteBtn.addEventListener('click', function() {
-    if (bsModal) bsModal.hide();
   });
 });
 </script>

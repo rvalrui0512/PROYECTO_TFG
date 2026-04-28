@@ -1,106 +1,112 @@
 
-# Estructura Detallada del Proyecto TFG Flamenco (Actualizada)
+# Estructura Detallada del Proyecto TFG Flamenco
 
-Este documento describe la estructura real y las funcionalidades implementadas en la plataforma web de guitarra flamenca basada en Django.
+Este documento resume el estado actual del proyecto web de guitarra flamenca basado en Django.
 
 ---
 
 ## 1. Modelos (`models.py`)
 
-### 1.1. Autenticación y Perfil
-- **User**: Modelo de usuario estándar de Django.
-- **Profile**: Extiende al usuario con:
-  - `user` (OneToOneField a User)
-  - `display_name`, `bio`, `avatar`, `pais`
+### 1.1. Autenticación y perfil
+- `User`: modelo estándar de Django.
+- `Profile`: perfil ampliado con `display_name`, `bio`, `avatar` y `pais`.
 
-### 1.2. Palos y Vídeos
-- **PaloFlamenco**: `nombre`, `descripcion`, `slug`
-- **Video**: `titulo`, `descripcion`, `palo_flamenco`, `autor`, `miniatura`, `archivo`, `duracion`, `fecha_publicacion`, `visibilidad`, `slug`
+### 1.2. Palos y vídeos
+- `PaloFlamenco`: catálogo de palos con `nombre`, `descripcion` y `slug`.
+- `Video`: vídeos con `titulo`, `descripcion`, `palo_flamenco`, `autor`, `miniatura`, `archivo`, `duracion`, `fecha_publicacion`, `visibilidad` y `slug`.
 
-### 1.3. Interacción Social
-- **Like**: `usuario`, `video`, `fecha` (único por usuario y vídeo)
-- **Comentario**: `usuario`, `video`, `texto`, `fecha_creacion`, `fecha_actualizacion`, `padre` (para hilos)
-- **ChatRoom**: `nombre`, `video`, `es_publico`
-- **ChatMessage**: `chatroom`, `usuario`, `mensaje`, `timestamp`
-- **Favorito**: genérico para vídeos y otros objetos
+### 1.3. Interacción social
+- `Like`: likes por usuario y vídeo.
+- `Comentario`: comentarios sobre vídeos con soporte de respuestas anidadas mediante `padre`.
+- `ChatRoom` y `ChatMessage`: base de datos para salas y mensajes asociados a vídeos.
 
+### 1.4. Clases privadas
+- `DisponibilidadProfesor`: franjas de disponibilidad del profesor.
+- `ClasePrivada`: reserva de clase con `profesor`, `alumno`, `titulo`, `descripcion`, `palo_flamenco`, `fecha_inicio`, `fecha_fin` y `estado`.
 
-### 1.4. Clases y Reservas
-- **ClasePrivada**: `profesor`, `alumno`, `titulo`, `descripcion`, `palo_flamenco`, `fecha_inicio`, `fecha_fin`, `estado`
-- **DisponibilidadProfesor**: `profesor`, `dia_semana`, `hora_inicio`, `hora_fin`
+### 1.5. Catálogo de guitarras
+- `Guitarra`: catálogo con `marca`, `modelo`, `tipo`, `descripcion`, `precio`, `stock` e `imagen`.
 
-### 1.5. Catálogo de Guitarras
-- **Guitarra**: `marca`, `modelo`, `tipo`, `descripcion`, `precio`, `stock`, `imagen`
+### 1.6. IA y contenido flamenco
+- `ArticuloFlamenco`: artículos informativos por categoría.
+- `PreguntaIA`: historial de preguntas y respuestas del buscador IA.
 
-### 1.6. IA y Contenido Histórico
-- **ArticuloFlamenco**: `titulo`, `contenido`, `categoria`, `slug`
-- **PreguntaIA**: `usuario`, `pregunta`, `respuesta`, `timestamp`
+### 1.7. Notificaciones
+- `Notification`: avisos para usuarios con `message`, `url`, `created_at` y `read`.
 
 ---
 
 ## 2. Administración (`admin.py`)
 
-Panel de administración personalizado para gestionar todos los modelos principales, con filtros, búsquedas y acciones rápidas.
+Panel administrativo para gestionar usuarios, perfiles, vídeos, comentarios, clases privadas, guitarras, artículos, preguntas IA y notificaciones.
 
 ---
 
-## 3. Formularios (`forms.py`) y Validaciones
+## 3. Formularios (`forms.py`) y validaciones
 
-- **RegistroUsuarioForm**: Registro de usuario con validación de email único y contraseña fuerte.
-- **ProfileForm**: Edición de perfil.
-- **VideoForm**: Creación/edición de vídeos.
-- **ComentarioForm**: Validación de longitud mínima y lenguaje ofensivo.
-- **ClasePrivadaForm**: Validación de fechas y solapamiento de clases.
-- **GuitarraForm**: Solo admin, valida precio positivo.
-
----
-
-## 4. Vistas (`views.py`) y Funcionalidad
-
-### 4.1. Sección Vídeos
-- Listado de vídeos por palo (paginado y filtrado)
-- Detalle de vídeo con reproductor, comentarios, likes, favoritos y miniatura
-- Subida de vídeos (solo admin)
-
-### 4.2. Sección Chat en Tiempo Real
-- Chat por vídeo usando Django Channels (WebSockets)
-
-### 4.3. Sección Clases Privadas
-- Listado y detalle de clases privadas
-- Solicitud y gestión de clases (solo admin/profesor)
-
-### 4.4. Sección Guitarras
-- Listado con filtros (modelo, tipo, precio)
-- Detalle con foto, descripción y stock
-- Añadir al carrito (simulado)
-
-### 4.5. Sección IA Flamenca
-- Buscador tipo “haz una pregunta”
-- Responde con información de guitarras, historia, palos y artículos
-- Guarda preguntas y respuestas en la base de datos
+- `RegistroUsuarioForm`: registro de usuario y creación del perfil asociado.
+- `ProfileForm`: edición de perfil.
+- `VideoForm`: creación y edición de vídeos.
+- `ComentarioForm`: gestión de comentarios.
+- `ClasePrivadaForm`: creación y edición de clases privadas.
+- `GuitarraForm`: gestión del catálogo de guitarras.
 
 ---
 
-## 5. Tecnologías y Arquitectura
+## 4. Vistas (`views.py`) y funcionalidad
 
-- Django + Django ORM
-- Django Templates + Bootstrap
-- Gestión de ficheros multimedia (`MEDIA_URL`, `MEDIA_ROOT`)
-- Django Channels + Redis para chat
-- Integración IA (backend propio)
+### 4.1. Sección vídeos
+- Listado de vídeos con filtros.
+- Detalle de vídeo con reproductor y comentarios.
+- Subida, edición y eliminación de vídeos para usuarios con permisos de administración.
+
+### 4.2. Sección clases privadas
+- Listado, detalle, alta, edición y borrado de clases privadas.
+- Videollamada embebida con Jitsi Meet.
+- Control de acceso por estado de la clase y usuario autenticado.
+- Avisos visuales cuando una clase está cancelada, caducada o todavía no ha empezado.
+
+### 4.3. Sección notificaciones
+- Listado de notificaciones para cada usuario.
+- Indicador de notificaciones no leídas en la interfaz.
+- Avisos automáticos al crear o modificar clases privadas.
+
+### 4.4. Sección guitarras
+- Listado con filtros por modelo, tipo y precio.
+- Detalle de guitarra.
+- Carrito de compra simulado con sesión.
+
+### 4.5. Sección IA flamenca
+- Buscador de preguntas sobre guitarras, palos, historia y artículos.
+- Guarda el historial de consultas y respuestas.
+
+### 4.6. Interacción social
+- Gestión de comentarios sobre vídeos.
+- Base preparada para chat por vídeo con `ChatRoom` y `ChatMessage`.
 
 ---
 
-## 6. Apartados de la Memoria
+## 5. Tecnologías y arquitectura
 
-- Introducción y motivación
-- Análisis de requisitos funcionales y no funcionales
-- Diseño (diagramas de clases, navegación, casos de uso)
-- Implementación (estructura de apps, modelos, forms, vistas, templates, Channels)
-- Pruebas (tests de modelos y vistas)
-- Despliegue (configuración para producción)
-- Conclusiones y trabajo futuro
+- Django y Django ORM.
+- Django Templates y Bootstrap.
+- SQLite como base de datos principal.
+- Gestión de ficheros multimedia con `MEDIA_URL` y `MEDIA_ROOT`.
+- Integración de videollamada embebida con Jitsi Meet External API.
+- JavaScript para interacciones de interfaz y notificaciones.
 
 ---
 
-Este documento refleja la estructura y funcionamiento real del proyecto TFG Flamenco, incluyendo la gestión de vídeos, IA, catálogo de guitarras, clases privadas, interacción social y administración. Puedes añadir vídeos grabados y mejorar la presentación según lo necesites.
+## 6. Apartados de la memoria
+
+- Introducción y motivación.
+- Análisis de requisitos funcionales y no funcionales.
+- Diseño general de la aplicación.
+- Implementación por módulos.
+- Pruebas y validación.
+- Despliegue y configuración.
+- Conclusiones y trabajo futuro.
+
+---
+
+Este documento refleja el estado actual del proyecto: vídeos, clases privadas, videollamada Jitsi, notificaciones, catálogo de guitarras, IA y administración.

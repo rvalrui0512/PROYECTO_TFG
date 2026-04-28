@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
 {% block title %}Formulario usuario{% endblock %}
 {% block content %}
+<style>
+    .helptext { display: none !important; }
+</style>
 <h1 class="h3 mb-3">Usuario</h1>
 <form method="post" enctype="multipart/form-data" class="card card-body">
     {% csrf_token %}
@@ -8,8 +11,39 @@
     {% if profile_form %}
         <hr>
         <h2 class="h5">Perfil</h2>
-        {{ profile_form.as_p }}
+        <div class="mb-3">
+            <label class="form-label">Elegir avatar</label>
+            <div class="d-flex flex-wrap gap-2">
+                {% for avatar in avatar_choices %}
+                    <label class="avatar-option" style="cursor:pointer;">
+                        <input type="radio" name="avatar_predefinido" value="avatars/{{ avatar }}" style="display:none;" {% if profile_form.instance.avatar and profile_form.instance.avatar.name == 'avatars/'|add:avatar %}checked{% endif %}>
+                        <img src="/media/avatars/{{ avatar }}" alt="Avatar" class="rounded-circle border {% if profile_form.instance.avatar and profile_form.instance.avatar.name == 'avatars/'|add:avatar %}border-success border-3{% else %}border-secondary{% endif %}" style="width:48px;height:48px;object-fit:cover;">
+                    </label>
+                {% endfor %}
+            </div>
+        </div>
+        <script>
+        // Selección visual de avatar
+        document.querySelectorAll('.avatar-option input[type="radio"]').forEach(function(radio) {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.avatar-option img').forEach(function(img) {
+                    img.classList.remove('border-success','border-3');
+                    img.classList.add('border-secondary');
+                });
+                if (this.checked) {
+                    this.nextElementSibling.classList.remove('border-secondary');
+                    this.nextElementSibling.classList.add('border-success','border-3');
+                }
+            });
+        });
+        </script>
+        {{ profile_form.display_name.label_tag }}
+        {{ profile_form.display_name }}
+        {{ profile_form.bio.label_tag }}
+        {{ profile_form.bio }}
+        {{ profile_form.pais.label_tag }}
+        {{ profile_form.pais }}
     {% endif %}
-    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="submit" class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;">Guardar</button>
 </form>
 {% endblock %}

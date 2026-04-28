@@ -2,9 +2,13 @@
 {% block title %}Formulario clase privada{% endblock %}
 {% block content %}
 <h1 class="h3 mb-3">Clase privada</h1>
+{% if request.user.is_staff or request.user.is_superuser %}
 <form method="post" class="card card-body">
     {% csrf_token %}
     {{ form.as_p }}
-    <button type="submit" class="btn btn-primary">Guardar</button>
+    <button type="submit" class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;">Guardar</button>
 </form>
+{% else %}
+<div class="alert alert-danger mt-3">No tienes permisos para crear o editar clases privadas.</div>
+{% endif %}
 {% endblock %}

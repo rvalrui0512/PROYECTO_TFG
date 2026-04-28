@@ -1,21 +1,36 @@
 {% extends 'base.html' %}
 {% block title %}Usuarios{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">Usuarios</h1>
-    <a class="btn btn-primary" href="{% url 'guitarra:user_create' %}">Nuevo usuario</a>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="h3 mb-0"><i class="fa-solid fa-users" style="margin-right:0.5em;"></i>Usuarios</h1>
+    {% if request.user.is_staff or request.user.is_superuser %}
+    <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:user_create' %}">Nuevo usuario</a>
+    {% endif %}
 </div>
-<ul class="list-group">
+{% include 'catalogo_card_style.html' %}
+<div class="catalogo-card-list">
     {% for u in users %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{% url 'guitarra:user_detail' u.pk %}">{{ u.name }}</a>
-            <div>
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'guitarra:user_update' u.pk %}">Editar</a>
-                <a class="btn btn-sm btn-outline-danger" href="{% url 'guitarra:user_delete' u.pk %}">Eliminar</a>
+    <div class="catalogo-card-item">
+        <a href="{% url 'guitarra:user_detail' u.pk %}" tabindex="0" style="text-decoration:none; color:inherit;">
+            <div class="catalogo-card-thumb">
+                {% if u.profile and u.profile.avatar %}
+                    <img src="/media/{{ u.profile.avatar }}" alt="Avatar de {{ u.username }}" style="width:80px; height:80px; object-fit:cover; border-radius:50%; box-shadow:0 2px 8px #0002; background:#eee;" />
+                {% else %}
+                    <i class="fa-solid fa-user"></i>
+                {% endif %}
             </div>
-        </li>
+            <div class="catalogo-card-title">{{ u.username }}</div>
+            <div class="catalogo-card-desc">{{ u.email }}</div>
+        </a>
+        <div class="catalogo-card-actions">
+            <a class="btn btn-sm btn-edit-dark" style="background:#f5eaea; color:#7a2222; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:user_update' u.pk %}">Editar</a>
+            {% if request.user.is_staff or request.user.is_superuser %}
+                <a class="btn btn-sm btn-delete-dark" style="background:#fbeaea; color:#b71c1c; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:user_delete' u.pk %}" data-delete-label="el usuario '{{ u.username }}'">Eliminar</a>
+            {% endif %}
+        </div>
+    </div>
     {% empty %}
-        <li class="list-group-item">No hay usuarios.</li>
+    <div class="catalogo-card-item">No hay usuarios.</div>
     {% endfor %}
-</ul>
+</div>
 {% endblock %}

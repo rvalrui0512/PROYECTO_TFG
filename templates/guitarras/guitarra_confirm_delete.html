@@ -3,9 +3,13 @@
 {% block content %}
 <h1 class="h3">Eliminar guitarra</h1>
 <p>¿Seguro que quieres eliminar {{ object.marca }} {{ object.modelo }}?</p>
+{% if request.user.is_staff or request.user.is_superuser %}
 <form method="post">
     {% csrf_token %}
-    <button class="btn btn-danger" type="submit">Sí, eliminar</button>
+    <button class="btn btn-danger" type="submit">S, eliminar</button>
     <a class="btn btn-secondary" href="{% url 'guitarra:guitarra_list' %}">Cancelar</a>
 </form>
+{% else %}
+<div class="alert alert-danger mt-3">No tienes permisos para eliminar guitarras.</div>
+{% endif %}
 {% endblock %}

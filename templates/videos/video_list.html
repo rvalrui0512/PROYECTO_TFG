@@ -1,21 +1,175 @@
 {% extends 'base.html' %}
 {% block title %}Videos{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h1 class="h3">Videos</h1>
-    <a class="btn btn-primary" href="{% url 'guitarra:video_create' %}">Nuevo video</a>
+<div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-3 gap-2">
+    <h1 class="h3 mb-0"><i class="fa-solid fa-film me-1"></i> Videos</h1>
+    {% if request.user.is_staff or request.user.is_superuser %}
+     <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:video_create' %}"><i class="fa-solid fa-plus me-1"></i> Nuevo video</a>
+    {% endif %}
 </div>
-<ul class="list-group">
-    {% for video in videos %}
-        <li class="list-group-item d-flex justify-content-between align-items-center">
-            <a href="{% url 'guitarra:video_detail' video.pk %}">{{ video.titulo }}</a>
-            <div>
-                <a class="btn btn-sm btn-outline-secondary" href="{% url 'guitarra:video_update' video.pk %}">Editar</a>
-                <a class="btn btn-sm btn-outline-danger" href="{% url 'guitarra:video_delete' video.pk %}">Eliminar</a>
+<div class="row">
+    <div class="col-12 col-lg-4 mb-4">
+        <form method="get" class="card p-3" style="border-radius:1em;box-shadow:0 2px 8px #bbb2;" aria-label="Filtrar y buscar videos">
+            <div class="mb-3">
+                <label for="palo" class="form-label">Palo flamenco</label>
+                <select id="palo" name="palo" class="form-select">
+                    <option value="">Todos</option>
+                    {% for key, value in palos %}
+                        <option value="{{ key }}" {% if request.GET.palo == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
             </div>
-        </li>
-    {% empty %}
-        <li class="list-group-item">No hay videos.</li>
-    {% endfor %}
-</ul>
+            <div class="mb-3">
+                <label for="duracion_max" class="form-label">Duración máxima (minutos)</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>
+                    <input type="number" id="duracion_max" name="duracion_max" class="form-control" min="0" step="0.1" value="{{ request.GET.duracion_max }}">
+                </div>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
+            </div>
+        </form>
+    </div>
+    <div class="col-12 col-lg-8">
+        <style>
+        .video-list-vertical {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5em;
+        }
+        .video-list-item {
+            background: #fff;
+            border-radius: 1.2em;
+            box-shadow: 0 2px 16px #b0b8c055;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            padding: 1.5em;
+            transition: box-shadow 0.18s, transform 0.18s;
+            position: relative;
+            min-height: 260px;
+        }
+        .video-list-item:hover {
+            box-shadow: 0 8px 32px #b0b8c055;
+            transform: translateY(-6px) scale(1.02);
+            z-index: 2;
+        }
+        .video-list-thumb {
+            width: 340px;
+            min-width: 220px;
+            height: 210px;
+            border-radius: 1em;
+            overflow: hidden;
+            margin-right: 2em;
+            background: #f7f7f9;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .video-list-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 1em;
+        }
+        .video-list-thumb .play-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.32);
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.18s, box-shadow 0.18s;
+            box-shadow: 0 2px 12px #0006;
+            z-index: 2;
+        }
+        .video-list-thumb .play-overlay i {
+            color: #fff;
+            font-size: 2.5em;
+            filter: drop-shadow(0 2px 8px #0008);
+        }
+        .video-list-item:hover .video-list-thumb .play-overlay {
+            background: rgba(183,28,28,0.82);
+        }
+        .video-list-info {
+            flex: 1 1 0%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .video-list-title {
+            font-size: 1.45em;
+            font-weight: 700;
+            color: #1a2233;
+            margin-bottom: 0.3em;
+            margin-top: 0.2em;
+        }
+        .video-list-meta {
+            color: #7a2222;
+            font-size: 1.1em;
+            margin-bottom: 0.7em;
+        }
+        .video-list-desc {
+            color: #444;
+            font-size: 1.08em;
+            margin-bottom: 0.7em;
+        }
+        .video-list-actions {
+            margin-top: 1em;
+        }
+        @media (max-width: 900px) {
+            .video-list-item {
+                flex-direction: column;
+                align-items: center;
+                padding: 1em;
+            }
+            .video-list-thumb {
+                margin-right: 0;
+                margin-bottom: 1em;
+                width: 100%;
+                min-width: unset;
+                height: 200px;
+            }
+        }
+        </style>
+        <div class="video-list-vertical">
+            {% for video in videos %}
+            <div class="video-list-item">
+                <a href="{% url 'guitarra:video_detail' video.pk %}" tabindex="0" style="text-decoration:none; color:inherit;display:flex;align-items:center;">
+                    <div class="video-list-thumb">
+                        {% if video.miniatura %}
+                            <img src="{{ video.miniatura.url }}" alt="Miniatura video" />
+                            <span class="play-overlay"><i class="fa-brands fa-youtube"></i></span>
+                        {% else %}
+                            <span class="play-overlay"><i class="fa-solid fa-circle-play"></i></span>
+                        {% endif %}
+                    </div>
+                </a>
+                <div class="video-list-info">
+                    <a href="{% url 'guitarra:video_detail' video.pk %}" tabindex="0" style="text-decoration:none; color:inherit;">
+                        <div class="video-list-title">{{ video.titulo }}</div>
+                    </a>
+                    <div class="video-list-meta">{{ video.autor }}</div>
+                    <div class="video-list-desc">{{ video.descripcion|truncatechars:120 }}</div>
+                    <div class="video-list-actions">
+                        {% if request.user.is_staff or request.user.is_superuser %}
+                            <a class="btn btn-sm btn-edit-dark" style="background:#f5eaea; color:#7a2222; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_update' video.pk %}"><i class="fa-solid fa-pen"></i> Editar</a>
+                            <a class="btn btn-sm btn-delete-dark" style="background:#fbeaea; color:#b71c1c; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_delete' video.pk %}" data-delete-label="el video '{{ video.titulo }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="video-list-item">No hay videos.</div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 {% endblock %}
