@@ -3,26 +3,11 @@
 <style>
     .clases-header {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.35rem;
-        margin-bottom: 1.2rem;
-    }
-
-    .clases-header-row {
-        width: 100%;
-        display: flex;
         flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
-        gap: 0.8rem;
-    }
-
-    .clases-title {
-        margin: 0;
-        font-size: clamp(1.6rem, 3vw, 2.5rem);
-        font-weight: 740;
-        color: #6a1e1e;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
     }
 
     .clases-subtitle {
@@ -307,8 +292,6 @@
         font-size: 1.08rem;
     }
 
-    body.dark-mode .clases-title { color: #ffb4ac; }
-    body.dark-mode .clases-subtitle { color: #b8bfd3; }
     body.dark-mode .llamada-item {
         background: #1d2435;
         border-color: #353e59;
@@ -421,13 +404,10 @@
 </style>
 
 <section class="clases-header">
-    <div class="clases-header-row">
-        <h2 class="clases-title"><i class="fa-solid fa-phone-volume me-2"></i>Llamadas de Clases</h2>
-        {% if user.is_staff or user.is_superuser %}
-            <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:claseprivada_create' %}"><i class="fa-solid fa-plus me-1"></i> Nueva clase</a>
-        {% endif %}
-    </div>
-    <p class="clases-subtitle">Vista rápida tipo catálogo para entrar, editar o gestionar tus videollamadas.</p>
+    <h1 class="h3 mb-0"><i class="fa-solid fa-phone-volume me-2"></i>Clases</h1>
+    {% if user.is_staff or user.is_superuser %}
+        <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:claseprivada_create' %}"><i class="fa-solid fa-plus me-1"></i> Nueva clase</a>
+    {% endif %}
 </section>
 
 {% if clases %}
