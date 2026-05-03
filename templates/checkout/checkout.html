@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+{% block title %}Checkout - Datos de envío{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="h3 mb-4"><i class="fa fa-box"></i> Datos de envío</h1>
+    
+    <div class="row">
+        <!-- Formulario -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0" style="border-radius:1.2em;">
+                <div class="card-body p-4">
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.nombre_completo.id_for_label }}" class="form-label fw-semibold">Nombre completo *</label>
+                                {{ form.nombre_completo }}
+                                {% if form.nombre_completo.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.nombre_completo.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.email.id_for_label }}" class="form-label fw-semibold">Correo electrónico *</label>
+                                {{ form.email }}
+                                {% if form.email.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.email.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="{{ form.telefono.id_for_label }}" class="form-label fw-semibold">Teléfono</label>
+                                {{ form.telefono }}
+                                {% if form.telefono.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.telefono.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-6">
+                                <label for="{{ form.pais.id_for_label }}" class="form-label fw-semibold">País *</label>
+                                {{ form.pais }}
+                                {% if form.pais.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.pais.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="{{ form.direccion.id_for_label }}" class="form-label fw-semibold">Dirección *</label>
+                            {{ form.direccion }}
+                            {% if form.direccion.errors %}
+                                <small class="text-danger d-block mt-1">{{ form.direccion.errors.0 }}</small>
+                            {% endif %}
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label for="{{ form.ciudad.id_for_label }}" class="form-label fw-semibold">Ciudad *</label>
+                                {{ form.ciudad }}
+                                {% if form.ciudad.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.ciudad.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-4">
+                                <label for="{{ form.codigo_postal.id_for_label }}" class="form-label fw-semibold">Código postal *</label>
+                                {{ form.codigo_postal }}
+                                {% if form.codigo_postal.errors %}
+                                    <small class="text-danger d-block mt-1">{{ form.codigo_postal.errors.0 }}</small>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="{{ form.notas.id_for_label }}" class="form-label fw-semibold">Notas adicionales</label>
+                            {{ form.notas }}
+                            <small class="form-text text-muted">P. ej., instrucciones de entrega, referencias del edificio, etc.</small>
+                        </div>
+
+                        <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                            <a href="{% url 'guitarra:cart_view' %}" class="btn btn-outline-secondary" style="border-radius:0.7em;">
+                                <i class="fa fa-arrow-left me-2"></i>Atrás
+                            </a>
+                            <button type="submit" class="btn btn-primary" style="border-radius:0.7em;font-weight:600;min-width:200px;">
+                                <i class="fa fa-arrow-right me-2"></i>Continuar a confirmación
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen del carrito -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0" style="border-radius:1.2em;position:sticky;top:20px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-3"><i class="fa fa-list"></i> Resumen</h5>
+                    
+                    <div style="border-bottom:1px solid #eee;padding-bottom:15px;margin-bottom:15px;">
+                        {% for guitarra_data in guitarras %}
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>
+                                <strong>{{ guitarra_data.guitarra.marca }} {{ guitarra_data.guitarra.modelo }}</strong>
+                                <br>
+                                <span class="text-muted">x{{ guitarra_data.cantidad }}</span>
+                            </small>
+                            <small class="fw-semibold">{{ guitarra_data.subtotal }} €</small>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0 fw-bold">Total:</h6>
+                        <h4 class="mb-0" style="color:#b71c1c;">{{ total }} €</h4>
+                    </div>
+
+                    <div class="alert alert-info mt-3 mb-0" style="border-radius:0.7em;font-size:0.9em;">
+                        <i class="fa fa-info-circle"></i> Llena todos los campos marcados con * para continuar.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

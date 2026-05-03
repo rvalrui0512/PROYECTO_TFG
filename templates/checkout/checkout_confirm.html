@@ -1,0 +1,132 @@
+{% extends 'base.html' %}
+{% block title %}Confirmación de orden{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <h1 class="h3 mb-4"><i class="fa fa-check-circle"></i> Confirmación de orden</h1>
+    
+    <div class="row">
+        <!-- Detalles de la orden -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm border-0 mb-4" style="border-radius:1.2em;">
+                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
+                    <h5 class="card-title mb-0"><i class="fa fa-items-items"></i> Artículos pedidos</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr style="border-bottom:2px solid #eee;">
+                                    <th>Producto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-right">Precio unitario</th>
+                                    <th class="text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for guitarra_data in guitarras %}
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td>
+                                        <strong>{{ guitarra_data.guitarra.marca }} {{ guitarra_data.guitarra.modelo }}</strong>
+                                        <br>
+                                        <small class="text-muted">Tipo: {{ guitarra_data.guitarra.tipo }}</small>
+                                    </td>
+                                    <td class="text-center">{{ guitarra_data.cantidad }}</td>
+                                    <td class="text-right">{{ guitarra_data.guitarra.precio }} €</td>
+                                    <td class="text-right fw-semibold">{{ guitarra_data.subtotal }} €</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr style="border-top:2px solid #eee;border-bottom:2px solid #eee;">
+                                    <td colspan="3" class="text-right fw-bold">TOTAL:</td>
+                                    <td class="text-right" style="font-size:1.2em;color:#b71c1c;font-weight:700;">{{ total }} €</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos de envío -->
+            <div class="card shadow-sm border-0" style="border-radius:1.2em;">
+                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
+                    <h5 class="card-title mb-0"><i class="fa fa-map-marker-alt"></i> Datos de envío</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p class="mb-3">
+                                <strong>{{ checkout_data.nombre_completo }}</strong><br>
+                                <small class="text-muted">{{ checkout_data.email }}</small>
+                            </p>
+                            {% if checkout_data.telefono %}
+                            <p class="mb-3">
+                                <strong>Teléfono:</strong><br>
+                                {{ checkout_data.telefono }}
+                            </p>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                            <p class="mb-3">
+                                <strong>Dirección:</strong><br>
+                                {{ checkout_data.direccion }}<br>
+                                {{ checkout_data.codigo_postal }} {{ checkout_data.ciudad }}<br>
+                                {{ checkout_data.pais }}
+                            </p>
+                        </div>
+                    </div>
+                    {% if checkout_data.notas %}
+                    <hr>
+                    <p class="mb-0">
+                        <strong>Notas:</strong><br>
+                        <small>{{ checkout_data.notas }}</small>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0" style="border-radius:1.2em;position:sticky;top:20px;">
+                <div class="card-body p-4">
+                    <h5 class="card-title fw-bold mb-4"><i class="fa fa-receipt"></i> Resumen</h5>
+                    
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Subtotal:</small>
+                        <small>{{ total }} €</small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-2">
+                        <small>Envío:</small>
+                        <small class="text-success">Gratis</small>
+                    </div>
+                    <div class="d-flex justify-content-between mb-3" style="border-bottom:1px solid #eee;padding-bottom:15px;">
+                        <small>Impuestos:</small>
+                        <small>Incluidos</small>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="mb-0 fw-bold">Total final:</h6>
+                        <h4 class="mb-0" style="color:#b71c1c;">{{ total }} €</h4>
+                    </div>
+
+                    <div class="alert alert-success mb-4" style="border-radius:0.7em;border:1px solid #28a745;background:#f1f9f5;">
+                        <small><i class="fa fa-check-circle"></i> Revisión completada. El siguiente paso es un pago de prueba, sin cobro real.</small>
+                    </div>
+
+                    <form method="post" action="{% url 'guitarra:checkout_payment' %}" class="d-grid gap-2">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-success btn-lg" style="border-radius:0.7em;font-weight:600;">
+                            <i class="fa fa-credit-card me-2"></i>Ir al pago de prueba
+                        </button>
+                    </form>
+
+                    <a href="{% url 'guitarra:checkout' %}" class="btn btn-outline-secondary w-100 mt-2" style="border-radius:0.7em;">
+                        <i class="fa fa-edit me-2"></i>Editar datos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

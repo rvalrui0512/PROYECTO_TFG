@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Mis pedidos{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
+        <h1 class="h3 mb-0"><i class="fa fa-list"></i> Mis pedidos</h1>
+        <a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-primary" style="border-radius:0.7em;font-weight:600;">
+            <i class="fa fa-arrow-left me-2"></i>Seguir comprando
+        </a>
+    </div>
+
+    <!-- Información de contacto -->
+    <div class="alert alert-light border mb-4" style="border-radius:1.2em;border-color:#ddd!important;">
+        <p class="mb-0">
+            <i class="fa fa-envelope" style="color:#b71c1c;"></i>
+            <strong>Si tienes dudas sobre tu pedido, contacta con nosotros a través del correo electrónico:</strong><br>
+            <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:600;">ruvenbraxvr@gmail.com</a>
+        </p>
+    </div>
+
+    {% if orders %}
+        <div class="row">
+            {% for order in orders %}
+            <div class="col-12 mb-4">
+                <div class="card shadow-sm border-0" style="border-radius:1.2em;">
+                    <div class="card-header bg-light p-4" style="border-bottom:1px solid #eee;border-radius:1.2em 1.2em 0 0;">
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <h6 class="mb-2 fw-bold">Orden #{{ order.pk }}</h6>
+                                <small class="text-muted">{{ order.fecha_creacion|date:"d/m/Y H:i" }}</small>
+                            </div>
+                            <div class="col-md-6 text-md-end">
+                                <span class="badge 
+                                    {% if order.estado == 'pendiente' %}bg-warning
+                                    {% elif order.estado == 'confirmada' %}bg-info
+                                    {% elif order.estado == 'enviada' %}bg-primary
+                                    {% elif order.estado == 'entregada' %}bg-success
+                                    {% elif order.estado == 'cancelada' %}bg-danger
+                                    {% endif %}"
+                                    style="font-size:0.9em;padding:0.5em 1em;">
+                                    {{ order.get_estado_display }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <h6 class="fw-bold mb-3">Artículos:</h6>
+                                <ul class="list-unstyled">
+                                    {% for item in order.items.all %}
+                                    <li class="mb-2">
+                                        {{ item.guitarra.marca }} {{ item.guitarra.modelo }}
+                                        <span class="text-muted">(x{{ item.cantidad }})</span>
+                                        <span class="float-end fw-semibold">{{ item.get_subtotal }} €</span>
+                                    </li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            <div class="col-md-4">
+                                <div style="background:#f8f9fa;padding:15px;border-radius:0.7em;">
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <small>Subtotal:</small>
+                                        <small>{{ order.total }} €</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between mb-2">
+                                        <small>Envío:</small>
+                                        <small class="text-success">Gratis</small>
+                                    </div>
+                                    <div class="d-flex justify-content-between" style="border-top:1px solid #ddd;padding-top:10px;margin-top:10px;">
+                                        <strong>Total:</strong>
+                                        <strong style="color:#b71c1c;">{{ order.total }} €</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <hr class="my-3">
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-2"><i class="fa fa-map-marker-alt"></i> Envío a:</h6>
+                                <small class="text-muted">
+                                    {{ order.nombre_completo }}<br>
+                                    {{ order.direccion }}<br>
+                                    {{ order.codigo_postal }} {{ order.ciudad }}<br>
+                                    {{ order.pais }}
+                                </small>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="fw-bold mb-2"><i class="fa fa-envelope"></i> Contacto:</h6>
+                                <small class="text-muted">
+                                    {{ order.email }}<br>
+                                    {% if order.telefono %}{{ order.telefono }}{% else %}<em>No especificado</em>{% endif %}
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-light p-4 border-0" style="border-radius:0 0 1.2em 1.2em;">
+                        <a href="{% url 'guitarra:order_detail' order.pk %}" class="btn btn-sm btn-primary" style="border-radius:0.5em;">
+                            <i class="fa fa-eye me-1"></i>Ver detalles
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center py-5" style="border-radius:1.2em;">
+            <p class="mb-3" style="font-size:3em;">
+                <i class="fa fa-inbox"></i>
+            </p>
+            <h5 class="fw-bold mb-2">No tienes pedidos aún</h5>
+            <p class="mb-0 text-muted">¡Explora nuestras guitarras y haz tu primer compra!</p>
+        </div>
+        <div class="text-center">
+            <a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-primary" style="border-radius:0.7em;font-weight:600;">
+                <i class="fa fa-arrow-left me-2"></i>Ir a la tienda
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

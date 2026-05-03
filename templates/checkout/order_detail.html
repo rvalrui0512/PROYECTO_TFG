@@ -1,0 +1,166 @@
+{% extends 'base.html' %}
+{% block title %}Orden #{{ order.pk }}{% endblock %}
+{% block content %}
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0"><i class="fa fa-box"></i> Orden #{{ order.pk }}</h1>
+        <span class="badge 
+            {% if order.estado == 'pendiente' %}bg-warning
+            {% elif order.estado == 'confirmada' %}bg-info
+            {% elif order.estado == 'enviada' %}bg-primary
+            {% elif order.estado == 'entregada' %}bg-success
+            {% elif order.estado == 'cancelada' %}bg-danger
+            {% endif %}"
+            style="font-size:1em;padding:0.7em 1.2em;">
+            {{ order.get_estado_display }}
+        </span>
+    </div>
+
+    <div class="row">
+        <!-- Información de la orden -->
+        <div class="col-lg-8">
+            <!-- Artículos -->
+            <div class="card shadow-sm border-0 mb-4" style="border-radius:1.2em;">
+                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
+                    <h5 class="card-title mb-0"><i class="fa fa-shopping-bag"></i> Artículos</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="table-responsive">
+                        <table class="table table-borderless">
+                            <thead>
+                                <tr style="border-bottom:2px solid #eee;">
+                                    <th>Producto</th>
+                                    <th class="text-center">Cantidad</th>
+                                    <th class="text-right">Precio unitario</th>
+                                    <th class="text-right">Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in order.items.all %}
+                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                    <td>
+                                        <strong>{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</strong>
+                                        <br>
+                                        <small class="text-muted">
+                                            Tipo: {{ item.guitarra.tipo }}
+                                            {% if item.guitarra.descripcion %}
+                                            <br>{{ item.guitarra.descripcion|truncatewords:10 }}
+                                            {% endif %}
+                                        </small>
+                                    </td>
+                                    <td class="text-center">{{ item.cantidad }}</td>
+                                    <td class="text-right">{{ item.precio_unitario }} €</td>
+                                    <td class="text-right fw-semibold">{{ item.get_subtotal }} €</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                            <tfoot>
+                                <tr style="border-top:2px solid #eee;border-bottom:2px solid #eee;">
+                                    <td colspan="3" class="text-right fw-bold">TOTAL:</td>
+                                    <td class="text-right" style="font-size:1.2em;color:#b71c1c;font-weight:700;">{{ order.total }} €</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos de envío -->
+            <div class="card shadow-sm border-0" style="border-radius:1.2em;">
+                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
+                    <h5 class="card-title mb-0"><i class="fa fa-map-marker-alt"></i> Datos de envío</h5>
+                </div>
+                <div class="card-body p-4">
+                    <p class="mb-3">
+                        <strong>{{ order.nombre_completo }}</strong><br>
+                        <small class="text-muted">{{ order.email }}</small>
+                    </p>
+                    <p class="mb-3">
+                        <strong>Dirección:</strong><br>
+                        {{ order.direccion }}<br>
+                        {{ order.codigo_postal }} {{ order.ciudad }}<br>
+                        {{ order.pais }}
+                    </p>
+                    {% if order.telefono %}
+                    <p class="mb-0">
+                        <strong>Teléfono:</strong><br>
+                        {{ order.telefono }}
+                    </p>
+                    {% endif %}
+                    {% if order.notas %}
+                    <hr>
+                    <p class="mb-0">
+                        <strong>Notas:</strong><br>
+                        <small>{{ order.notas }}</small>
+                    </p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Resumen lateral -->
+        <div class="col-lg-4">
+            <div class="card shadow-sm border-0 mb-4" style="border-radius:1.2em;">
+                <div class="card-body p-4">
+                    <h6 class="card-title fw-bold mb-3"><i class="fa fa-receipt"></i> Resumen de orden</h6>
+                    
+                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
+                        <small class="text-muted d-block mb-1">Número de orden:</small>
+                        <strong>#{{ order.pk }}</strong>
+                    </div>
+
+                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
+                        <small class="text-muted d-block mb-1">Fecha de compra:</small>
+                        <strong>{{ order.fecha_creacion|date:"d/m/Y" }}</strong><br>
+                        <small class="text-muted">{{ order.fecha_creacion|time:"H:i" }}</small>
+                    </div>
+
+                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
+                        <small class="text-muted d-block mb-1">Estado:</small>
+                        <span class="badge 
+                            {% if order.estado == 'pendiente' %}bg-warning
+                            {% elif order.estado == 'confirmada' %}bg-info
+                            {% elif order.estado == 'enviada' %}bg-primary
+                            {% elif order.estado == 'entregada' %}bg-success
+                            {% elif order.estado == 'cancelada' %}bg-danger
+                            {% endif %}">
+                            {{ order.get_estado_display }}
+                        </span>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>Subtotal:</small>
+                            <small>{{ order.total }} €</small>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <small>Envío:</small>
+                            <small class="text-success">Gratis</small>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3" style="border-bottom:1px solid #eee;padding-bottom:15px;">
+                            <small>Impuestos:</small>
+                            <small>Incluidos</small>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold">Total final:</h6>
+                            <h5 class="mb-0" style="color:#b71c1c;">{{ order.total }} €</h5>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-light border mb-0" style="border-radius:0.7em;font-size:0.9em;border-color:#ddd!important;">
+                        <i class="fa fa-envelope" style="color:#b71c1c;"></i>
+                        <strong>Si tienes dudas sobre tu pedido, contacta con nosotros:</strong><br>
+                        <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:600;">ruvenbraxvr@gmail.com</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Acciones -->
+            <a href="{% url 'guitarra:my_orders' %}" class="btn btn-outline-primary w-100" style="border-radius:0.7em;font-weight:600;">
+                <i class="fa fa-arrow-left me-2"></i>Volver a mis pedidos
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
