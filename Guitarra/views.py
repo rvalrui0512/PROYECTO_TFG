@@ -441,13 +441,13 @@ class GuitarraDetailView(LoginRequiredMixin, DetailView):
 
 class GuitarraCreateView(AdminRequiredLoginMixin, CreateView):
     model = Guitarra
-    fields = ['modelo', 'marca', 'precio', 'descripcion']
+    fields = ['marca', 'modelo', 'tipo', 'precio', 'stock', 'descripcion', 'imagen']
     template_name = 'guitarras/guitarra_form.html'
     success_url = reverse_lazy('guitarra:guitarra_list')
 
 class GuitarraUpdateView(AdminRequiredLoginMixin, UpdateView):
     model = Guitarra
-    fields = ['modelo', 'marca', 'precio', 'descripcion']
+    fields = ['marca', 'modelo', 'tipo', 'precio', 'stock', 'descripcion', 'imagen']
     template_name = 'guitarras/guitarra_form.html'
     success_url = reverse_lazy('guitarra:guitarra_list')
 
