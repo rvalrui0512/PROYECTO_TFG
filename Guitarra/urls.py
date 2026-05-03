@@ -5,6 +5,7 @@ from .views import GuitarraListView, GuitarraDetailView, GuitarraCreateView, Gui
 from .views import ClasePrivadaListView, ClasePrivadaDetailView, ClasePrivadaCreateView, ClasePrivadaUpdateView, ClasePrivadaDeleteView
 from .views import IABusquedaView, NotificationListView, NotificationPopupView
 from .views import add_to_cart, cart_view, remove_from_cart
+from .views import checkout_view, checkout_confirm_view, checkout_payment_view, checkout_success_view, my_orders_view, order_detail_view
 from .views import *
 
 app_name = 'guitarra'
@@ -39,7 +40,17 @@ urlpatterns = [
 
     path('ia/', IABusquedaView.as_view(), name='ia_busqueda'),
     path('notificaciones/', NotificationPopupView.as_view(), name='notification_list'),
+    
+    # Carrito
     path('carrito/', cart_view, name='cart_view'),
     path('carrito/agregar/<int:guitarra_id>/', add_to_cart, name='add_to_cart'),
     path('carrito/eliminar/<int:guitarra_id>/', remove_from_cart, name='remove_from_cart'),
+    
+    # Checkout
+    path('checkout/', checkout_view, name='checkout'),
+    path('checkout/confirmar/', checkout_confirm_view, name='checkout_confirm'),
+    path('checkout/pago/', checkout_payment_view, name='checkout_payment'),
+    path('checkout/exito/<int:order_id>/', checkout_success_view, name='checkout_success'),
+    path('mis-pedidos/', my_orders_view, name='my_orders'),
+    path('pedidos/<int:order_id>/', order_detail_view, name='order_detail'),
 ]

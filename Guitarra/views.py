@@ -639,3 +639,235 @@ def remove_from_cart(request, guitarra_id):
         request.session['cart'] = cart
     return redirect('guitarra:cart_view')
 
+
+# ====== VISTAS DE CHECKOUT ======
+
+@login_required
+def checkout_view(request):
+    """Vista de checkout - mostrar formulario de dirección de envío"""
+    from .forms import CheckoutForm
+    cart = request.session.get('cart', {})
+    
+    if not cart:
+        return redirect('guitarra:cart_view')
+    
+    # Obtener guitarras del carrito
+    guitarras = []
+    total = 0
+    for gid, qty in cart.items():
+        guitarra = get_object_or_404(Guitarra, pk=gid)
+        
+        # Validar stock
+        if guitarra.stock < qty:
+            from django.contrib import messages
+            messages.error(request, f'Stock insuficiente de {guitarra.marca} {guitarra.modelo}. Solo hay {guitarra.stock} disponibles.')
+            return redirect('guitarra:cart_view')
+        
+        guitarras.append({'guitarra': guitarra, 'cantidad': qty, 'subtotal': guitarra.precio * qty})
+        total += guitarra.precio * qty
+    
+    if request.method == 'POST':
+        form = CheckoutForm(request.POST)
+        if form.is_valid():
+            # Guardar la orden temporalmente en la sesión
+            request.session['checkout_data'] = {
+                'nombre_completo': form.cleaned_data['nombre_completo'],
+                'email': form.cleaned_data['email'],
+                'telefono': form.cleaned_data['telefono'],
+                'direccion': form.cleaned_data['direccion'],
+                'ciudad': form.cleaned_data['ciudad'],
+                'codigo_postal': form.cleaned_data['codigo_postal'],
+                'pais': form.cleaned_data['pais'],
+                'notas': form.cleaned_data['notas'],
+            }
+            return redirect('guitarra:checkout_confirm')
+    else:
+        # Pre-llenar con datos del usuario si existe
+        initial_data = {
+            'nombre_completo': request.user.get_full_name() or request.user.username,
+            'email': request.user.email,
+            'pais': getattr(request.user.profile, 'pais', '') if hasattr(request.user, 'profile') else '',
+        }
+        form = CheckoutForm(initial=initial_data)
+    
+    context = {
+        'form': form,
+        'guitarras': guitarras,
+        'total': total,
+        'cart': cart,
+    }
+    return render(request, 'checkout/checkout.html', context)
+
+
+@login_required
+def checkout_confirm_view(request):
+    """Vista de confirmación - resumen de la orden"""
+    cart = request.session.get('cart', {})
+    checkout_data = request.session.get('checkout_data')
+    
+    if not cart or not checkout_data:
+        return redirect('guitarra:cart_view')
+    
+    # Obtener guitarras del carrito
+    guitarras = []
+    total = 0
+    for gid, qty in cart.items():
+        guitarra = get_object_or_404(Guitarra, pk=gid)
+        guitarras.append({'guitarra': guitarra, 'cantidad': qty, 'subtotal': guitarra.precio * qty})
+        total += guitarra.precio * qty
+    
+    if request.method == 'POST':
+        request.session['checkout_payment_total'] = str(total)
+        request.session.modified = True
+        return redirect('guitarra:checkout_payment')
+    
+    context = {
+        'guitarras': guitarras,
+        'total': total,
+        'checkout_data': checkout_data,
+    }
+    return render(request, 'checkout/checkout_confirm.html', context)
+
+
+@login_required
+def checkout_payment_view(request):
+    """Vista de pago ficticio para simular una pasarela sin cobrar dinero real."""
+    from .forms import FakePaymentForm
+
+    cart = request.session.get('cart', {})
+    checkout_data = request.session.get('checkout_data')
+
+    if not cart or not checkout_data:
+        return redirect('guitarra:cart_view')
+
+    guitarras = []
+    total = 0
+    for gid, qty in cart.items():
+        guitarra = get_object_or_404(Guitarra, pk=gid)
+        guitarras.append({'guitarra': guitarra, 'cantidad': qty, 'subtotal': guitarra.precio * qty})
+        total += guitarra.precio * qty
+
+    if request.method == 'POST':
+        form = FakePaymentForm(request.POST)
+        if form.is_valid():
+            request.session['fake_payment_data'] = {
+                'card_holder': form.cleaned_data['card_holder'],
+                'card_number': form.cleaned_data['card_number'][-4:],
+                'expiry_date': form.cleaned_data['expiry_date'],
+            }
+            request.session.modified = True
+            return process_checkout(request, guitarras, total, checkout_data)
+    else:
+        initial = {
+            'card_holder': checkout_data['nombre_completo'],
+        }
+        form = FakePaymentForm(initial=initial)
+
+    context = {
+        'form': form,
+        'guitarras': guitarras,
+        'total': total,
+        'checkout_data': checkout_data,
+    }
+    return render(request, 'checkout/checkout_payment.html', context)
+
+
+def process_checkout(request, guitarras, total, checkout_data):
+    """Procesar la orden y guardar en BD"""
+    from .models import Order, OrderItem
+    from django.contrib import messages
+    
+    cart = request.session.get('cart', {})
+    
+    try:
+        # Crear la orden
+        order = Order.objects.create(
+            usuario=request.user,
+            nombre_completo=checkout_data['nombre_completo'],
+            email=checkout_data['email'],
+            telefono=checkout_data['telefono'],
+            direccion=checkout_data['direccion'],
+            ciudad=checkout_data['ciudad'],
+            codigo_postal=checkout_data['codigo_postal'],
+            pais=checkout_data['pais'],
+            notas=checkout_data['notas'],
+            total=total,
+            estado='confirmada',  # Cambiar a 'pendiente' si usas pasarela de pago real
+        )
+        
+        # Crear items de la orden y descontar stock
+        for guitarra_data in guitarras:
+            guitarra = guitarra_data['guitarra']
+            cantidad = guitarra_data['cantidad']
+            
+            # Validar stock una última vez
+            if guitarra.stock < cantidad:
+                order.delete()
+                messages.error(request, f'Stock insuficiente. La guitarra {guitarra.marca} {guitarra.modelo} no tiene suficiente inventario.')
+                return redirect('guitarra:cart_view')
+            
+            # Crear OrderItem
+            OrderItem.objects.create(
+                order=order,
+                guitarra=guitarra,
+                cantidad=cantidad,
+                precio_unitario=guitarra.precio,
+            )
+            
+            # Descontar stock
+            guitarra.stock -= cantidad
+            guitarra.save()
+        
+        # Limpiar carrito y datos de checkout de la sesión
+        del request.session['cart']
+        del request.session['checkout_data']
+        request.session.pop('checkout_payment_total', None)
+        request.session.pop('fake_payment_data', None)
+        request.session.modified = True
+        
+        messages.success(request, f'¡Pago de prueba completado! Número de orden: #{order.pk}')
+        return redirect('guitarra:checkout_success', order_id=order.pk)
+    
+    except Exception as e:
+        from django.contrib import messages
+        messages.error(request, f'Error al procesar la orden: {str(e)}')
+        return redirect('guitarra:checkout_confirm')
+
+
+@login_required
+def checkout_success_view(request, order_id):
+    """Vista de éxito - mostrar resumen de la orden"""
+    from .models import Order
+    order = get_object_or_404(Order, pk=order_id, usuario=request.user)
+    
+    context = {
+        'order': order,
+        'items': order.items.all(),
+    }
+    return render(request, 'checkout/checkout_success.html', context)
+
+
+@login_required
+def my_orders_view(request):
+    """Vista de historial de pedidos del usuario"""
+    from .models import Order
+    orders = Order.objects.filter(usuario=request.user).order_by('-fecha_creacion')
+    
+    context = {
+        'orders': orders,
+    }
+    return render(request, 'checkout/my_orders.html', context)
+
+
+@login_required
+def order_detail_view(request, order_id):
+    """Vista de detalle de una orden"""
+    from .models import Order
+    order = get_object_or_404(Order, pk=order_id, usuario=request.user)
+    
+    context = {
+        'order': order,
+        'items': order.items.all(),
+    }
+    return render(request, 'checkout/order_detail.html', context)
+
