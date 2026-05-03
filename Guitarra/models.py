@@ -286,3 +286,55 @@ class PreguntaIA(models.Model):
         verbose_name = 'Pregunta IA'
         verbose_name_plural = 'Preguntas IA'
 
+
+# Tienda - Órdenes y Compras
+class Order(models.Model):
+    ESTADO_CHOICES = [
+        ('pendiente', 'Pendiente de pago'),
+        ('confirmada', 'Confirmada'),
+        ('enviada', 'Enviada'),
+        ('entregada', 'Entregada'),
+        ('cancelada', 'Cancelada'),
+    ]
+    
+    usuario = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='orders')
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    estado = models.CharField(max_length=20, choices=ESTADO_CHOICES, default='pendiente')
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    # Información de envío
+    nombre_completo = models.CharField(max_length=200)
+    email = models.EmailField()
+    telefono = models.CharField(max_length=20, blank=True)
+    direccion = models.CharField(max_length=300)
+    ciudad = models.CharField(max_length=100)
+    codigo_postal = models.CharField(max_length=10)
+    pais = models.CharField(max_length=100)
+    
+    notas = models.TextField(blank=True)
+    
+    def __str__(self):
+        return f"Orden #{self.pk} - {self.usuario.username} - {self.estado}"
+    
+    class Meta:
+        verbose_name = 'Orden'
+        verbose_name_plural = 'Órdenes'
+        ordering = ['-fecha_creacion']
+
+
+class OrderItem(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
+    guitarra = models.ForeignKey(Guitarra, on_delete=models.SET_NULL, null=True)
+    cantidad = models.PositiveIntegerField(default=1)
+    precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    def get_subtotal(self):
+        return self.cantidad * self.precio_unitario
+    
+    def __str__(self):
+        return f"{self.guitarra.marca} {self.guitarra.modelo} x{self.cantidad} en Orden #{self.order.pk}"
+    
+    class Meta:
+        verbose_name = 'Item de Orden'
+        verbose_name_plural = 'Items de Órdenes'
+
