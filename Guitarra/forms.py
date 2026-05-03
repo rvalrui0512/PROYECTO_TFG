@@ -1,7 +1,7 @@
 from django import forms
 from django.contrib.auth.hashers import make_password
 from .models import (
-    Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA
+    Profile, Video, Comentario, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Order
 )
 from django.contrib.auth import get_user_model
 User = get_user_model()
@@ -247,3 +247,129 @@ class PreguntaIAForm(forms.ModelForm):
             'pregunta': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Pregunta', 'rows': 3}),
             'respuesta': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Respuesta', 'rows': 3}),
         }
+
+
+class CheckoutForm(forms.ModelForm):
+    class Meta:
+        model = Order
+        fields = ['nombre_completo', 'email', 'telefono', 'direccion', 'ciudad', 'codigo_postal', 'pais', 'notas']
+        widgets = {
+            'nombre_completo': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Nombre completo',
+                'required': True
+            }),
+            'email': forms.EmailInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Correo electrónico',
+                'required': True
+            }),
+            'telefono': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Teléfono (opcional)'
+            }),
+            'direccion': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Calle y número',
+                'required': True
+            }),
+            'ciudad': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Ciudad',
+                'required': True
+            }),
+            'codigo_postal': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'Código postal',
+                'required': True
+            }),
+            'pais': forms.TextInput(attrs={
+                'class': 'form-control',
+                'placeholder': 'País',
+                'required': True
+            }),
+            'notas': forms.Textarea(attrs={
+                'class': 'form-control',
+                'placeholder': 'Notas de la orden (opcional)',
+                'rows': 3
+            }),
+        }
+    
+    def clean_nombre_completo(self):
+        nombre = self.cleaned_data.get('nombre_completo')
+        if nombre and len(nombre) < 3:
+            raise forms.ValidationError('El nombre debe tener al menos 3 caracteres.')
+        return nombre
+    
+    def clean_codigo_postal(self):
+        codigo = self.cleaned_data.get('codigo_postal')
+        if codigo and not codigo.replace('-', '').isalnum():
+            raise forms.ValidationError('El código postal debe contener solo números y guiones.')
+        return codigo
+    
+    def clean_telefono(self):
+        telefono = self.cleaned_data.get('telefono')
+        if telefono and not any(c.isdigit() for c in telefono):
+            raise forms.ValidationError('El teléfono debe contener al menos un número.')
+        return telefono
+
+
+class FakePaymentForm(forms.Form):
+    card_holder = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Nombre y apellidos del titular',
+            'autocomplete': 'cc-name',
+        }),
+    )
+    card_number = forms.CharField(
+        max_length=19,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '4111 1111 1111 1111',
+            'autocomplete': 'cc-number',
+            'inputmode': 'numeric',
+        }),
+    )
+    expiry_date = forms.CharField(
+        max_length=7,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'MM/YY',
+            'autocomplete': 'cc-exp',
+        }),
+    )
+    cvc = forms.CharField(
+        max_length=4,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': '123',
+            'autocomplete': 'cc-csc',
+            'inputmode': 'numeric',
+        }),
+    )
+
+    def clean_card_number(self):
+        card_number = self.cleaned_data.get('card_number', '').replace(' ', '')
+        if not card_number.isdigit() or not 13 <= len(card_number) <= 19:
+            raise forms.ValidationError('Introduce un número de tarjeta ficticio válido para la simulación.')
+        return card_number
+
+    def clean_expiry_date(self):
+        expiry_date = self.cleaned_data.get('expiry_date', '').strip()
+        if '/' not in expiry_date:
+            raise forms.ValidationError('Usa el formato MM/YY para la fecha de caducidad.')
+        month, year = expiry_date.split('/', 1)
+        if not (month.isdigit() and year.isdigit()):
+            raise forms.ValidationError('La fecha de caducidad no es válida.')
+        month_int = int(month)
+        if month_int < 1 or month_int > 12:
+            raise forms.ValidationError('El mes de caducidad debe estar entre 01 y 12.')
+        return expiry_date
+
+    def clean_cvc(self):
+        cvc = self.cleaned_data.get('cvc', '').strip()
+        if not cvc.isdigit() or len(cvc) not in (3, 4):
+            raise forms.ValidationError('El CVC debe tener 3 o 4 dígitos.')
+        return cvc
