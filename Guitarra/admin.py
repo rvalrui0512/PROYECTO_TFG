@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Like, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Notification
+from .models import Like, Profile, PaloFlamenco, Video, Comentario, ChatRoom, ChatMessage, DisponibilidadProfesor, ClasePrivada, Guitarra, ArticuloFlamenco, PreguntaIA, Notification, Order, OrderItem
 
 # Notification admin
 @admin.register(Notification)
@@ -125,13 +125,13 @@ class ClasePrivadaAdmin(admin.ModelAdmin):
 
 @admin.register(Guitarra)
 class GuitarraAdmin(admin.ModelAdmin):
-    list_display = ('marca', 'tipo', 'modelo', 'precio')
+    list_display = ('marca', 'tipo', 'modelo', 'precio', 'stock')
     search_fields = ('marca', 'tipo', 'modelo', 'precio')
     list_filter = ('marca', 'tipo', 'precio')
 
     fieldsets = [
         ('Guitarra', {
-            'fields': ['marca', 'tipo', 'modelo', 'precio'],
+            'fields': ['marca', 'tipo', 'modelo', 'precio', 'stock', 'descripcion', 'imagen'],
         })
     ]
 
@@ -159,3 +159,45 @@ class PreguntaIAAdmin(admin.ModelAdmin):
         })
     ]
 
+
+# Órdenes y compras
+class OrderItemInline(admin.TabularInline):
+    model = OrderItem
+    extra = 0
+    fields = ['guitarra', 'cantidad', 'precio_unitario']
+    readonly_fields = ['precio_unitario']
+
+
+@admin.register(Order)
+class OrderAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'usuario', 'fecha_creacion', 'total', 'estado')
+    search_fields = ('usuario__username', 'nombre_completo', 'email', 'pk')
+    list_filter = ('estado', 'fecha_creacion', 'pais')
+    readonly_fields = ['fecha_creacion', 'total']
+    inlines = [OrderItemInline]
+    
+    fieldsets = [
+        ('Información de la orden', {
+            'fields': ['usuario', 'fecha_creacion', 'estado', 'total'],
+        }),
+        ('Datos de envío', {
+            'fields': ['nombre_completo', 'email', 'telefono', 'direccion', 'ciudad', 'codigo_postal', 'pais'],
+        }),
+        ('Notas', {
+            'fields': ['notas'],
+        })
+    ]
+
+
+@admin.register(OrderItem)
+class OrderItemAdmin(admin.ModelAdmin):
+    list_display = ('order', 'guitarra', 'cantidad', 'precio_unitario')
+    search_fields = ('order__pk', 'guitarra__marca', 'guitarra__modelo')
+    list_filter = ('order', 'guitarra')
+    readonly_fields = ['order', 'guitarra', 'cantidad', 'precio_unitario']
+    
+    fieldsets = [
+        ('Item de orden', {
+            'fields': ['order', 'guitarra', 'cantidad', 'precio_unitario'],
+        })
+    ]
