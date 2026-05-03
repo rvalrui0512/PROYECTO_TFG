@@ -547,6 +547,153 @@
                                 font-size: 4.5em;
                             }
                         }
+
+                        @media (max-width: 991.98px) {
+                            nav.navbar > div,
+                            main > div,
+                            footer > div {
+                                width: 100% !important;
+                                min-width: 0 !important;
+                                max-width: 100% !important;
+                                margin-left: 0 !important;
+                                transform: none !important;
+                                padding-left: 1rem !important;
+                                padding-right: 1rem !important;
+                            }
+
+                            nav.navbar,
+                            main,
+                            main > section,
+                            footer {
+                                width: 100% !important;
+                                min-width: 0 !important;
+                                max-width: 100% !important;
+                                margin-left: 0 !important;
+                                transform: none !important;
+                            }
+
+                            .navbar-brand {
+                                font-size: 1.4em !important;
+                            }
+
+                            main > section {
+                                padding-left: 1rem !important;
+                                padding-right: 1rem !important;
+                            }
+
+                            main > section > div {
+                                flex-direction: column !important;
+                                align-items: stretch !important;
+                                gap: 1rem !important;
+                            }
+
+                            main > section > div > div {
+                                min-width: 0 !important;
+                                width: 100% !important;
+                                border-right: none !important;
+                                border-bottom: 1.5px solid #e0e0e0 !important;
+                                padding: 0.4rem 0 !important;
+                            }
+
+                            main > section > div > div:last-child {
+                                border-bottom: none !important;
+                            }
+
+                            .flamenco-sections {
+                                gap: 1.2rem !important;
+                            }
+
+                            .flamenco-card {
+                                min-width: 0 !important;
+                                max-width: 48% !important;
+                                flex: 1 1 48% !important;
+                            }
+
+                            #notificationPopup {
+                                width: min(92vw, 360px) !important;
+                                right: 0 !important;
+                            }
+
+                            #iaChatPopup {
+                                width: min(92vw, 360px) !important;
+                                right: 1rem !important;
+                                left: auto !important;
+                                bottom: 7rem !important;
+                            }
+
+                            #iaChatBtn {
+                                right: 1rem !important;
+                                bottom: 1rem !important;
+                                width: 58px !important;
+                                height: 58px !important;
+                                font-size: 2em !important;
+                            }
+
+                            footer > div > div {
+                                flex-direction: column !important;
+                                gap: 1.2rem !important;
+                                align-items: stretch !important;
+                            }
+
+                            footer > div > div > div {
+                                min-width: 0 !important;
+                                width: 100% !important;
+                                padding-left: 0 !important;
+                                padding-right: 0 !important;
+                            }
+
+                            footer .footer-institucional {
+                                width: 100% !important;
+                                flex-wrap: wrap !important;
+                                justify-content: center !important;
+                                gap: 0.75rem !important;
+                            }
+
+                            footer .footer-institucional img {
+                                height: 56px !important;
+                                max-width: 30vw !important;
+                                margin-left: 0 !important;
+                            }
+                        }
+
+                        @media (max-width: 767.98px) {
+                            .flamenco-card {
+                                max-width: 100% !important;
+                                flex: 1 1 100% !important;
+                                min-height: 180px !important;
+                                min-width: 0 !important;
+                            }
+
+                            .flamenco-hero h1 {
+                                font-size: 2.1em !important;
+                            }
+
+                            .flamenco-hero .fa-guitar {
+                                font-size: 2.4em !important;
+                            }
+
+                            #notificationPopup,
+                            #iaChatPopup {
+                                width: 94vw !important;
+                                max-width: 94vw !important;
+                            }
+
+                            .alert,
+                            .card,
+                            .table-responsive,
+                            .container {
+                                max-width: 100% !important;
+                            }
+
+                            footer {
+                                padding-top: 1.8em !important;
+                            }
+
+                            footer .footer-institucional img {
+                                height: 48px !important;
+                                max-width: 28vw !important;
+                            }
+                        }
                         </style>
                 </section>
     <!-- Eliminado: expansión AJAX, ahora navegación profesional -->
@@ -736,7 +883,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div style="flex: 1 1 22%; min-width: 220px; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0 2vw;">
                     <div style="font-weight: bold; font-size: 1.18em; margin-bottom: 0.5em;"><i class="fa-solid fa-headset" style="color:#b71c1c; margin-right:0.5em;"></i>Soporte y contacto</div>
                     <div style="margin-bottom: 0.3em; font-size:1.08em;"><i class="fa-solid fa-phone" style="color:#b71c1c; margin-right:0.4em;"></i>Teléfono: <a href="tel:644853482" style="color:#b71c1c; text-decoration:none; font-weight:600;">644 853 482</a></div>
-                    <div style="font-size:1.08em;"><i class="fa-solid fa-envelope" style="color:#b71c1c; margin-right:0.4em;"></i>Correo: <a href="mailto:info@mundoflamenco.com" style="color:#b71c1c; text-decoration:none; font-weight:600;">info@mundoflamenco.com</a></div>
+                    <div style="font-size:1.08em;"><i class="fa-solid fa-envelope" style="color:#b71c1c; margin-right:0.4em;"></i>Correo: <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c; text-decoration:none; font-weight:600;">ruvenbraxvr@gmail.com</a></div>
                 </div>
                 <!-- Columna 3: Beneficios y valores -->
                 <div style="flex: 1 1 33%; min-width: 260px; display: flex; flex-direction: column; justify-content: flex-start; align-items: flex-start; padding: 0 0 0 2vw; color: #555; font-size: 1.08em; gap: 1.1em;">
