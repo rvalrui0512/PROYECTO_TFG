@@ -100,6 +100,14 @@
         }
         .video-list-actions {
             margin-top: 1em;
+            display: flex;
+            gap: 0.5em;
+            flex-wrap: wrap;
+        }
+        .action-btn {
+            padding: 0.35em 0.9em !important;
+            font-size: 0.85em !important;
+            white-space: nowrap;
         }
         @media (max-width: 900px) {
             .video-list-item {
@@ -137,8 +145,8 @@
                     <div class="video-list-desc">{{ video.descripcion|truncatechars:120 }}</div>
                     <div class="video-list-actions">
                         {% if request.user.is_staff or request.user.is_superuser %}
-                            <a class="btn btn-sm btn-edit-dark" style="background:#f5eaea; color:#7a2222; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_update' video.pk %}"><i class="fa-solid fa-pen"></i> Editar</a>
-                            <a class="btn btn-sm btn-delete-dark" style="background:#fbeaea; color:#b71c1c; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_delete' video.pk %}" data-delete-label="el video '{{ video.titulo }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
+                            <a class="btn btn-sm action-btn btn-edit-dark" style="background:#f5eaea; color:#7a2222; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_update' video.pk %}"><i class="fa-solid fa-pen"></i> Editar</a>
+                            <a class="btn btn-sm action-btn btn-delete-dark" style="background:#fbeaea; color:#b71c1c; font-weight:500; border-radius:0.5em;" href="{% url 'guitarra:video_delete' video.pk %}" data-delete-label="el video '{{ video.titulo }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
                         {% endif %}
                     </div>
                 </div>

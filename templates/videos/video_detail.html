@@ -4,72 +4,479 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 {% endblock %}
 {% block content %}
+<style>
+    .video-hero {
+        background: linear-gradient(145deg, #fff8f5 0%, #fff 45%, #f8f9fb 100%);
+        border-radius: 1.3em;
+        box-shadow: 0 12px 40px rgba(28, 33, 45, 0.12);
+        border: 1px solid #f0e8e2;
+        padding: 1.4em;
+    }
+
+    body.dark-mode .video-hero {
+        background: linear-gradient(145deg, #1f262f 0%, #252d3a 100%);
+        border-color: #303a4a;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    .video-hero-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1em;
+        margin-bottom: 1.1em;
+    }
+
+    .video-hero-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.55em;
+        font-weight: 800;
+        color: #1f2531;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .video-hero-title {
+        color: #e7ecff;
+    }
+
+    .video-hero-badges {
+        display: flex;
+        gap: 0.55em;
+        flex-wrap: wrap;
+        margin-top: 0.65em;
+    }
+
+    .video-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35em;
+        border-radius: 999px;
+        padding: 0.35em 0.75em;
+        font-size: 0.78em;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        background: #fbeaea;
+        color: #8b1d1d;
+        border: 1px solid #f2d8d8;
+    }
+
+    body.dark-mode .video-pill {
+        background: rgba(110, 198, 255, 0.12);
+        color: #9edcff;
+        border-color: rgba(110, 198, 255, 0.2);
+    }
+
+    .video-back-btn {
+        background: #b71c1c;
+        color: #fff;
+        border-radius: 0.75em;
+        padding: 0.6em 1.05em;
+        font-size: 0.9em;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        box-shadow: 0 6px 16px rgba(183, 28, 28, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .video-back-btn:hover {
+        background: #951414;
+        color: #fff;
+        transform: translateY(-1px);
+    }
+
+    body.dark-mode .video-back-btn {
+        background: #6ec6ff;
+        color: #1c2430;
+        box-shadow: 0 6px 16px rgba(110, 198, 255, 0.2);
+    }
+
+    body.dark-mode .video-back-btn:hover {
+        background: #8ad4ff;
+        color: #1c2430;
+    }
+
+    .video-player-wrapper {
+        border-radius: 1em;
+        overflow: hidden;
+        box-shadow: 0 20px 40px rgba(10, 12, 20, 0.22);
+        border: 1px solid rgba(0, 0, 0, 0.08);
+        margin-bottom: 0.9em;
+    }
+
+    body.dark-mode .video-player-wrapper {
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+        border-color: rgba(255, 255, 255, 0.06);
+    }
+
+    .video-player-wrapper video {
+        width: 100%;
+        height: 100%;
+        background: #000;
+    }
+
+    .video-subline {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        padding: 0.65em 0.2em 0.2em;
+        color: #6a6f78;
+        font-size: 0.92em;
+        font-weight: 500;
+    }
+
+    .video-subline strong {
+        color: #373c46;
+    }
+
+    body.dark-mode .video-subline {
+        color: #aab3c2;
+    }
+
+    body.dark-mode .video-subline strong {
+        color: #d7dfef;
+    }
+
+    .comments-panel {
+        margin-top: 1.2em;
+        background: #fff;
+        border: 1px solid #eef1f4;
+        border-radius: 1.2em;
+        box-shadow: 0 10px 24px rgba(23, 28, 36, 0.08);
+        overflow: hidden;
+    }
+
+    body.dark-mode .comments-panel {
+        background: #1f262f;
+        border-color: #303a4a;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .comments-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1em;
+        padding: 1em 1.2em;
+        border-bottom: 1px solid #eef1f4;
+        background: #fcfdff;
+    }
+
+    body.dark-mode .comments-head {
+        background: #252d3a;
+        border-bottom-color: #303a4a;
+    }
+
+    .comments-title {
+        margin: 0;
+        font-size: 1.05em;
+        font-weight: 800;
+        color: #222a35;
+    }
+
+    body.dark-mode .comments-title {
+        color: #e7ecff;
+    }
+
+    .comments-counter {
+        font-size: 0.78em;
+        font-weight: 700;
+        color: #7a818d;
+        background: #f3f5f8;
+        border: 1px solid #e3e8ef;
+        padding: 0.3em 0.65em;
+        border-radius: 999px;
+    }
+
+    body.dark-mode .comments-counter {
+        color: #b6c1d3;
+        background: #1d2430;
+        border-color: #303a4a;
+    }
+
+    .comments-list {
+        max-height: 370px;
+        overflow-y: auto;
+        padding: 1em 1.2em 0.8em;
+        background: linear-gradient(180deg, #ffffff 0%, #fbfcff 100%);
+    }
+
+    body.dark-mode .comments-list {
+        background: linear-gradient(180deg, #1f262f 0%, #222b37 100%);
+    }
+
+    .comment-row {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.7em;
+        margin-bottom: 0.95em;
+    }
+
+    .comment-avatar,
+    .comment-avatar-fallback {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        flex-shrink: 0;
+        object-fit: cover;
+    }
+
+    .comment-avatar-fallback {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1em;
+        font-weight: 700;
+        color: #fff;
+        background: #7a808b;
+    }
+
+    .comment-bubble {
+        max-width: 90%;
+        background: #f6f8fb;
+        border: 1px solid #e8edf4;
+        border-radius: 0.9em;
+        padding: 0.55em 0.8em;
+    }
+
+    body.dark-mode .comment-bubble {
+        background: #252d3a;
+        border-color: #344052;
+    }
+
+    .comment-meta {
+        display: flex;
+        align-items: center;
+        gap: 0.45em;
+        margin-bottom: 0.25em;
+        flex-wrap: wrap;
+    }
+
+    .comment-author {
+        font-size: 0.92em;
+        font-weight: 700;
+        color: #242c36;
+    }
+
+    body.dark-mode .comment-author {
+        color: #e7ecff;
+    }
+
+    .comment-time {
+        font-size: 0.78em;
+        color: #8a909b;
+    }
+
+    body.dark-mode .comment-time {
+        color: #a7b0bf;
+    }
+
+    .comment-text {
+        font-size: 0.95em;
+        color: #2f3640;
+        line-height: 1.45;
+    }
+
+    body.dark-mode .comment-text {
+        color: #dbe3f2;
+    }
+
+    .comments-empty {
+        text-align: center;
+        color: #8b93a0;
+        font-weight: 600;
+        padding: 1.2em 0.2em 1.4em;
+    }
+
+    body.dark-mode .comments-empty {
+        color: #aeb8c8;
+    }
+
+    .comments-foot {
+        border-top: 1px solid #eef1f4;
+        background: #fcfdff;
+        padding: 0.95em 1.2em 1.1em;
+    }
+
+    body.dark-mode .comments-foot {
+        background: #252d3a;
+        border-top-color: #303a4a;
+    }
+
+    .comment-form {
+        display: flex;
+        align-items: flex-end;
+        gap: 0.7em;
+    }
+
+    .comment-input-wrap {
+        flex: 1 1 auto;
+    }
+
+    .comment-input-wrap textarea {
+        width: 100%;
+        min-height: 58px;
+        max-height: 140px;
+        resize: vertical;
+        border-radius: 0.8em;
+        border: 1px solid #d9e0ea;
+        padding: 0.65em 0.8em;
+        background: #fff;
+        color: #1f2630;
+        font-size: 0.94em;
+        line-height: 1.4;
+    }
+
+    .comment-input-wrap textarea:focus {
+        outline: none;
+        border-color: #b71c1c;
+        box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.12);
+    }
+
+    body.dark-mode .comment-input-wrap textarea {
+        background: #1f262f;
+        border-color: #344052;
+        color: #e7ecff;
+    }
+
+    body.dark-mode .comment-input-wrap textarea:focus {
+        border-color: #6ec6ff;
+        box-shadow: 0 0 0 3px rgba(110, 198, 255, 0.16);
+    }
+
+    .comment-send-btn {
+        min-width: 102px;
+        border: none;
+        border-radius: 0.75em;
+        padding: 0.6em 0.9em;
+        font-size: 0.9em;
+        font-weight: 700;
+        background: #b71c1c;
+        color: #fff;
+        box-shadow: 0 6px 16px rgba(183, 28, 28, 0.2);
+        transition: all 0.2s ease;
+    }
+
+    .comment-send-btn:hover {
+        background: #951414;
+        transform: translateY(-1px);
+    }
+
+    body.dark-mode .comment-send-btn {
+        background: #6ec6ff;
+        color: #1c2430;
+        box-shadow: 0 6px 16px rgba(110, 198, 255, 0.2);
+    }
+
+    body.dark-mode .comment-send-btn:hover {
+        background: #8ad4ff;
+    }
+
+    @media (max-width: 768px) {
+        .video-hero {
+            padding: 1em;
+        }
+
+        .video-hero-head {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .video-hero-title {
+            font-size: 1.28em;
+        }
+
+        .video-back-btn {
+            width: fit-content;
+        }
+
+        .video-subline {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .comment-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .comment-send-btn {
+            width: 100%;
+        }
+    }
+</style>
+
 <div class="container py-4">
     <div class="row justify-content-center">
         <div class="col-lg-10">
-            <div class="row g-4 align-items-start" style="background:#faf9f7; border-radius:1.2em; box-shadow:0 2px 8px #bbb2; padding:2.5em 2em 2em 2em;">
-                <div class="col-lg-9 col-md-12 text-center">
-                    <div class="ratio ratio-16x9 mb-3" style="border-radius:1.2em;overflow:hidden;box-shadow:0 4px 24px #b71c1c33; max-width:100%; min-height:420px;">
-                        {% if video.archivo %}
-                            <video id="main-video" controls style="width:100%;height:100%;background:#000;max-height:520px;">
-                                <source src="{{ video.archivo.url }}" type="video/mp4">
-                                Tu navegador no soporta la reproducción de video.
-                            </video>
-                        {% endif %}
+            <div class="video-hero">
+                <div class="video-hero-head">
+                    <div>
+                        <h1 class="video-hero-title">{{ video.titulo }}</h1>
+                        <div class="video-hero-badges">
+                            <span class="video-pill"><i class="fa-solid fa-guitar"></i>{{ video.palo_flamenco }}</span>
+                            <span class="video-pill"><i class="fa-solid fa-user"></i>{{ video.autor }}</span>
+                            <span class="video-pill"><i class="fa-solid fa-clock"></i>{{ video.duracion }}</span>
+                        </div>
                     </div>
+                    <a href="{% url 'guitarra:video_list' %}" class="video-back-btn">
+                        <i class="fa-solid fa-arrow-left me-1"></i>Volver
+                    </a>
                 </div>
-                <div class="col-lg-3 col-md-12">
-                    <h1 class="h4 mb-2" style="font-weight:700; letter-spacing:1px;">{{ video.titulo }}</h1>
-                    <div class="mb-3" style="font-size:1em; color:#555;">
-                        <span style="display:inline-block; min-width:90px;"><strong>Palo:</strong></span> {{ video.palo_flamenco }}<br>
-                        <span style="display:inline-block; min-width:90px;"><strong>Autor:</strong></span> {{ video.autor }}<br>
-                        <span style="display:inline-block; min-width:90px;"><strong>Duración:</strong></span> {{ video.duracion }}<br>
-                        <span style="display:inline-block; min-width:90px;"><strong>Fecha publicación:</strong></span> {{ video.fecha_publicacion|date:'d/m/Y H:i' }}<br>
-                        <span style="display:inline-block; min-width:90px;"><strong>Visibilidad:</strong></span> {% if video.visibilidad %}Público{% else %}Privado{% endif %}
-                    </div>
-                    <div class="mb-3" style="color:#444;">
-                        <strong>Descripción:</strong><br>
-                        <span style="white-space:pre-line;">{{ video.descripcion }}</span>
-                    </div>
-                    <div class="d-flex align-items-center mb-4">
-                        <a class="btn" style="background:#e7bcbc; color:#7a2222; font-weight:500; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c11; padding:0.5em 1.3em; margin-right:1em;" href="{% url 'guitarra:video_list' %}"><i class="fa-solid fa-arrow-left me-2"></i>Volver</a>
-                    </div>
+
+                <div class="ratio ratio-16x9 video-player-wrapper" style="min-height: 540px;">
+                    {% if video.archivo %}
+                        <video id="main-video" controls>
+                            <source src="{{ video.archivo.url }}" type="video/mp4">
+                            Tu navegador no soporta la reproducción de video.
+                        </video>
+                    {% endif %}
+                </div>
+
+                <div class="video-subline">
+                    <span><strong>Publicado:</strong> {{ video.fecha_publicacion|date:'d/m/Y H:i' }}</span>
+                    <span><strong>Estado:</strong> {% if video.visibilidad %}Público{% else %}Privado{% endif %}</span>
                 </div>
             </div>
-            <!-- Sección de comentarios tipo chat profesional -->
-            <div class="card mt-4" style="border-radius:1em;box-shadow:0 2px 8px #bbb2;max-height:500px;display:flex;flex-direction:column;">
-                <div class="card-header bg-white border-0 pb-0" style="border-radius:1em 1em 0 0;">
-                    <h5 class="card-title mb-0"><i class="fa-solid fa-comments me-2"></i>Comentarios</h5>
+
+            <!-- Sección de comentarios -->
+            <div class="comments-panel">
+                <div class="comments-head">
+                    <h5 class="comments-title"><i class="fa-solid fa-comments me-2"></i>Comentarios</h5>
+                    <span class="comments-counter">{{ video.comentarios.count }} mensajes</span>
                 </div>
-                <div id="comentarios-lista" class="card-body overflow-auto" style="flex:1 1 auto;max-height:340px;padding-bottom:0.5em;">
+
+                <div id="comentarios-lista" class="comments-list">
                     {% for comentario in video.comentarios.all %}
-                        <div class="d-flex mb-3 align-items-start comentario-item" data-comentario-id="{{ comentario.id }}">
-                            <div class="me-2">
+                        <div class="comment-row comentario-item" data-comentario-id="{{ comentario.id }}">
+                            <div>
                                 {% if comentario.usuario.profile.avatar %}
-                                    <img src="{{ comentario.usuario.profile.avatar.url }}" class="rounded-circle" style="width:38px;height:38px;object-fit:cover;">
+                                    <img src="{{ comentario.usuario.profile.avatar.url }}" class="comment-avatar" alt="Avatar">
                                 {% else %}
-                                    <span class="d-inline-block rounded-circle bg-secondary text-white text-center" style="width:38px;height:38px;line-height:38px;font-size:1.2em;">{{ comentario.usuario.username|slice:"0:1"|upper }}</span>
+                                    <span class="comment-avatar-fallback">{{ comentario.usuario.username|slice:"0:1"|upper }}</span>
                                 {% endif %}
                             </div>
-                            <div class="flex-grow-1 position-relative">
-                                <div class="bg-light rounded px-3 py-2" style="display:inline-block;max-width:90%;">
-                                    <div class="d-flex align-items-center mb-1">
-                                        <span class="fw-bold me-2" style="font-size:1em;">{{ comentario.usuario.profile.display_name|default:comentario.usuario.username }}</span>
-                                        <span class="text-muted" style="font-size:0.85em;">{{ comentario.fecha_creacion|timesince }} atrás</span>
-                                    </div>
-                                    <div style="font-size:1.05em;">{{ comentario.texto }}</div>
+                            <div class="comment-bubble">
+                                <div class="comment-meta">
+                                    <span class="comment-author">{{ comentario.usuario.profile.display_name|default:comentario.usuario.username }}</span>
+                                    <span class="comment-time">{{ comentario.fecha_creacion|timesince }} atrás</span>
                                 </div>
+                                <div class="comment-text">{{ comentario.texto }}</div>
                             </div>
                         </div>
                     {% empty %}
-                        <div class="text-muted text-center">Sé el primero en comentar este vídeo.</div>
+                        <div class="comments-empty">Sé el primero en comentar este vídeo.</div>
                     {% endfor %}
                 </div>
-                <div class="card-footer bg-white border-0 pt-0" style="border-radius:0 0 1em 1em;">
+
+                <div class="comments-foot">
                     {% if user.is_authenticated %}
-                        <form method="post" action="" class="d-flex align-items-end gap-2">
+                        <form method="post" action="" class="comment-form">
                             {% csrf_token %}
-                            <div class="flex-grow-1">
+                            <div class="comment-input-wrap">
                                 {{ comentario_form.texto }}
                                 {% if comentario_form.texto.errors %}
                                     <div class="alert alert-danger mt-2 mb-0" role="alert">
@@ -77,7 +484,7 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-primary" style="min-width:90px;">Enviar</button>
+                            <button type="submit" class="comment-send-btn">Enviar</button>
                         </form>
                     {% else %}
                         <div class="alert alert-info mb-0">Inicia sesión para comentar.</div>
@@ -87,23 +494,23 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 {% load static %}
 <script>
-// Pantalla completa para el vídeo
-document.addEventListener('DOMContentLoaded', function() {
-    var video = document.getElementById('main-video');
-    if(video) {
-        video.addEventListener('dblclick', function() {
-            if (video.requestFullscreen) {
-                video.requestFullscreen();
-            } else if (video.webkitRequestFullscreen) {
-                video.webkitRequestFullscreen();
-            } else if (video.msRequestFullscreen) {
-                video.msRequestFullscreen();
-            }
-        });
-    }
-});
-// ...otros scripts existentes...
+    // Pantalla completa para el vídeo
+    document.addEventListener('DOMContentLoaded', function() {
+        var video = document.getElementById('main-video');
+        if(video) {
+            video.addEventListener('dblclick', function() {
+                if (video.requestFullscreen) {
+                    video.requestFullscreen();
+                } else if (video.webkitRequestFullscreen) {
+                    video.webkitRequestFullscreen();
+                } else if (video.msRequestFullscreen) {
+                    video.msRequestFullscreen();
+                }
+            });
+        }
+    });
 </script>
