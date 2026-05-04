@@ -1,121 +1,352 @@
 {% extends 'base.html' %}
 {% block title %}Mis pedidos{% endblock %}
 {% block content %}
-<div class="container py-5">
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-2">
-        <h1 class="h3 mb-0"><i class="fa fa-list"></i> Mis pedidos</h1>
-        <a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-primary" style="border-radius:0.7em;font-weight:600;">
-            <i class="fa fa-arrow-left me-2"></i>Seguir comprando
+<style>
+    .orders-shell {
+        padding-top: 0.6em;
+    }
+
+    .orders-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        margin-bottom: 1.1em;
+    }
+
+    .orders-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.8em;
+        font-weight: 800;
+        color: #202734;
+    }
+
+    body.dark-mode .orders-title {
+        color: #e7ecff;
+    }
+
+    .orders-subtitle {
+        margin: 0.2em 0 0;
+        color: #7a8391;
+        font-size: 0.95em;
+    }
+
+    body.dark-mode .orders-subtitle {
+        color: #aab4c6;
+    }
+
+    .orders-btn-shop {
+        border-radius: 0.75em;
+        font-weight: 700;
+        padding: 0.6em 1em;
+        color: #fff;
+        background: #b71c1c;
+        text-decoration: none;
+        box-shadow: 0 8px 16px rgba(183, 28, 28, 0.2);
+    }
+
+    .orders-contact {
+        border: 1px solid #e8edf4;
+        background: #fff;
+        border-radius: 1.05em;
+        box-shadow: 0 8px 20px rgba(20, 25, 35, 0.06);
+        padding: 0.95em 1em;
+        margin-bottom: 1.2em;
+    }
+
+    body.dark-mode .orders-contact {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+        color: #d5ddee;
+    }
+
+    .orders-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.95em;
+    }
+
+    .order-card {
+        border: 1px solid #e8edf4;
+        background: #fff;
+        border-radius: 1.1em;
+        box-shadow: 0 10px 24px rgba(20, 25, 35, 0.08);
+        overflow: hidden;
+    }
+
+    body.dark-mode .order-card {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.36);
+    }
+
+    .order-card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0.9em;
+        padding: 0.9em 1em;
+        border-bottom: 1px solid #edf0f4;
+        background: #fcfdff;
+    }
+
+    body.dark-mode .order-card-head {
+        background: #252d3a;
+        border-bottom-color: #333d4d;
+    }
+
+    .order-number {
+        margin: 0;
+        font-size: 1.05em;
+        font-weight: 800;
+        color: #222a36;
+    }
+
+    body.dark-mode .order-number {
+        color: #e8eefc;
+    }
+
+    .order-date {
+        font-size: 0.84em;
+        color: #7d8592;
+    }
+
+    .order-status {
+        font-size: 0.82em;
+        font-weight: 700;
+        padding: 0.48em 0.9em;
+        border-radius: 999px;
+    }
+
+    .order-card-body {
+        padding: 1em;
+    }
+
+    .order-items {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+    }
+
+    .order-item-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 0.7em;
+        padding-bottom: 0.4em;
+        border-bottom: 1px dashed #e6ebf2;
+    }
+
+    .order-item-row:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    body.dark-mode .order-item-row {
+        border-bottom-color: #3a4658;
+    }
+
+    .order-item-name {
+        color: #2a323f;
+        font-weight: 700;
+    }
+
+    .order-item-qty {
+        color: #7d8592;
+        font-size: 0.87em;
+    }
+
+    .order-item-subtotal {
+        font-weight: 700;
+        color: #28313f;
+        white-space: nowrap;
+    }
+
+    body.dark-mode .order-item-name,
+    body.dark-mode .order-item-subtotal {
+        color: #dfe7f7;
+    }
+
+    body.dark-mode .order-item-qty {
+        color: #aab5c7;
+    }
+
+    .order-summary-box {
+        border: 1px solid #e8edf4;
+        border-radius: 0.85em;
+        background: #f9fbfe;
+        padding: 0.7em 0.8em;
+    }
+
+    body.dark-mode .order-summary-box {
+        border-color: #3a4658;
+        background: #252d3a;
+    }
+
+    .order-summary-total {
+        color: #a31515;
+        font-size: 1.16em;
+        font-weight: 800;
+    }
+
+    body.dark-mode .order-summary-total {
+        color: #9edcff;
+    }
+
+    .order-address,
+    .order-contact {
+        font-size: 0.9em;
+        color: #6a7382;
+    }
+
+    body.dark-mode .order-address,
+    body.dark-mode .order-contact {
+        color: #b4c0d3;
+    }
+
+    .order-card-foot {
+        border-top: 1px solid #edf0f4;
+        background: #fcfdff;
+        padding: 0.85em 1em;
+    }
+
+    body.dark-mode .order-card-foot {
+        border-top-color: #333d4d;
+        background: #252d3a;
+    }
+
+    .order-detail-btn {
+        border-radius: 0.65em;
+        font-weight: 700;
+        padding: 0.45em 0.9em;
+        color: #fff;
+        background: #2457c8;
+        text-decoration: none;
+    }
+
+    .orders-empty {
+        border: 1px solid #e8edf4;
+        background: #fff;
+        border-radius: 1.1em;
+        box-shadow: 0 10px 24px rgba(20, 25, 35, 0.08);
+        text-align: center;
+        padding: 2em 1.2em;
+    }
+
+    body.dark-mode .orders-empty {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.36);
+    }
+
+    @media (max-width: 768px) {
+        .orders-head {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .order-card-head {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="container py-5 orders-shell">
+    <div class="orders-head">
+        <div>
+            <h1 class="orders-title"><i class="fa-solid fa-boxes-stacked me-2"></i>Mis pedidos</h1>
+            <p class="orders-subtitle">Consulta estado, artículos y resumen de cada compra.</p>
+        </div>
+        <a href="{% url 'guitarra:guitarra_list' %}" class="orders-btn-shop">
+            <i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando
         </a>
     </div>
 
-    <!-- Información de contacto -->
-    <div class="alert alert-light border mb-4" style="border-radius:1.2em;border-color:#ddd!important;">
-        <p class="mb-0">
-            <i class="fa fa-envelope" style="color:#b71c1c;"></i>
-            <strong>Si tienes dudas sobre tu pedido, contacta con nosotros a través del correo electrónico:</strong><br>
-            <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:600;">ruvenbraxvr@gmail.com</a>
-        </p>
+    <div class="orders-contact">
+        <i class="fa-solid fa-envelope" style="color:#b71c1c;"></i>
+        <strong>Si tienes dudas sobre tu pedido, contacta con nosotros:</strong>
+        <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:700;">ruvenbraxvr@gmail.com</a>
     </div>
 
     {% if orders %}
-        <div class="row">
+        <div class="orders-list">
             {% for order in orders %}
-            <div class="col-12 mb-4">
-                <div class="card shadow-sm border-0" style="border-radius:1.2em;">
-                    <div class="card-header bg-light p-4" style="border-bottom:1px solid #eee;border-radius:1.2em 1.2em 0 0;">
-                        <div class="row align-items-center">
-                            <div class="col-md-6">
-                                <h6 class="mb-2 fw-bold">Orden #{{ order.pk }}</h6>
-                                <small class="text-muted">{{ order.fecha_creacion|date:"d/m/Y H:i" }}</small>
-                            </div>
-                            <div class="col-md-6 text-md-end">
-                                <span class="badge 
-                                    {% if order.estado == 'pendiente' %}bg-warning
-                                    {% elif order.estado == 'confirmada' %}bg-info
-                                    {% elif order.estado == 'enviada' %}bg-primary
-                                    {% elif order.estado == 'entregada' %}bg-success
-                                    {% elif order.estado == 'cancelada' %}bg-danger
-                                    {% endif %}"
-                                    style="font-size:0.9em;padding:0.5em 1em;">
-                                    {{ order.get_estado_display }}
-                                </span>
+            <article class="order-card">
+                <div class="order-card-head">
+                    <div>
+                        <p class="order-number">Orden #{{ order.pk }}</p>
+                        <span class="order-date">{{ order.fecha_creacion|date:"d/m/Y H:i" }}</span>
+                    </div>
+                    <span class="badge order-status
+                        {% if order.estado == 'pendiente' %}bg-warning
+                        {% elif order.estado == 'confirmada' %}bg-info
+                        {% elif order.estado == 'enviada' %}bg-primary
+                        {% elif order.estado == 'entregada' %}bg-success
+                        {% elif order.estado == 'cancelada' %}bg-danger
+                        {% endif %}">
+                        {{ order.get_estado_display }}
+                    </span>
+                </div>
+
+                <div class="order-card-body">
+                    <div class="row g-3">
+                        <div class="col-lg-7">
+                            <h6 class="fw-bold mb-2">Artículos</h6>
+                            <div class="order-items">
+                                {% for item in order.items.all %}
+                                <div class="order-item-row">
+                                    <div>
+                                        <div class="order-item-name">{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</div>
+                                        <div class="order-item-qty">Cantidad: x{{ item.cantidad }}</div>
+                                    </div>
+                                    <div class="order-item-subtotal">{{ item.get_subtotal }} €</div>
+                                </div>
+                                {% endfor %}
                             </div>
                         </div>
-                    </div>
-                    <div class="card-body p-4">
-                        <div class="row mb-3">
-                            <div class="col-md-8">
-                                <h6 class="fw-bold mb-3">Artículos:</h6>
-                                <ul class="list-unstyled">
-                                    {% for item in order.items.all %}
-                                    <li class="mb-2">
-                                        {{ item.guitarra.marca }} {{ item.guitarra.modelo }}
-                                        <span class="text-muted">(x{{ item.cantidad }})</span>
-                                        <span class="float-end fw-semibold">{{ item.get_subtotal }} €</span>
-                                    </li>
-                                    {% endfor %}
-                                </ul>
-                            </div>
-                            <div class="col-md-4">
-                                <div style="background:#f8f9fa;padding:15px;border-radius:0.7em;">
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <small>Subtotal:</small>
-                                        <small>{{ order.total }} €</small>
-                                    </div>
-                                    <div class="d-flex justify-content-between mb-2">
-                                        <small>Envío:</small>
-                                        <small class="text-success">Gratis</small>
-                                    </div>
-                                    <div class="d-flex justify-content-between" style="border-top:1px solid #ddd;padding-top:10px;margin-top:10px;">
-                                        <strong>Total:</strong>
-                                        <strong style="color:#b71c1c;">{{ order.total }} €</strong>
-                                    </div>
+
+                        <div class="col-lg-5">
+                            <div class="order-summary-box mb-3">
+                                <div class="d-flex justify-content-between mb-1"><small>Subtotal</small><small>{{ order.total }} €</small></div>
+                                <div class="d-flex justify-content-between mb-1"><small>Envío</small><small class="text-success">Gratis</small></div>
+                                <hr class="my-2">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <strong>Total</strong>
+                                    <span class="order-summary-total">{{ order.total }} €</span>
                                 </div>
                             </div>
-                        </div>
 
-                        <hr class="my-3">
-
-                        <div class="row">
-                            <div class="col-md-6">
-                                <h6 class="fw-bold mb-2"><i class="fa fa-map-marker-alt"></i> Envío a:</h6>
-                                <small class="text-muted">
-                                    {{ order.nombre_completo }}<br>
-                                    {{ order.direccion }}<br>
-                                    {{ order.codigo_postal }} {{ order.ciudad }}<br>
-                                    {{ order.pais }}
-                                </small>
+                            <div class="order-address mb-2">
+                                <strong>Envío:</strong><br>
+                                {{ order.nombre_completo }}<br>
+                                {{ order.direccion }}<br>
+                                {{ order.codigo_postal }} {{ order.ciudad }} - {{ order.pais }}
                             </div>
-                            <div class="col-md-6">
-                                <h6 class="fw-bold mb-2"><i class="fa fa-envelope"></i> Contacto:</h6>
-                                <small class="text-muted">
-                                    {{ order.email }}<br>
-                                    {% if order.telefono %}{{ order.telefono }}{% else %}<em>No especificado</em>{% endif %}
-                                </small>
+                            <div class="order-contact">
+                                <strong>Contacto:</strong> {{ order.email }}
                             </div>
                         </div>
-                    </div>
-                    <div class="card-footer bg-light p-4 border-0" style="border-radius:0 0 1.2em 1.2em;">
-                        <a href="{% url 'guitarra:order_detail' order.pk %}" class="btn btn-sm btn-primary" style="border-radius:0.5em;">
-                            <i class="fa fa-eye me-1"></i>Ver detalles
-                        </a>
                     </div>
                 </div>
-            </div>
+
+                <div class="order-card-foot">
+                    <a href="{% url 'guitarra:order_detail' order.pk %}" class="order-detail-btn">
+                        <i class="fa-solid fa-eye me-1"></i>Ver detalles
+                    </a>
+                </div>
+            </article>
             {% endfor %}
         </div>
     {% else %}
-        <div class="alert alert-info text-center py-5" style="border-radius:1.2em;">
-            <p class="mb-3" style="font-size:3em;">
-                <i class="fa fa-inbox"></i>
-            </p>
+        <div class="orders-empty">
+            <p class="mb-2" style="font-size:2.4em;color:#b5bfce;"><i class="fa-solid fa-inbox"></i></p>
             <h5 class="fw-bold mb-2">No tienes pedidos aún</h5>
-            <p class="mb-0 text-muted">¡Explora nuestras guitarras y haz tu primer compra!</p>
-        </div>
-        <div class="text-center">
-            <a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-primary" style="border-radius:0.7em;font-weight:600;">
-                <i class="fa fa-arrow-left me-2"></i>Ir a la tienda
+            <p class="text-muted mb-3">Explora nuestras guitarras y haz tu primera compra.</p>
+            <a href="{% url 'guitarra:guitarra_list' %}" class="orders-btn-shop" style="display:inline-block;">
+                <i class="fa-solid fa-arrow-left me-2"></i>Ir a la tienda
             </a>
         </div>
     {% endif %}

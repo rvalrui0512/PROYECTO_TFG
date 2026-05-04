@@ -1,63 +1,315 @@
 {% extends 'base.html' %}
 {% block title %}Orden #{{ order.pk }}{% endblock %}
 {% block content %}
-<div class="container py-5">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0"><i class="fa fa-box"></i> Orden #{{ order.pk }}</h1>
-        <span class="badge 
+<style>
+    .order-shell {
+        padding-top: 0.6em;
+    }
+
+    .order-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        margin-bottom: 1.1em;
+    }
+
+    .order-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.75em;
+        font-weight: 800;
+        color: #202734;
+    }
+
+    body.dark-mode .order-title {
+        color: #e7ecff;
+    }
+
+    .order-layout {
+        display: grid;
+        grid-template-columns: 1.45fr 0.9fr;
+        gap: 1em;
+    }
+
+    .order-card {
+        border: 1px solid #e8edf4;
+        border-radius: 1.1em;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(20, 25, 35, 0.08);
+        overflow: hidden;
+    }
+
+    body.dark-mode .order-card {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .order-card-head {
+        padding: 0.9em 1em;
+        border-bottom: 1px solid #edf0f4;
+        background: #fcfdff;
+        font-size: 1em;
+        font-weight: 800;
+        color: #232b38;
+    }
+
+    body.dark-mode .order-card-head {
+        background: #252d3a;
+        border-bottom-color: #333d4d;
+        color: #e7ecff;
+    }
+
+    .order-card-body {
+        padding: 1em;
+    }
+
+    .order-items-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    .order-items-table th,
+    .order-items-table td {
+        padding: 0.62em 0.45em;
+        border-bottom: 1px solid #edf1f6;
+        text-align: left;
+        vertical-align: top;
+        font-size: 0.92em;
+    }
+
+    .order-items-table th {
+        color: #6f7887;
+        font-size: 0.8em;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        font-weight: 700;
+    }
+
+    body.dark-mode .order-items-table th,
+    body.dark-mode .order-items-table td {
+        border-bottom-color: #3a4658;
+    }
+
+    body.dark-mode .order-items-table th {
+        color: #aeb9cb;
+    }
+
+    .item-name {
+        font-weight: 700;
+        color: #252e3b;
+    }
+
+    .item-desc {
+        color: #7b8392;
+        font-size: 0.86em;
+    }
+
+    body.dark-mode .item-name {
+        color: #dfe7f7;
+    }
+
+    body.dark-mode .item-desc {
+        color: #aab5c8;
+    }
+
+    .order-total-row td {
+        border-bottom: none;
+        padding-top: 0.8em;
+    }
+
+    .order-total-value {
+        color: #a31515;
+        font-weight: 800;
+        font-size: 1.2em;
+    }
+
+    body.dark-mode .order-total-value {
+        color: #9edcff;
+    }
+
+    .shipping-block p {
+        margin-bottom: 0.7em;
+        color: #677180;
+        font-size: 0.93em;
+    }
+
+    body.dark-mode .shipping-block p {
+        color: #b2bed1;
+    }
+
+    .side-panel {
+        border: 1px solid #e8edf4;
+        border-radius: 1.1em;
+        background: #fff;
+        box-shadow: 0 10px 24px rgba(20, 25, 35, 0.08);
+        padding: 1em;
+        position: sticky;
+        top: 1em;
+        height: fit-content;
+    }
+
+    body.dark-mode .side-panel {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .side-title {
+        margin: 0 0 0.8em;
+        font-size: 1.08em;
+        font-weight: 800;
+        color: #232b38;
+    }
+
+    body.dark-mode .side-title {
+        color: #e7ecff;
+    }
+
+    .side-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.7em;
+        font-size: 0.91em;
+        color: #616a79;
+        padding: 0.45em 0;
+        border-bottom: 1px dashed #e3e8f0;
+    }
+
+    .side-row:last-child {
+        border-bottom: none;
+    }
+
+    body.dark-mode .side-row {
+        color: #b2bed1;
+        border-bottom-color: #3a4658;
+    }
+
+    .side-total {
+        margin-top: 0.6em;
+        border-radius: 0.8em;
+        background: linear-gradient(120deg, #fff2f2 0%, #ffe8e8 100%);
+        border: 1px solid #efd1d1;
+        padding: 0.65em 0.75em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .side-total strong:last-child {
+        color: #a31515;
+        font-size: 1.25em;
+    }
+
+    body.dark-mode .side-total {
+        background: linear-gradient(120deg, rgba(110, 198, 255, 0.12) 0%, rgba(110, 198, 255, 0.06) 100%);
+        border-color: rgba(110, 198, 255, 0.3);
+    }
+
+    body.dark-mode .side-total strong:last-child {
+        color: #bfe6ff;
+    }
+
+    .order-contact-box {
+        margin-top: 0.8em;
+        border: 1px solid #e8edf4;
+        border-radius: 0.85em;
+        background: #f9fbfe;
+        padding: 0.7em 0.8em;
+        font-size: 0.88em;
+        color: #687282;
+    }
+
+    body.dark-mode .order-contact-box {
+        border-color: #3a4658;
+        background: #252d3a;
+        color: #b2bed1;
+    }
+
+    .back-orders-btn {
+        margin-top: 0.8em;
+        width: 100%;
+        border-radius: 0.7em;
+        text-decoration: none;
+        text-align: center;
+        font-weight: 700;
+        padding: 0.62em 0.9em;
+        display: inline-block;
+        color: #fff;
+        background: #2457c8;
+    }
+
+    @media (max-width: 1000px) {
+        .order-layout {
+            grid-template-columns: 1fr;
+        }
+
+        .side-panel {
+            position: static;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .order-head {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .order-items-table th,
+        .order-items-table td {
+            font-size: 0.86em;
+            padding: 0.48em 0.3em;
+        }
+    }
+</style>
+
+<div class="container py-5 order-shell">
+    <div class="order-head">
+        <h1 class="order-title"><i class="fa-solid fa-box me-2"></i>Orden #{{ order.pk }}</h1>
+        <span class="badge px-3 py-2
             {% if order.estado == 'pendiente' %}bg-warning
             {% elif order.estado == 'confirmada' %}bg-info
             {% elif order.estado == 'enviada' %}bg-primary
             {% elif order.estado == 'entregada' %}bg-success
             {% elif order.estado == 'cancelada' %}bg-danger
-            {% endif %}"
-            style="font-size:1em;padding:0.7em 1.2em;">
+            {% endif %}">
             {{ order.get_estado_display }}
         </span>
     </div>
 
-    <div class="row">
-        <!-- Información de la orden -->
-        <div class="col-lg-8">
-            <!-- Artículos -->
-            <div class="card shadow-sm border-0 mb-4" style="border-radius:1.2em;">
-                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
-                    <h5 class="card-title mb-0"><i class="fa fa-shopping-bag"></i> Artículos</h5>
-                </div>
-                <div class="card-body p-4">
+    <div class="order-layout">
+        <section>
+            <div class="order-card mb-3">
+                <div class="order-card-head"><i class="fa-solid fa-bag-shopping me-2"></i>Artículos</div>
+                <div class="order-card-body">
                     <div class="table-responsive">
-                        <table class="table table-borderless">
+                        <table class="order-items-table">
                             <thead>
-                                <tr style="border-bottom:2px solid #eee;">
+                                <tr>
                                     <th>Producto</th>
                                     <th class="text-center">Cantidad</th>
-                                    <th class="text-right">Precio unitario</th>
-                                    <th class="text-right">Subtotal</th>
+                                    <th class="text-end">Precio</th>
+                                    <th class="text-end">Subtotal</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for item in order.items.all %}
-                                <tr style="border-bottom:1px solid #f0f0f0;">
+                                <tr>
                                     <td>
-                                        <strong>{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</strong>
-                                        <br>
-                                        <small class="text-muted">
-                                            Tipo: {{ item.guitarra.tipo }}
-                                            {% if item.guitarra.descripcion %}
-                                            <br>{{ item.guitarra.descripcion|truncatewords:10 }}
-                                            {% endif %}
-                                        </small>
+                                        <div class="item-name">{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</div>
+                                        <div class="item-desc">Tipo: {{ item.guitarra.tipo }}</div>
                                     </td>
                                     <td class="text-center">{{ item.cantidad }}</td>
-                                    <td class="text-right">{{ item.precio_unitario }} €</td>
-                                    <td class="text-right fw-semibold">{{ item.get_subtotal }} €</td>
+                                    <td class="text-end">{{ item.precio_unitario }} €</td>
+                                    <td class="text-end fw-bold">{{ item.get_subtotal }} €</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
                             <tfoot>
-                                <tr style="border-top:2px solid #eee;border-bottom:2px solid #eee;">
-                                    <td colspan="3" class="text-right fw-bold">TOTAL:</td>
-                                    <td class="text-right" style="font-size:1.2em;color:#b71c1c;font-weight:700;">{{ order.total }} €</td>
+                                <tr class="order-total-row">
+                                    <td colspan="3" class="text-end fw-bold">TOTAL</td>
+                                    <td class="text-end order-total-value">{{ order.total }} €</td>
                                 </tr>
                             </tfoot>
                         </table>
@@ -65,102 +317,43 @@
                 </div>
             </div>
 
-            <!-- Datos de envío -->
-            <div class="card shadow-sm border-0" style="border-radius:1.2em;">
-                <div class="card-header bg-light p-4" style="border-radius:1.2em 1.2em 0 0;border-bottom:1px solid #eee;">
-                    <h5 class="card-title mb-0"><i class="fa fa-map-marker-alt"></i> Datos de envío</h5>
-                </div>
-                <div class="card-body p-4">
-                    <p class="mb-3">
-                        <strong>{{ order.nombre_completo }}</strong><br>
-                        <small class="text-muted">{{ order.email }}</small>
-                    </p>
-                    <p class="mb-3">
-                        <strong>Dirección:</strong><br>
-                        {{ order.direccion }}<br>
-                        {{ order.codigo_postal }} {{ order.ciudad }}<br>
-                        {{ order.pais }}
-                    </p>
+            <div class="order-card">
+                <div class="order-card-head"><i class="fa-solid fa-location-dot me-2"></i>Datos de envío</div>
+                <div class="order-card-body shipping-block">
+                    <p><strong>{{ order.nombre_completo }}</strong><br>{{ order.email }}</p>
+                    <p><strong>Dirección:</strong><br>{{ order.direccion }}<br>{{ order.codigo_postal }} {{ order.ciudad }}<br>{{ order.pais }}</p>
                     {% if order.telefono %}
-                    <p class="mb-0">
-                        <strong>Teléfono:</strong><br>
-                        {{ order.telefono }}
-                    </p>
+                    <p><strong>Teléfono:</strong> {{ order.telefono }}</p>
                     {% endif %}
                     {% if order.notas %}
-                    <hr>
-                    <p class="mb-0">
-                        <strong>Notas:</strong><br>
-                        <small>{{ order.notas }}</small>
-                    </p>
+                    <p class="mb-0"><strong>Notas:</strong><br>{{ order.notas }}</p>
                     {% endif %}
                 </div>
             </div>
-        </div>
+        </section>
 
-        <!-- Resumen lateral -->
-        <div class="col-lg-4">
-            <div class="card shadow-sm border-0 mb-4" style="border-radius:1.2em;">
-                <div class="card-body p-4">
-                    <h6 class="card-title fw-bold mb-3"><i class="fa fa-receipt"></i> Resumen de orden</h6>
-                    
-                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
-                        <small class="text-muted d-block mb-1">Número de orden:</small>
-                        <strong>#{{ order.pk }}</strong>
-                    </div>
-
-                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
-                        <small class="text-muted d-block mb-1">Fecha de compra:</small>
-                        <strong>{{ order.fecha_creacion|date:"d/m/Y" }}</strong><br>
-                        <small class="text-muted">{{ order.fecha_creacion|time:"H:i" }}</small>
-                    </div>
-
-                    <div class="mb-3 pb-3" style="border-bottom:1px solid #eee;">
-                        <small class="text-muted d-block mb-1">Estado:</small>
-                        <span class="badge 
-                            {% if order.estado == 'pendiente' %}bg-warning
-                            {% elif order.estado == 'confirmada' %}bg-info
-                            {% elif order.estado == 'enviada' %}bg-primary
-                            {% elif order.estado == 'entregada' %}bg-success
-                            {% elif order.estado == 'cancelada' %}bg-danger
-                            {% endif %}">
-                            {{ order.get_estado_display }}
-                        </span>
-                    </div>
-
-                    <div class="mb-4">
-                        <div class="d-flex justify-content-between mb-2">
-                            <small>Subtotal:</small>
-                            <small>{{ order.total }} €</small>
-                        </div>
-                        <div class="d-flex justify-content-between mb-2">
-                            <small>Envío:</small>
-                            <small class="text-success">Gratis</small>
-                        </div>
-                        <div class="d-flex justify-content-between mb-3" style="border-bottom:1px solid #eee;padding-bottom:15px;">
-                            <small>Impuestos:</small>
-                            <small>Incluidos</small>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center">
-                            <h6 class="mb-0 fw-bold">Total final:</h6>
-                            <h5 class="mb-0" style="color:#b71c1c;">{{ order.total }} €</h5>
-                        </div>
-                    </div>
-
-                    <div class="alert alert-light border mb-0" style="border-radius:0.7em;font-size:0.9em;border-color:#ddd!important;">
-                        <i class="fa fa-envelope" style="color:#b71c1c;"></i>
-                        <strong>Si tienes dudas sobre tu pedido, contacta con nosotros:</strong><br>
-                        <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:600;">ruvenbraxvr@gmail.com</a>
-                    </div>
-                </div>
+        <aside class="side-panel">
+            <h2 class="side-title"><i class="fa-solid fa-receipt me-2"></i>Resumen de orden</h2>
+            <div class="side-row"><span>Número</span><strong>#{{ order.pk }}</strong></div>
+            <div class="side-row"><span>Fecha</span><strong>{{ order.fecha_creacion|date:"d/m/Y H:i" }}</strong></div>
+            <div class="side-row"><span>Estado</span><strong>{{ order.get_estado_display }}</strong></div>
+            <div class="side-row"><span>Subtotal</span><strong>{{ order.total }} €</strong></div>
+            <div class="side-row"><span>Envío</span><strong class="text-success">Gratis</strong></div>
+            <div class="side-row"><span>Impuestos</span><strong>Incluidos</strong></div>
+            <div class="side-total">
+                <strong>Total</strong>
+                <strong>{{ order.total }} €</strong>
             </div>
 
-            <!-- Acciones -->
-            <a href="{% url 'guitarra:my_orders' %}" class="btn btn-outline-primary w-100" style="border-radius:0.7em;font-weight:600;">
-                <i class="fa fa-arrow-left me-2"></i>Volver a mis pedidos
+            <div class="order-contact-box">
+                <i class="fa-solid fa-envelope me-1" style="color:#b71c1c;"></i>
+                Dudas sobre tu pedido: <a href="mailto:ruvenbraxvr@gmail.com" style="color:#b71c1c;text-decoration:none;font-weight:700;">ruvenbraxvr@gmail.com</a>
+            </div>
+
+            <a href="{% url 'guitarra:my_orders' %}" class="back-orders-btn">
+                <i class="fa-solid fa-arrow-left me-2"></i>Volver a mis pedidos
             </a>
-        </div>
+        </aside>
     </div>
 </div>
 {% endblock %}
