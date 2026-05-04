@@ -1,8 +1,6 @@
 {% extends 'base.html' %}
 {% block title %}Detalle video{% endblock %}
-{% block extra_head %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-{% endblock %}
+{# extra head removed; scripts included at bottom of page #}
 {% block content %}
 <style>
     .video-hero {
@@ -439,6 +437,16 @@
                 <div class="video-subline">
                     <span><strong>Publicado:</strong> {{ video.fecha_publicacion|date:'d/m/Y H:i' }}</span>
                     <span><strong>Estado:</strong> {% if video.visibilidad %}Público{% else %}Privado{% endif %}</span>
+                    <span>
+                        <button id="btn-like" class="btn" style="background:transparent;border:none;display:inline-flex;align-items:center;gap:0.45em;" data-like-url="{% url 'guitarra:video_toggle_like' video.pk %}">
+                            {% if user_liked %}
+                                <i id="like-icon" class="fa-solid fa-heart" style="color:#e53935;font-size:1.05em;"></i>
+                            {% else %}
+                                <i id="like-icon" class="fa-regular fa-heart" style="color:#6b7280;font-size:1.05em;"></i>
+                            {% endif %}
+                            <span id="likes-count" style="font-weight:700;color:#333;">{{ likes_count }}</span>
+                        </button>
+                    </span>
                 </div>
             </div>
 
@@ -494,23 +502,69 @@
         </div>
     </div>
 </div>
+            <script>
+                // Pantalla completa para el vídeo
+                document.addEventListener('DOMContentLoaded', function() {
+                    var video = document.getElementById('main-video');
+                    if(video) {
+                        video.addEventListener('dblclick', function() {
+                            if (video.requestFullscreen) {
+                                video.requestFullscreen();
+                            } else if (video.webkitRequestFullscreen) {
+                                video.webkitRequestFullscreen();
+                            } else if (video.msRequestFullscreen) {
+                                video.msRequestFullscreen();
+                            }
+                        });
+                    }
+                });
 
-{% endblock %}
-{% load static %}
-<script>
-    // Pantalla completa para el vídeo
-    document.addEventListener('DOMContentLoaded', function() {
-        var video = document.getElementById('main-video');
-        if(video) {
-            video.addEventListener('dblclick', function() {
-                if (video.requestFullscreen) {
-                    video.requestFullscreen();
-                } else if (video.webkitRequestFullscreen) {
-                    video.webkitRequestFullscreen();
-                } else if (video.msRequestFullscreen) {
-                    video.msRequestFullscreen();
-                }
-            });
-        }
-    });
-</script>
+                // Like toggle via fetch (vanilla JS)
+                (function(){
+                    function getCookie(name) {
+                        let cookieValue = null;
+                        if (document.cookie && document.cookie !== '') {
+                            const cookies = document.cookie.split(';');
+                            for (let i = 0; i < cookies.length; i++) {
+                                const cookie = cookies[i].trim();
+                                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                                    break;
+                                }
+                            }
+                        }
+                        return cookieValue;
+                    }
+
+                    var btn = document.getElementById('btn-like');
+                    if(!btn) return;
+                    btn.addEventListener('click', function(e){
+                        e.preventDefault();
+                        var url = btn.dataset.likeUrl;
+                        var icon = document.getElementById('like-icon');
+                        var countEl = document.getElementById('likes-count');
+                        fetch(url, {
+                            method: 'POST',
+                            headers: { 'X-CSRFToken': getCookie('csrftoken'), 'Accept': 'application/json' }
+                        }).then(function(response){
+                            if(response.status === 403){
+                                window.location.href = '{% url "login" %}?next={{ request.path }}';
+                                return;
+                            }
+                            return response.json();
+                        }).then(function(data){
+                            if(!data) return;
+                            if(data.liked){
+                                icon.classList.remove('fa-regular'); icon.classList.add('fa-solid'); icon.style.color = '#e53935';
+                            } else {
+                                icon.classList.remove('fa-solid'); icon.classList.add('fa-regular'); icon.style.color = '';
+                            }
+                            if(countEl) countEl.textContent = data.likes_count;
+                        }).catch(function(){
+                            // Silently fail
+                        });
+                    });
+                })();
+            </script>
+        {% endblock %}
+        {% load static %}

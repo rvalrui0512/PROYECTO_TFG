@@ -23,6 +23,7 @@ urlpatterns = [
     path('videos/<int:pk>/', VideoDetailView.as_view(), name='video_detail'),
     path('videos/<int:pk>/editar/', VideoUpdateView.as_view(), name='video_update'),
     path('videos/<int:pk>/eliminar/', VideoDeleteView.as_view(), name='video_delete'),
+    path('videos/<int:pk>/toggle-like/', toggle_like, name='video_toggle_like'),
 
     path('guitarras/', GuitarraListView.as_view(), name='guitarra_list'),
     path('guitarras/nueva/', GuitarraCreateView.as_view(), name='guitarra_create'),

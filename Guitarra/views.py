@@ -62,6 +62,8 @@ from django.utils import timezone
 from django.views.decorators.http import require_POST
 from django.db import models
 from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 
 # List view for user notifications
 class NotificationListView(LoginRequiredMixin, ListView):
@@ -356,6 +358,13 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
         obj = self.get_object()
         if 'comentario_form' not in context:
             context['comentario_form'] = ComentarioForm(initial={'usuario': self.request.user, 'video': obj})
+        # Likes: número total y si el usuario actual ha dado like
+        try:
+            context['likes_count'] = obj.likes.count()
+            context['user_liked'] = obj.likes.filter(usuario=self.request.user).exists() if self.request.user.is_authenticated else False
+        except Exception:
+            context['likes_count'] = 0
+            context['user_liked'] = False
         return context
 
     def post(self, request, *args, **kwargs):
@@ -389,6 +398,23 @@ class VideoDeleteView(AdminRequiredLoginMixin, DeleteView):
     model = Video
     template_name = 'videos/video_confirm_delete.html'
     success_url = reverse_lazy('guitarra:video_list')
+
+
+@login_required
+@require_POST
+def toggle_like(request, pk):
+    """Toggle like/unlike for a video. Returns JSON with new state and count."""
+    video = get_object_or_404(Video, pk=pk)
+    user = request.user
+    # Verifica existencia
+    existing = Like.objects.filter(usuario=user, video=video).first()
+    if existing:
+        existing.delete()
+        liked = False
+    else:
+        Like.objects.create(usuario=user, video=video)
+        liked = True
+    return JsonResponse({'liked': liked, 'likes_count': video.likes.count()})
 
 
 class GuitarraListView(LoginRequiredMixin, ListView):
