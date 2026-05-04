@@ -1,43 +1,444 @@
 {% extends 'base.html' %}
 {% block title %}Carrito de compra{% endblock %}
 {% block content %}
-<h1 class="h3 mb-4"><i class="fa fa-shopping-cart"></i> Carrito de compra</h1>
-{% if guitarras %}
-<div class="row g-4">
-    {% for item in guitarras %}
-    <div class="col-12 col-md-6 col-lg-4">
-        <div class="card h-100 shadow-sm border-0" style="border-radius:1.2em;">
-            {% if item.guitarra.imagen %}
-            <img src="{{ item.guitarra.imagen.url }}" class="card-img-top" alt="{{ item.guitarra.marca }} {{ item.guitarra.modelo }}" style="object-fit:cover;max-height:180px;border-top-left-radius:1.2em;border-top-right-radius:1.2em;">
-            {% else %}
-            <div style="height:180px;background:#f5f5f5;border-top-left-radius:1.2em;border-top-right-radius:1.2em;display:flex;align-items:center;justify-content:center;font-size:2.5em;color:#bbb;">
-                <i class="fa-solid fa-guitar"></i>
-            </div>
-            {% endif %}
-            <div class="card-body d-flex flex-column">
-                <h5 class="card-title mb-2" style="font-weight:700;">{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</h5>
-                <div class="mb-2"><span class="fw-semibold">Precio:</span> {{ item.guitarra.precio }} €</div>
-                <div class="mb-2"><span class="fw-semibold">Cantidad:</span> {{ item.cantidad }}</div>
-                <div class="mb-2"><span class="fw-semibold">Subtotal:</span> {{ item.subtotal }} €</div>
-                <form method="post" action="{% url 'guitarra:remove_from_cart' item.guitarra.pk %}" class="mt-auto">
-                    {% csrf_token %}
-                    <button type="submit" class="btn btn-danger w-100" style="border-radius:0.7em;font-weight:600;"><i class="fa fa-trash me-2"></i>Quitar</button>
-                </form>
+<style>
+    .cart-page {
+        padding-top: 0.5em;
+    }
+
+    .cart-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1em;
+        margin-bottom: 1.2em;
+    }
+
+    .cart-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.8em;
+        font-weight: 800;
+        color: #1f2430;
+    }
+
+    .cart-subtitle {
+        margin: 0.2em 0 0;
+        color: #7d8592;
+        font-size: 0.95em;
+    }
+
+    body.dark-mode .cart-title {
+        color: #e6edfc;
+    }
+
+    body.dark-mode .cart-subtitle {
+        color: #aab4c6;
+    }
+
+    .cart-badge {
+        border-radius: 999px;
+        border: 1px solid #e7d2d2;
+        background: #fff4f4;
+        color: #8a1f1f;
+        padding: 0.45em 0.85em;
+        font-size: 0.82em;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    body.dark-mode .cart-badge {
+        background: rgba(110, 198, 255, 0.12);
+        border-color: rgba(110, 198, 255, 0.3);
+        color: #9edcff;
+    }
+
+    .cart-grid {
+        display: grid;
+        grid-template-columns: 1.6fr 0.9fr;
+        gap: 1.2em;
+    }
+
+    .cart-items-panel,
+    .cart-summary-panel {
+        border: 1px solid #e9edf4;
+        background: #fff;
+        border-radius: 1.15em;
+        box-shadow: 0 10px 26px rgba(22, 27, 37, 0.08);
+    }
+
+    body.dark-mode .cart-items-panel,
+    body.dark-mode .cart-summary-panel {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    }
+
+    .cart-items-list {
+        padding: 0.95em;
+        display: flex;
+        flex-direction: column;
+        gap: 0.8em;
+    }
+
+    .cart-item {
+        border: 1px solid #e9edf4;
+        border-radius: 0.95em;
+        padding: 0.8em;
+        display: grid;
+        grid-template-columns: 130px 1fr auto;
+        gap: 0.85em;
+        align-items: center;
+        background: #fcfdff;
+    }
+
+    body.dark-mode .cart-item {
+        background: #252d3a;
+        border-color: #364254;
+    }
+
+    .cart-item-media {
+        width: 130px;
+        height: 100px;
+        border-radius: 0.75em;
+        overflow: hidden;
+        border: 1px solid #e5e9ef;
+        background: #f4f6f9;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    body.dark-mode .cart-item-media {
+        border-color: #3a4658;
+        background: #1f262f;
+    }
+
+    .cart-item-media img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .cart-item-name {
+        margin: 0;
+        font-size: 1.02em;
+        font-weight: 800;
+        color: #202734;
+        line-height: 1.25;
+    }
+
+    body.dark-mode .cart-item-name {
+        color: #e4ecfb;
+    }
+
+    .cart-item-meta {
+        display: flex;
+        gap: 0.5em;
+        flex-wrap: wrap;
+        margin-top: 0.45em;
+    }
+
+    .cart-meta-pill {
+        border-radius: 999px;
+        border: 1px solid #dde4ee;
+        background: #f7f9fc;
+        color: #5c6675;
+        font-size: 0.78em;
+        font-weight: 700;
+        padding: 0.28em 0.65em;
+    }
+
+    body.dark-mode .cart-meta-pill {
+        border-color: #3a4658;
+        background: #1f262f;
+        color: #b8c4d8;
+    }
+
+    .cart-item-pricing {
+        text-align: right;
+        min-width: 140px;
+    }
+
+    .cart-subtotal {
+        margin: 0;
+        font-size: 1.1em;
+        font-weight: 800;
+        color: #a31515;
+    }
+
+    body.dark-mode .cart-subtotal {
+        color: #9edcff;
+    }
+
+    .cart-remove-btn {
+        margin-top: 0.45em;
+        border: 1px solid #f2cece;
+        background: #fff1f1;
+        color: #a11f1f;
+        border-radius: 0.65em;
+        font-size: 0.82em;
+        font-weight: 700;
+        padding: 0.35em 0.7em;
+    }
+
+    .cart-remove-btn:hover {
+        background: #ffe6e6;
+    }
+
+    body.dark-mode .cart-remove-btn {
+        border-color: rgba(255, 120, 120, 0.35);
+        background: rgba(255, 120, 120, 0.1);
+        color: #ff9a9a;
+    }
+
+    .cart-summary-panel {
+        padding: 1em;
+        position: sticky;
+        top: 1.1em;
+        height: fit-content;
+    }
+
+    .summary-title {
+        margin: 0 0 0.8em;
+        font-size: 1.15em;
+        font-weight: 800;
+        color: #202734;
+    }
+
+    body.dark-mode .summary-title {
+        color: #e4ecfb;
+    }
+
+    .summary-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5em 0;
+        color: #5f6877;
+        font-size: 0.95em;
+        border-bottom: 1px dashed #e4e8ef;
+    }
+
+    .summary-row:last-of-type {
+        border-bottom: none;
+        padding-bottom: 0.2em;
+    }
+
+    body.dark-mode .summary-row {
+        color: #b6c1d3;
+        border-bottom-color: #3a4658;
+    }
+
+    .summary-total {
+        margin-top: 0.65em;
+        border-radius: 0.85em;
+        border: 1px solid #efd1d1;
+        background: linear-gradient(120deg, #fff2f2 0%, #ffe9e9 100%);
+        padding: 0.7em 0.8em;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .summary-total-label {
+        font-size: 0.8em;
+        letter-spacing: 0.4px;
+        text-transform: uppercase;
+        font-weight: 700;
+        color: #8b1d1d;
+    }
+
+    .summary-total-value {
+        font-size: 1.55em;
+        font-weight: 800;
+        color: #a31515;
+        line-height: 1;
+    }
+
+    body.dark-mode .summary-total {
+        border-color: rgba(110, 198, 255, 0.32);
+        background: linear-gradient(120deg, rgba(110, 198, 255, 0.12) 0%, rgba(110, 198, 255, 0.06) 100%);
+    }
+
+    body.dark-mode .summary-total-label,
+    body.dark-mode .summary-total-value {
+        color: #bfe6ff;
+    }
+
+    .summary-actions {
+        margin-top: 0.9em;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+    }
+
+    .btn-checkout,
+    .btn-continue,
+    .btn-orders {
+        width: 100%;
+        border-radius: 0.75em;
+        font-weight: 700;
+        padding: 0.63em 0.9em;
+        text-align: center;
+        text-decoration: none;
+        border: none;
+    }
+
+    .btn-checkout {
+        color: #fff;
+        background: linear-gradient(120deg, #198754 0%, #157347 100%);
+        box-shadow: 0 8px 16px rgba(25, 135, 84, 0.24);
+    }
+
+    .btn-continue {
+        color: #1b77bd;
+        background: #f4f9ff;
+        border: 1px solid #d6e8f8;
+    }
+
+    .btn-orders {
+        color: #fff;
+        background: #b71c1c;
+        box-shadow: 0 8px 16px rgba(183, 28, 28, 0.24);
+    }
+
+    body.dark-mode .btn-continue {
+        color: #9edcff;
+        background: #1f262f;
+        border-color: #3a4658;
+    }
+
+    .empty-cart {
+        border: 1px solid #e9edf4;
+        background: #fff;
+        border-radius: 1.2em;
+        box-shadow: 0 10px 26px rgba(22, 27, 37, 0.08);
+        padding: 1.6em;
+        text-align: center;
+    }
+
+    body.dark-mode .empty-cart {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.35);
+    }
+
+    .empty-cart i {
+        font-size: 2.4em;
+        color: #b4bcc9;
+        margin-bottom: 0.35em;
+    }
+
+    @media (max-width: 1100px) {
+        .cart-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-summary-panel {
+            position: static;
+        }
+    }
+
+    @media (max-width: 650px) {
+        .cart-item {
+            grid-template-columns: 1fr;
+        }
+
+        .cart-item-media {
+            width: 100%;
+            height: 170px;
+        }
+
+        .cart-item-pricing {
+            text-align: left;
+        }
+
+        .cart-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+</style>
+
+<div class="cart-page">
+    <div class="cart-header">
+        <div>
+            <h1 class="cart-title"><i class="fa-solid fa-cart-shopping me-2"></i>Carrito de compra</h1>
+            <p class="cart-subtitle">Revisa tus guitarras seleccionadas antes de finalizar el pedido.</p>
+        </div>
+        {% if guitarras %}
+            <span class="cart-badge">{{ guitarras|length }} producto{% if guitarras|length != 1 %}s{% endif %}</span>
+        {% endif %}
+    </div>
+
+    {% if guitarras %}
+    <div class="cart-grid">
+        <div class="cart-items-panel">
+            <div class="cart-items-list">
+                {% for item in guitarras %}
+                <article class="cart-item">
+                    <div class="cart-item-media">
+                        {% if item.guitarra.imagen %}
+                            <img src="{{ item.guitarra.imagen.url }}" alt="{{ item.guitarra.marca }} {{ item.guitarra.modelo }}">
+                        {% else %}
+                            <i class="fa-solid fa-guitar" style="font-size:2.2em;color:#b4bcc9;"></i>
+                        {% endif %}
+                    </div>
+
+                    <div>
+                        <h2 class="cart-item-name">{{ item.guitarra.marca }} {{ item.guitarra.modelo }}</h2>
+                        <div class="cart-item-meta">
+                            <span class="cart-meta-pill">Precio: {{ item.guitarra.precio }} €</span>
+                            <span class="cart-meta-pill">Cantidad: {{ item.cantidad }}</span>
+                        </div>
+                    </div>
+
+                    <div class="cart-item-pricing">
+                        <p class="cart-subtotal">{{ item.subtotal }} €</p>
+                        <form method="post" action="{% url 'guitarra:remove_from_cart' item.guitarra.pk %}">
+                            {% csrf_token %}
+                            <button type="submit" class="cart-remove-btn"><i class="fa-solid fa-trash me-1"></i>Quitar</button>
+                        </form>
+                    </div>
+                </article>
+                {% endfor %}
             </div>
         </div>
+
+        <aside class="cart-summary-panel">
+            <h3 class="summary-title">Resumen de compra</h3>
+            <div class="summary-row">
+                <span>Productos</span>
+                <strong>{{ guitarras|length }}</strong>
+            </div>
+            <div class="summary-row">
+                <span>Envío</span>
+                <strong>Incluido</strong>
+            </div>
+            <div class="summary-total">
+                <span class="summary-total-label">Total</span>
+                <span class="summary-total-value">{{ total }} €</span>
+            </div>
+
+            <div class="summary-actions">
+                <a href="{% url 'guitarra:checkout' %}" class="btn-checkout"><i class="fa-solid fa-credit-card me-2"></i>Finalizar compra</a>
+                <a href="{% url 'guitarra:guitarra_list' %}" class="btn-continue"><i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'guitarra:my_orders' %}" class="btn-orders"><i class="fa-solid fa-box me-2"></i>Mis pedidos</a>
+                {% endif %}
+            </div>
+        </aside>
     </div>
-    {% endfor %}
-</div>
-<div class="d-flex flex-column flex-md-row justify-content-end align-items-center mt-4 gap-3">
-    <div class="fs-5 fw-bold me-md-4 mb-2 mb-md-0">Total: {{ total }} €</div>
-    <a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-outline-primary" style="border-radius:0.7em;font-weight:600;"><i class="fa fa-arrow-left me-2"></i>Seguir comprando</a>
-    {% if user.is_authenticated %}
-    <a href="{% url 'guitarra:my_orders' %}" class="btn" style="background:#b71c1c;color:#fff;font-weight:600;border-radius:0.7em;box-shadow:0 2px 8px #b71c1c22;border:none;"><i class="fa fa-box me-2"></i>Mis pedidos</a>
+    {% else %}
+    <div class="empty-cart">
+        <i class="fa-solid fa-cart-shopping"></i>
+        <h2 class="h5 mb-2">Tu carrito está vacío</h2>
+        <p class="text-muted mb-3">Descubre nuestras guitarras y añade tus favoritas.</p>
+        <a href="{% url 'guitarra:guitarra_list' %}" class="btn-continue" style="display:inline-block; width:auto; min-width:180px;">
+            <i class="fa-solid fa-arrow-left me-2"></i>Ir a la tienda
+        </a>
+    </div>
     {% endif %}
-    <a href="{% url 'guitarra:checkout' %}" class="btn btn-success" style="border-radius:0.7em;font-weight:600;min-width:180px;"><i class="fa fa-credit-card me-2"></i>Finalizar compra</a>
 </div>
-{% else %}
-<div class="alert alert-info">Tu carrito está vacío.</div>
-<a href="{% url 'guitarra:guitarra_list' %}" class="btn btn-outline-primary"><i class="fa fa-arrow-left"></i> Ir a la tienda</a>
-{% endif %}
 {% endblock %}
