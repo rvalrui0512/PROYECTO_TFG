@@ -1,49 +1,579 @@
 {% extends 'base.html' %}
-{% block title %}Formulario usuario{% endblock %}
+{% block title %}Crear cuenta - MUNDO FLAMENCO{% endblock %}
 {% block content %}
 <style>
     .helptext { display: none !important; }
+
+    /* Ocultar los cards de catálogo */
+    main > section:nth-of-type(2) {
+        display: none !important;
+    }
+
+    /* Contenedor principal */
+    .register-container {
+        min-height: 50vh;
+        background: #f8f8f8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 1rem;
+    }
+
+    body.dark-mode .register-container {
+        background: #141926;
+    }
+
+    /* Tarjeta del formulario */
+    .register-card {
+        width: 100%;
+        max-width: 480px;
+        border-radius: 0.8em;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        background: #fff;
+        border: 1px solid #f0f0f0;
+        overflow: hidden;
+    }
+
+    body.dark-mode .register-card {
+        background: #1f262f;
+        border-color: #252d3a;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Encabezado */
+    .register-header {
+        background: #fff;
+        padding: 1.8em 2em 1.5em 2em;
+        border-bottom: 1.5px solid #f0f0f0;
+        text-align: center;
+    }
+
+    body.dark-mode .register-header {
+        background: #1f262f;
+        border-bottom-color: #252d3a;
+    }
+
+    .register-logo {
+        font-size: 0.85em;
+        color: #b71c1c;
+        font-weight: 700;
+        letter-spacing: 1px;
+        margin-bottom: 0.6em;
+        text-transform: uppercase;
+    }
+
+    body.dark-mode .register-logo {
+        color: #6ec6ff;
+    }
+
+    .register-title {
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.7em;
+        font-weight: 700;
+        margin: 0;
+        color: #1a1a1a;
+        letter-spacing: 0.3px;
+    }
+
+    body.dark-mode .register-title {
+        color: #e3eafc;
+    }
+
+    .register-subtitle {
+        font-size: 0.85em;
+        color: #888;
+        margin: 0.3em 0 0 0;
+        font-weight: 400;
+    }
+
+    body.dark-mode .register-subtitle {
+        color: #9ca3af;
+    }
+
+    /* Cuerpo del formulario */
+    .register-body {
+        padding: 2em;
+    }
+
+    body.dark-mode .register-body {
+        background: #1f262f;
+    }
+
+    /* Grupo de formulario */
+    .form-group-register {
+        margin-bottom: 1.3em;
+    }
+
+    .form-group-register label {
+        display: block;
+        margin-bottom: 0.5em;
+        font-weight: 600;
+        color: #1a1a1a;
+        font-size: 0.9em;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .form-group-register label {
+        color: #d4d8df;
+    }
+
+    /* Campos de entrada */
+    .register-input,
+    .register-select {
+        width: 100%;
+        padding: 0.85em 1em;
+        border: 1px solid #ddd;
+        border-radius: 0.6em;
+        font-size: 0.95em;
+        font-family: 'Montserrat', Arial, sans-serif;
+        background: #fafafa;
+        color: #1a1a1a;
+        transition: all 0.25s ease;
+        box-shadow: none;
+    }
+
+    .register-input:focus,
+    .register-select:focus {
+        outline: none;
+        border-color: #b71c1c;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.08);
+    }
+
+    body.dark-mode .register-input,
+    body.dark-mode .register-select {
+        background: #252d3a;
+        border-color: #3a4251;
+        color: #e3eafc;
+    }
+
+    body.dark-mode .register-input:focus,
+    body.dark-mode .register-select:focus {
+        border-color: #6ec6ff;
+        background: #2a3240;
+        box-shadow: 0 0 0 3px rgba(110, 198, 255, 0.12);
+    }
+
+    /* Sección de avatar */
+    .avatar-section {
+        margin: 1.5em 0;
+        padding: 1.3em;
+        background: #f5f5f5;
+        border-radius: 0.8em;
+        border: 1.5px solid #e0e0e0;
+    }
+
+    body.dark-mode .avatar-section {
+        background: #252d3a;
+        border-color: #3a4251;
+    }
+
+    .avatar-section-title {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 1em;
+        font-size: 0.95em;
+    }
+
+    body.dark-mode .avatar-section-title {
+        color: #e3eafc;
+    }
+
+    /* Contenedor de avatares */
+    .avatar-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(60px, 1fr));
+        gap: 0.8em;
+        margin-bottom: 1em;
+    }
+
+    .avatar-option {
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .avatar-option input {
+        display: none;
+    }
+
+    .avatar-option img {
+        width: 56px;
+        height: 56px;
+        object-fit: cover;
+        border-radius: 0.8em;
+        border: 2px solid #ddd;
+        transition: all 0.25s ease;
+    }
+
+    .avatar-option input:checked + img {
+        border-color: #b71c1c;
+        box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.2);
+        transform: scale(1.08);
+    }
+
+    body.dark-mode .avatar-option img {
+        border-color: #3a4251;
+    }
+
+    body.dark-mode .avatar-option input:checked + img {
+        border-color: #6ec6ff;
+        box-shadow: 0 0 0 3px rgba(110, 198, 255, 0.2);
+    }
+
+    /* Campos adicionales en la sección de perfil */
+    .profile-section {
+        margin-top: 1.5em;
+        padding-top: 1.5em;
+        border-top: 1.5px solid #e0e0e0;
+    }
+
+    body.dark-mode .profile-section {
+        border-top-color: #3a4251;
+    }
+
+    .profile-section-title {
+        font-weight: 600;
+        color: #1a1a1a;
+        margin-bottom: 1em;
+        font-size: 0.95em;
+    }
+
+    body.dark-mode .profile-section-title {
+        color: #e3eafc;
+    }
+
+    /* Textareas */
+    .register-textarea {
+        width: 100%;
+        padding: 0.85em 1em;
+        border: 1px solid #ddd;
+        border-radius: 0.6em;
+        font-size: 0.95em;
+        font-family: 'Montserrat', Arial, sans-serif;
+        background: #fafafa;
+        color: #1a1a1a;
+        transition: all 0.25s ease;
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .register-textarea:focus {
+        outline: none;
+        border-color: #b71c1c;
+        background: #fff;
+        box-shadow: 0 0 0 3px rgba(183, 28, 28, 0.08);
+    }
+
+    body.dark-mode .register-textarea {
+        background: #252d3a;
+        border-color: #3a4251;
+        color: #e3eafc;
+    }
+
+    body.dark-mode .register-textarea:focus {
+        border-color: #6ec6ff;
+        background: #2a3240;
+        box-shadow: 0 0 0 3px rgba(110, 198, 255, 0.12);
+    }
+
+    /* Mensajes de error */
+    .errorlist {
+        list-style: none;
+        padding: 0.9em;
+        margin-bottom: 1em;
+        background: #fff3f3;
+        border: 1px solid #ffc8c8;
+        border-radius: 0.6em;
+        color: #c41e3a;
+        font-size: 0.85em;
+    }
+
+    body.dark-mode .errorlist {
+        background: rgba(255, 110, 110, 0.08);
+        border-color: #ff6e6e;
+        color: #ff8989;
+    }
+
+    .errorlist li {
+        margin-bottom: 0.3em;
+    }
+
+    .errorlist li:last-child {
+        margin-bottom: 0;
+    }
+
+    /* Pie del formulario */
+    .register-footer {
+        padding: 1.5em 2em;
+        background: #fafafa;
+        border-top: 1px solid #f0f0f0;
+        text-align: center;
+    }
+
+    body.dark-mode .register-footer {
+        background: #252d3a;
+        border-top-color: #3a4251;
+    }
+
+    .register-btn {
+        width: 100%;
+        padding: 0.85em 1.5em;
+        background: #b71c1c;
+        color: #fff;
+        border: none;
+        border-radius: 0.6em;
+        font-size: 0.95em;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+        cursor: pointer;
+        transition: all 0.25s ease;
+        box-shadow: 0 2px 8px rgba(183, 28, 28, 0.2);
+        font-family: 'Montserrat', Arial, sans-serif;
+        margin-bottom: 0.8em;
+    }
+
+    .register-btn:hover {
+        background: #8b1515;
+        box-shadow: 0 4px 12px rgba(183, 28, 28, 0.25);
+    }
+
+    body.dark-mode .register-btn {
+        background: #6ec6ff;
+        color: #1f262f;
+        box-shadow: 0 2px 8px rgba(110, 198, 255, 0.2);
+    }
+
+    body.dark-mode .register-btn:hover {
+        background: #8dd9ff;
+        box-shadow: 0 4px 12px rgba(110, 198, 255, 0.25);
+    }
+
+    .register-footer-text {
+        color: #666;
+        font-size: 0.9em;
+        margin-bottom: 0.5em;
+    }
+
+    body.dark-mode .register-footer-text {
+        color: #9ca3af;
+    }
+
+    .login-link-btn {
+        display: inline-block;
+        padding: 0.6em 1.3em;
+        background: transparent;
+        color: #b71c1c;
+        border: 1.5px solid #b71c1c;
+        border-radius: 0.6em;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.25s ease;
+        font-size: 0.9em;
+    }
+
+    .login-link-btn:hover {
+        background: #b71c1c;
+        color: #fff;
+        box-shadow: 0 2px 8px rgba(183, 28, 28, 0.2);
+    }
+
+    body.dark-mode .login-link-btn {
+        color: #6ec6ff;
+        border-color: #6ec6ff;
+    }
+
+    body.dark-mode .login-link-btn:hover {
+        background: #6ec6ff;
+        color: #1f262f;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+        .register-container {
+            min-height: 45vh;
+            padding: 1rem 0.5rem;
+        }
+
+        .register-card {
+            max-width: 100%;
+        }
+
+        .register-header {
+            padding: 1.4em 1.5em 1.1em 1.5em;
+        }
+
+        .register-body {
+            padding: 1.5em;
+        }
+
+        .register-footer {
+            padding: 1.2em 1.5em;
+        }
+
+        .register-title {
+            font-size: 1.5em;
+        }
+
+        .avatar-grid {
+            grid-template-columns: repeat(4, 1fr);
+        }
+    }
 </style>
-<h1 class="h3 mb-3">Usuario</h1>
-<form method="post" enctype="multipart/form-data" class="card card-body">
-    {% csrf_token %}
-    {{ form.as_p }}
-    {% if profile_form %}
-        <hr>
-        <h2 class="h5">Perfil</h2>
-        <div class="mb-3">
-            <label class="form-label">Elegir avatar</label>
-            <div class="d-flex flex-wrap gap-2">
-                {% for avatar in avatar_choices %}
-                    <label class="avatar-option" style="cursor:pointer;">
-                        <input type="radio" name="avatar_predefinido" value="avatars/{{ avatar }}" style="display:none;" {% if profile_form.instance.avatar and profile_form.instance.avatar.name == 'avatars/'|add:avatar %}checked{% endif %}>
-                        <img src="/media/avatars/{{ avatar }}" alt="Avatar" class="rounded-circle border {% if profile_form.instance.avatar and profile_form.instance.avatar.name == 'avatars/'|add:avatar %}border-success border-3{% else %}border-secondary{% endif %}" style="width:48px;height:48px;object-fit:cover;">
-                    </label>
-                {% endfor %}
-            </div>
+
+<div class="register-container">
+    <div class="register-card">
+        <!-- Encabezado -->
+        <div class="register-header">
+            <div class="register-logo">MUNDO FLAMENCO</div>
+            <h1 class="register-title">Crear cuenta</h1>
+            <p class="register-subtitle">Únete a nuestra comunidad flamenca</p>
         </div>
-        <script>
-        // Selección visual de avatar
-        document.querySelectorAll('.avatar-option input[type="radio"]').forEach(function(radio) {
-            radio.addEventListener('change', function() {
-                document.querySelectorAll('.avatar-option img').forEach(function(img) {
-                    img.classList.remove('border-success','border-3');
-                    img.classList.add('border-secondary');
-                });
-                if (this.checked) {
-                    this.nextElementSibling.classList.remove('border-secondary');
-                    this.nextElementSibling.classList.add('border-success','border-3');
+
+        <!-- Cuerpo del formulario -->
+        <div class="register-body">
+            <form method="post" enctype="multipart/form-data" novalidate>
+                {% csrf_token %}
+
+                <!-- Errores generales -->
+                {% if form.non_field_errors %}
+                <div class="errorlist">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Campos del formulario de usuario -->
+                {% for field in form %}
+                    {% if field.name != 'password1' and field.name != 'password2' %}
+                        <div class="form-group-register">
+                            <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                            {% if field.field.widget.input_type == 'textarea' %}
+                                {{ field }}
+                            {% else %}
+                                {{ field }}
+                            {% endif %}
+                            {% if field.errors %}
+                            <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                                {% for error in field.errors %}{{ error }}{% endfor %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+
+                <!-- Campos de contraseña -->
+                {% if form.password1 %}
+                <div class="form-group-register">
+                    <label for="{{ form.password1.id_for_label }}">{{ form.password1.label }}</label>
+                    {{ form.password1 }}
+                    {% if form.password1.errors %}
+                    <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                        {% for error in form.password1.errors %}{{ error }}<br>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="form-group-register">
+                    <label for="{{ form.password2.id_for_label }}">{{ form.password2.label }}</label>
+                    {{ form.password2 }}
+                    {% if form.password2.errors %}
+                    <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                        {% for error in form.password2.errors %}{{ error }}<br>{% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <!-- Sección de perfil (si existe) -->
+                {% if profile_form %}
+                <div class="profile-section">
+                    <h2 class="profile-section-title"><i class="fa-solid fa-user-circle" style="margin-right: 0.4em; color: #b71c1c;"></i>Perfil</h2>
+
+                    <!-- Avatar -->
+                    <div class="avatar-section">
+                        <div class="avatar-section-title">Elige tu avatar</div>
+                        <div class="avatar-grid">
+                            {% for avatar in avatar_choices %}
+                                <label class="avatar-option">
+                                    <input type="radio" name="avatar_predefinido" value="avatars/{{ avatar }}" {% if profile_form.instance.avatar and profile_form.instance.avatar.name == 'avatars/'|add:avatar %}checked{% endif %}>
+                                    <img src="/media/avatars/{{ avatar }}" alt="Avatar" title="Avatar">
+                                </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Nombre mostrado -->
+                    <div class="form-group-register">
+                        <label for="{{ profile_form.display_name.id_for_label }}">{{ profile_form.display_name.label }}</label>
+                        {{ profile_form.display_name }}
+                        {% if profile_form.display_name.errors %}
+                        <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                            {% for error in profile_form.display_name.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Biografía -->
+                    <div class="form-group-register">
+                        <label for="{{ profile_form.bio.id_for_label }}">{{ profile_form.bio.label }}</label>
+                        {{ profile_form.bio }}
+                        {% if profile_form.bio.errors %}
+                        <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                            {% for error in profile_form.bio.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- País -->
+                    <div class="form-group-register">
+                        <label for="{{ profile_form.pais.id_for_label }}">{{ profile_form.pais.label }}</label>
+                        {{ profile_form.pais }}
+                        {% if profile_form.pais.errors %}
+                        <div class="invalid-feedback" style="display: block; color: #c41e3a; font-size: 0.8em; margin-top: 0.35em;">
+                            {% for error in profile_form.pais.errors %}{{ error }}{% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- Botón de envío -->
+                <button type="submit" class="register-btn">
+                    <i class="fa-solid fa-user-plus" style="margin-right: 0.4em;"></i>Crear cuenta
+                </button>
+            </form>
+        </div>
+
+        <!-- Pie -->
+        <div class="register-footer">
+            <div class="register-footer-text">¿Ya tienes cuenta?</div>
+            <a href="{% url 'login' %}" class="login-link-btn">
+                <i class="fa-solid fa-sign-in-alt" style="margin-right: 0.3em;"></i>Inicia sesión
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Script para aplicar clases a los campos -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Aplicar clases a todos los campos del formulario
+        document.querySelectorAll('input[type="text"], input[type="email"], input[type="password"], input[type="number"], textarea, select').forEach(function(field) {
+            if (field.name !== 'avatar_predefinido' && !field.classList.contains('hidden')) {
+                if (field.tagName === 'TEXTAREA') {
+                    field.classList.add('register-textarea');
+                } else if (field.tagName === 'SELECT') {
+                    field.classList.add('register-select');
+                } else {
+                    field.classList.add('register-input');
                 }
-            });
+            }
         });
-        </script>
-        {{ profile_form.display_name.label_tag }}
-        {{ profile_form.display_name }}
-        {{ profile_form.bio.label_tag }}
-        {{ profile_form.bio }}
-        {{ profile_form.pais.label_tag }}
-        {{ profile_form.pais }}
-    {% endif %}
-    <button type="submit" class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;">Guardar</button>
-</form>
+    });
+</script>
+
 {% endblock %}
