@@ -8,29 +8,6 @@
     {% endif %}
 </div>
 <div class="row">
-    <div class="col-12 col-lg-4 mb-4">
-        <form method="get" class="card p-3" style="border-radius:1em;box-shadow:0 2px 8px #bbb2;" aria-label="Filtrar y buscar videos">
-            <div class="mb-3">
-                <label for="palo" class="form-label">Palo flamenco</label>
-                <select id="palo" name="palo" class="form-select">
-                    <option value="">Todos</option>
-                    {% for key, value in palos %}
-                        <option value="{{ key }}" {% if request.GET.palo == key %}selected{% endif %}>{{ value }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="mb-3">
-                <label for="duracion_max" class="form-label">Duración máxima (minutos)</label>
-                <div class="input-group">
-                    <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>
-                    <input type="number" id="duracion_max" name="duracion_max" class="form-control" min="0" step="0.1" value="{{ request.GET.duracion_max }}">
-                </div>
-            </div>
-            <div class="d-grid">
-                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
-            </div>
-        </form>
-    </div>
     <div class="col-12 col-lg-8">
         <style>
         .video-list-vertical {
@@ -48,7 +25,7 @@
             padding: 1.5em;
             transition: box-shadow 0.18s, transform 0.18s;
             position: relative;
-            min-height: 260px;
+            min-height: 380px;
         }
         .video-list-item:hover {
             box-shadow: 0 8px 32px #b0b8c055;
@@ -56,9 +33,9 @@
             z-index: 2;
         }
         .video-list-thumb {
-            width: 340px;
-            min-width: 220px;
-            height: 210px;
+            width: 560px;
+            min-width: 320px;
+            height: 350px;
             border-radius: 1em;
             overflow: hidden;
             margin-right: 2em;
@@ -135,7 +112,7 @@
                 margin-bottom: 1em;
                 width: 100%;
                 min-width: unset;
-                height: 200px;
+                height: 320px;
             }
         }
         </style>
@@ -170,6 +147,29 @@
             <div class="video-list-item">No hay videos.</div>
             {% endfor %}
         </div>
+    </div>
+    <div class="col-12 col-lg-4 mb-4">
+        <form method="get" class="card p-3" style="border-radius:1em;box-shadow:0 2px 8px #bbb2;" aria-label="Filtrar y buscar videos">
+            <div class="mb-3">
+                <label for="palo" class="form-label">Palo flamenco</label>
+                <select id="palo" name="palo" class="form-select">
+                    <option value="">Todos</option>
+                    {% for key, value in palos %}
+                        <option value="{{ key }}" {% if request.GET.palo == key %}selected{% endif %}>{{ value }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="duracion_max" class="form-label">Duración máxima (minutos)</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fa-solid fa-clock"></i></span>
+                    <input type="number" id="duracion_max" name="duracion_max" class="form-control" min="0" step="0.1" value="{{ request.GET.duracion_max }}">
+                </div>
+            </div>
+            <div class="d-grid">
+                <button type="submit" class="btn btn-outline-primary"><i class="fa-solid fa-filter me-1"></i> Filtrar</button>
+            </div>
+        </form>
     </div>
 </div>
 {% endblock %}
