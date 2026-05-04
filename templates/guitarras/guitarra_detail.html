@@ -1,42 +1,359 @@
 {% extends 'base.html' %}
 {% block title %}Detalle guitarra{% endblock %}
 {% block content %}
+<style>
+	.guitar-hero {
+		background: linear-gradient(145deg, #fff7f4 0%, #ffffff 50%, #f8fafc 100%);
+		border: 1px solid #f0e8e2;
+		border-radius: 1.4em;
+		box-shadow: 0 16px 42px rgba(20, 25, 35, 0.12);
+		padding: 1.2em;
+	}
+
+	body.dark-mode .guitar-hero {
+		background: linear-gradient(145deg, #1f262f 0%, #252d3a 100%);
+		border-color: #333d4d;
+		box-shadow: 0 16px 42px rgba(0, 0, 0, 0.45);
+	}
+
+	.guitar-image-panel {
+		border-radius: 1.1em;
+		background: radial-gradient(circle at 12% 20%, #fff 0%, #fafafa 100%);
+		border: 1px solid #ececec;
+		box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+		min-height: 620px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 1.2em;
+		overflow: hidden;
+	}
+
+	body.dark-mode .guitar-image-panel {
+		background: radial-gradient(circle at 12% 20%, #2a3342 0%, #1f262f 100%);
+		border-color: #364254;
+	}
+
+	.guitar-image-panel img {
+		width: 100%;
+		max-height: 590px;
+		object-fit: contain;
+		border-radius: 0.9em;
+		filter: drop-shadow(0 14px 28px rgba(0, 0, 0, 0.24));
+	}
+
+	.guitar-fallback-icon {
+		font-size: 9em;
+		color: #c2c7cf;
+	}
+
+	body.dark-mode .guitar-fallback-icon {
+		color: #586272;
+	}
+
+	.guitar-info-panel {
+		height: 100%;
+		border-radius: 1.1em;
+		background: #ffffff;
+		border: 1px solid #eceff3;
+		box-shadow: 0 10px 28px rgba(20, 25, 35, 0.07);
+		padding: 1.3em;
+		display: flex;
+		flex-direction: column;
+		gap: 0.9em;
+	}
+
+	body.dark-mode .guitar-info-panel {
+		background: #1f262f;
+		border-color: #333d4d;
+		box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+	}
+
+	.guitar-title {
+		margin: 0;
+		font-family: 'Montserrat', Arial, sans-serif;
+		font-weight: 800;
+		font-size: 2em;
+		color: #1f2430;
+		line-height: 1.15;
+	}
+
+	body.dark-mode .guitar-title {
+		color: #e8eefc;
+	}
+
+	.guitar-subtitle {
+		margin: 0;
+		color: #7c8491;
+		font-size: 0.95em;
+		font-weight: 600;
+		letter-spacing: 0.2px;
+	}
+
+	body.dark-mode .guitar-subtitle {
+		color: #aeb8c9;
+	}
+
+	.guitar-spec-grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 0.65em;
+		margin-top: 0.4em;
+	}
+
+	.guitar-spec-card {
+		border: 1px solid #e8edf4;
+		background: #f9fbfe;
+		border-radius: 0.8em;
+		padding: 0.7em 0.8em;
+	}
+
+	body.dark-mode .guitar-spec-card {
+		border-color: #3a4658;
+		background: #252d3a;
+	}
+
+	.guitar-spec-label {
+		font-size: 0.76em;
+		font-weight: 700;
+		letter-spacing: 0.45px;
+		text-transform: uppercase;
+		color: #8a93a0;
+		margin-bottom: 0.25em;
+	}
+
+	.guitar-spec-value {
+		font-size: 0.97em;
+		font-weight: 700;
+		color: #212936;
+	}
+
+	body.dark-mode .guitar-spec-label {
+		color: #9eabc0;
+	}
+
+	body.dark-mode .guitar-spec-value {
+		color: #e2eaf7;
+	}
+
+	.guitar-price-box {
+		margin-top: 0.3em;
+		border-radius: 0.95em;
+		border: 1px solid #efd3d3;
+		background: linear-gradient(120deg, #fff2f2 0%, #ffecec 100%);
+		padding: 0.9em 1em;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 1em;
+	}
+
+	body.dark-mode .guitar-price-box {
+		border-color: rgba(110, 198, 255, 0.3);
+		background: linear-gradient(120deg, rgba(110, 198, 255, 0.12) 0%, rgba(110, 198, 255, 0.08) 100%);
+	}
+
+	.guitar-price-label {
+		font-size: 0.78em;
+		font-weight: 700;
+		letter-spacing: 0.35px;
+		text-transform: uppercase;
+		color: #8b1d1d;
+	}
+
+	.guitar-price-value {
+		font-size: 2.15em;
+		line-height: 1;
+		font-weight: 800;
+		color: #a31515;
+	}
+
+	body.dark-mode .guitar-price-label {
+		color: #9edcff;
+	}
+
+	body.dark-mode .guitar-price-value {
+		color: #c5e9ff;
+	}
+
+	.guitar-desc-box {
+		border: 1px solid #e8edf4;
+		background: #f9fbfe;
+		border-radius: 0.9em;
+		padding: 0.85em 0.9em;
+		color: #39414d;
+		font-size: 0.97em;
+		line-height: 1.55;
+	}
+
+	body.dark-mode .guitar-desc-box {
+		border-color: #3a4658;
+		background: #252d3a;
+		color: #d4deee;
+	}
+
+	.guitar-actions {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.6em;
+		margin-top: auto;
+		padding-top: 0.6em;
+	}
+
+	.guitar-btn-cart {
+		border: none;
+		border-radius: 0.8em;
+		padding: 0.72em 1.25em;
+		font-size: 1em;
+		font-weight: 700;
+		color: #fff;
+		background: linear-gradient(120deg, #198754 0%, #157347 100%);
+		box-shadow: 0 8px 18px rgba(25, 135, 84, 0.26);
+		transition: all 0.2s ease;
+	}
+
+	.guitar-btn-cart:hover {
+		transform: translateY(-1px);
+		box-shadow: 0 10px 20px rgba(25, 135, 84, 0.34);
+	}
+
+	.guitar-btn-back {
+		border-radius: 0.8em;
+		padding: 0.65em 1.05em;
+		font-weight: 700;
+		color: #1b8b5b;
+		background: #f3faf7;
+		border: 1px solid #cce8da;
+		text-decoration: none;
+		transition: all 0.2s ease;
+	}
+
+	.guitar-btn-back:hover {
+		color: #146f45;
+		background: #e7f4ee;
+	}
+
+	.guitar-note {
+		font-size: 0.9em;
+		color: #6d7582;
+		margin: 0;
+	}
+
+	body.dark-mode .guitar-note {
+		color: #aab5c6;
+	}
+
+	@media (max-width: 991px) {
+		.guitar-image-panel {
+			min-height: 430px;
+		}
+
+		.guitar-image-panel img {
+			max-height: 390px;
+		}
+
+		.guitar-title {
+			font-size: 1.65em;
+		}
+
+		.guitar-price-value {
+			font-size: 1.9em;
+		}
+	}
+
+	@media (max-width: 575px) {
+		.guitar-hero {
+			padding: 0.85em;
+		}
+
+		.guitar-info-panel {
+			padding: 1em;
+		}
+
+		.guitar-spec-grid {
+			grid-template-columns: 1fr;
+		}
+
+		.guitar-actions {
+			flex-direction: column;
+			align-items: stretch;
+		}
+
+		.guitar-btn-cart,
+		.guitar-btn-back {
+			width: 100%;
+			text-align: center;
+		}
+	}
+</style>
+
 <div class="container py-4">
 	<div class="row justify-content-center">
-		<div class="col-lg-10">
-			<div class="row g-4 align-items-start" style="background:#faf9f7; border-radius:1.2em; box-shadow:0 2px 8px #bbb2; padding:2.5em 2em 2em 2em;">
-				<div class="col-md-5 text-center">
-					{% if guitarra.imagen %}
-						<img src="{{ guitarra.imagen.url }}" alt="{{ guitarra.marca }} {{ guitarra.modelo }}" style="max-width:100%; max-height:370px; border-radius:1em; box-shadow:0 4px 24px #b71c1c33; object-fit:contain; background:#fff;" />
-					{% else %}
-						<i class="fa-solid fa-guitar" style="font-size:7em; color:#bbb;"></i>
-					{% endif %}
-				</div>
-				<div class="col-md-7">
-					<h1 class="h3 mb-2" style="font-weight:700; letter-spacing:1px;">{{ guitarra.marca }} {{ guitarra.modelo }}</h1>
-					<div class="mb-3" style="font-size:1.1em; color:#555;">
-						<span style="display:inline-block; min-width:90px;"><strong>Marca:</strong></span> {{ guitarra.marca }}<br>
-						<span style="display:inline-block; min-width:90px;"><strong>Modelo:</strong></span> {{ guitarra.modelo }}<br>
-						<span style="display:inline-block; min-width:90px;"><strong>Tipo:</strong></span> {{ guitarra.tipo }}<br>
-						<span style="display:inline-block; min-width:90px;"><strong>Stock:</strong></span> {{ guitarra.stock }}
+		<div class="col-xl-11">
+			<div class="guitar-hero">
+				<div class="row g-4 align-items-stretch">
+					<div class="col-lg-7">
+						<div class="guitar-image-panel">
+							{% if guitarra.imagen %}
+								<img src="{{ guitarra.imagen.url }}" alt="{{ guitarra.marca }} {{ guitarra.modelo }}" />
+							{% else %}
+								<i class="fa-solid fa-guitar guitar-fallback-icon"></i>
+							{% endif %}
+						</div>
 					</div>
-					<div class="mb-3" style="color:#444;">
-						<strong>Descripción:</strong><br>
-						<span style="white-space:pre-line;">{{ guitarra.descripcion }}</span>
+
+					<div class="col-lg-5">
+						<div class="guitar-info-panel">
+							<div>
+								<h1 class="guitar-title">{{ guitarra.marca }} {{ guitarra.modelo }}</h1>
+								<p class="guitar-subtitle">Guitarra flamenca seleccionada para tu estudio y directo</p>
+							</div>
+
+							<div class="guitar-spec-grid">
+								<div class="guitar-spec-card">
+									<div class="guitar-spec-label">Marca</div>
+									<div class="guitar-spec-value">{{ guitarra.marca }}</div>
+								</div>
+								<div class="guitar-spec-card">
+									<div class="guitar-spec-label">Modelo</div>
+									<div class="guitar-spec-value">{{ guitarra.modelo }}</div>
+								</div>
+								<div class="guitar-spec-card">
+									<div class="guitar-spec-label">Tipo</div>
+									<div class="guitar-spec-value">{{ guitarra.tipo }}</div>
+								</div>
+								<div class="guitar-spec-card">
+									<div class="guitar-spec-label">Stock</div>
+									<div class="guitar-spec-value">{{ guitarra.stock }}</div>
+								</div>
+							</div>
+
+							<div class="guitar-price-box">
+								<span class="guitar-price-label">Precio final</span>
+								<span class="guitar-price-value">{{ guitarra.precio }} €</span>
+							</div>
+
+							<div class="guitar-desc-box">
+								<strong>Descripción</strong><br>
+								<span style="white-space:pre-line;">{{ guitarra.descripcion }}</span>
+							</div>
+
+							<p class="guitar-note">Para más información, puedes preguntar a nuestra IA Flamenca.</p>
+
+							<div class="guitar-actions">
+								<form method="post" action="{% url 'guitarra:add_to_cart' guitarra.pk %}">
+									{% csrf_token %}
+									<button type="submit" class="guitar-btn-cart">
+										<i class="fa-solid fa-cart-plus me-2"></i>Añadir al carrito
+									</button>
+								</form>
+								<a class="guitar-btn-back" href="{% url 'guitarra:guitarra_list' %}">
+									<i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando
+								</a>
+							</div>
+						</div>
 					</div>
-					<div class="d-flex align-items-center mb-4">
-						<span style="font-size:2em; font-weight:700; color:#7a2222; margin-right:1em;">{{ guitarra.precio }} €</span>
-					</div>
-					<div style="font-size:1em; color:#222; margin-bottom:1.1em;">
-						Para más información, puedes preguntar a nuestra IA Flamenca.
-					</div>
-					<form method="post" action="{% url 'guitarra:add_to_cart' guitarra.pk %}" class="mb-2">
-						{% csrf_token %}
-						<button type="submit" class="btn" style="background:#198754; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #19875422; padding:0.7em 2.2em; font-size:1.15em;">
-							<i class="fa-solid fa-cart-plus me-2"></i>Añadir al carrito
-						</button>
-					</form>
-					<a class="btn mt-2" style="background:#f5f5f5; color:#198754; font-weight:500; border-radius:0.7em; box-shadow:0 2px 8px #19875411; padding:0.5em 1.3em;" href="{% url 'guitarra:guitarra_list' %}"><i class="fa-solid fa-arrow-left me-2"></i>Seguir comprando</a>
 				</div>
 			</div>
 		</div>
