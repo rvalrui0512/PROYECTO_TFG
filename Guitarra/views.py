@@ -897,3 +897,8 @@ def order_detail_view(request, order_id):
     }
     return render(request, 'checkout/order_detail.html', context)
 
+
+def handler_404(request, exception=None):
+    """Renderiza la plantilla 404 personalizada."""
+    return render(request, '404.html', status=404)
+

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}404 - Página no encontrada{% endblock %}
+
+{% block content %}
+<section class="error-hero py-5">
+	<div class="error-container">
+		<div class="error-panel" style="grid-template-columns:1fr;">
+				<div class="error-content text-center" style="padding:1rem 0">
+					<h1 class="error-code">404</h1>
+					<h2 class="error-title">Página no encontrada</h2>
+					<p class="error-text">Lo sentimos, no hemos encontrado la página que buscas. Puede que se haya movido o que la dirección sea incorrecta.</p>
+
+					<div class="error-actions d-flex gap-3 justify-content-center flex-wrap">
+						<a href="/" class="btn btn-primary btn-lg btn-primary-custom"><i class="fas fa-home me-2"></i>Ir al inicio</a>
+					</div>
+				</div>
+			</div>
+	</div>
+
+	<footer class="error-footer text-center mt-4"></footer>
+
+	<style>
+		:root{--err-primary:#b71c1c;--err-accent:#6ec6ff}
+		.error-hero{display:flex;flex-direction:column;align-items:center;}
+		.error-container{width:100%;max-width:1100px;padding:2rem}
+		.error-panel{display:grid;grid-template-columns:220px 1fr;gap:2rem;align-items:center;background:linear-gradient(180deg,rgba(255,255,255,0.9),#fff);padding:2.2rem;border-radius:16px;box-shadow:0 12px 40px rgba(10,20,30,0.08);}
+		.error-visual{display:flex;align-items:center;justify-content:center}
+		.error-visual svg{width:160px;height:160px;opacity:0.92}
+		.error-code{font-family:'Poppins',system-ui,Arial;font-size:4.4rem;margin:0;color:var(--err-primary);font-weight:800;letter-spacing:1px}
+		.error-title{font-family:'Poppins',system-ui,Arial;font-size:1.6rem;margin:.2rem 0 0.6rem 0;font-weight:700}
+		.error-text{color:#55606a;max-width:640px;margin:0 auto 1.2rem;font-size:1rem}
+		.error-actions .btn-primary-custom{background:var(--err-primary);border:none;color:#fff;padding:.65rem 1.6rem;border-radius:.6rem;font-weight:600}
+		.error-actions .btn-outline-custom{border:2px solid var(--err-primary);color:var(--err-primary);padding:.6rem 1.45rem;border-radius:.6rem;font-weight:600}
+		.error-actions .btn-outline-custom:hover{background:var(--err-primary);color:#fff}
+
+		/* Subtle hover lift */
+		.error-panel:hover{transform:translateY(-2px);transition:transform .18s ease}
+
+		/* Dark mode adaptations (inherits base.dark-mode variables) */
+		body.dark-mode .error-panel{background:linear-gradient(180deg,#0f1728,#0b1320);box-shadow:0 12px 40px rgba(0,0,0,0.55)}
+		body.dark-mode .error-code{color:var(--err-accent)}
+		body.dark-mode .error-text{color:#9fb0c6}
+		body.dark-mode .error-actions .btn-outline-custom{border-color:var(--err-accent);color:var(--err-accent)}
+		body.dark-mode .error-actions .btn-primary-custom{background:var(--err-accent);color:#10202a}
+
+		@media (max-width:768px){
+			.error-panel{grid-template-columns:1fr;gap:1rem;padding:1.25rem}
+			.error-visual{order:2}
+			.error-content{order:1}
+			.error-code{font-size:3.2rem}
+		}
+	</style>
+</section>
+
+{% endblock %}
