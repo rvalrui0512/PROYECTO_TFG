@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Crear cuenta - MUNDO FLAMENCO{% endblock %}
+{% block title %}{% if object %}Editar usuario - MUNDO FLAMENCO{% else %}Crear cuenta - MUNDO FLAMENCO{% endif %}{% endblock %}
 {% block content %}
 <style>
     .helptext { display: none !important; }
@@ -428,8 +428,8 @@
         <!-- Encabezado -->
         <div class="register-header">
             <div class="register-logo">MUNDO FLAMENCO</div>
-            <h1 class="register-title">Crear cuenta</h1>
-            <p class="register-subtitle">Únete a nuestra comunidad flamenca</p>
+            <h1 class="register-title">{% if object %}Editar usuario{% else %}Crear cuenta{% endif %}</h1>
+            <p class="register-subtitle">{% if object %}Modifica los datos del usuario{% else %}Únete a nuestra comunidad flamenca{% endif %}</p>
         </div>
 
         <!-- Cuerpo del formulario -->
@@ -543,17 +543,27 @@
 
                 <!-- Botón de envío -->
                 <button type="submit" class="register-btn">
-                    <i class="fa-solid fa-user-plus" style="margin-right: 0.4em;"></i>Crear cuenta
+                    {% if object %}
+                        <i class="fa-solid fa-save" style="margin-right: 0.4em;"></i>Guardar
+                    {% else %}
+                        <i class="fa-solid fa-user-plus" style="margin-right: 0.4em;"></i>Crear cuenta
+                    {% endif %}
                 </button>
             </form>
         </div>
 
         <!-- Pie -->
         <div class="register-footer">
-            <div class="register-footer-text">¿Ya tienes cuenta?</div>
-            <a href="{% url 'login' %}" class="login-link-btn">
-                <i class="fa-solid fa-sign-in-alt" style="margin-right: 0.3em;"></i>Inicia sesión
-            </a>
+            {% if object %}
+                <a href="{% url 'guitarra:user_list' %}" class="login-link-btn" style="border-color:#6c6c6c; color:#333;">
+                    <i class="fa-solid fa-arrow-left" style="margin-right: 0.3em;"></i>Volver a usuarios
+                </a>
+            {% else %}
+                <div class="register-footer-text">¿Ya tienes cuenta?</div>
+                <a href="{% url 'login' %}" class="login-link-btn">
+                    <i class="fa-solid fa-sign-in-alt" style="margin-right: 0.3em;"></i>Inicia sesión
+                </a>
+            {% endif %}
         </div>
     </div>
 </div>
