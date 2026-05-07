@@ -1,31 +1,566 @@
 {% extends 'base.html' %}
+{% block title %}{{ clase.titulo }}{% endblock %}
 {% block content %}
-<h2>Detalle de la Clase</h2>
-<div class="card">
-    <div class="card-body">
-        <h4>{{ clase.titulo }}</h4>
-        <p><strong>Profesor:</strong> {{ clase.profesor.get_full_name|default:clase.profesor.username }}</p>
-        <p><strong>Alumno:</strong> {{ clase.alumno.get_full_name|default:clase.alumno.username }}</p>
-        <p><strong>Palo Flamenco:</strong> {{ clase.palo_flamenco }}</p>
-        <p><strong>Fecha y hora:</strong> {{ clase.fecha_inicio|date:'d/m/Y H:i' }} - {{ clase.fecha_fin|date:'d/m/Y H:i' }}</p>
-        <p><strong>Estado:</strong> {{ clase.get_estado_display }}</p>
-        <p><strong>Descripción:</strong> {{ clase.descripcion }}</p>
-        <hr>
-        {% if estado_videollamada == 'activa' %}
-            <a href="{{ jitsi_join_url }}" class="btn btn-success">Unirse a Jitsi Meet</a>
-            <div class="alert alert-success mt-3 mb-0">La clase está en horario y puedes entrar ahora.</div>
-        {% elif estado_videollamada == 'pendiente' %}
-            <div class="alert alert-info mt-2">La clase aún no ha empezado. Podrás unirte a partir de las {{ clase.fecha_inicio|date:'H:i' }}.</div>
-        {% elif estado_videollamada == 'cancelada' %}
-            <div class="alert alert-warning mt-2">Esta clase está cancelada y no tiene acceso a videollamada.</div>
-        {% else %}
-            <div class="alert alert-warning mt-2">Esta clase ya ha cumplido la hora. No puedes acceder a la videollamada.</div>
-        {% endif %}
+<style>
+    .clase-hero {
+        background: linear-gradient(145deg, #fff7f4 0%, #ffffff 50%, #f8fafc 100%);
+        border-radius: 1.3em;
+        box-shadow: 0 12px 40px rgba(28, 33, 45, 0.12);
+        border: 1px solid #f0e8e2;
+        padding: 1.4em;
+    }
+
+    body.dark-mode .clase-hero {
+        background: linear-gradient(145deg, #1f262f 0%, #252d3a 100%);
+        border-color: #303a4a;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    .clase-hero-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1em;
+        margin-bottom: 1.1em;
+    }
+
+    .clase-hero-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.8em;
+        font-weight: 800;
+        color: #1f2531;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .clase-hero-title {
+        color: #e7ecff;
+    }
+
+    .clase-hero-badges {
+        display: flex;
+        gap: 0.55em;
+        flex-wrap: wrap;
+        margin-top: 0.65em;
+    }
+
+    .clase-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35em;
+        border-radius: 999px;
+        padding: 0.45em 0.95em;
+        font-size: 0.82em;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        background: #fbeaea;
+        color: #8b1d1d;
+        border: 1px solid #f2d8d8;
+    }
+
+    .clase-pill.confirmed {
+        background: #d1fae5;
+        color: #065f46;
+        border-color: #a7f3d0;
+    }
+
+    .clase-pill.completed {
+        background: #dbeafe;
+        color: #0c4a6e;
+        border-color: #bae6fd;
+    }
+
+    .clase-pill.cancelled {
+        background: #fee2e2;
+        color: #7f1d1d;
+        border-color: #fecaca;
+    }
+
+    body.dark-mode .clase-pill {
+        background: rgba(183, 28, 28, 0.15);
+        color: #fca5a5;
+        border-color: rgba(183, 28, 28, 0.3);
+    }
+
+    body.dark-mode .clase-pill.confirmed {
+        background: rgba(16, 185, 129, 0.15);
+        color: #6ee7b7;
+        border-color: rgba(16, 185, 129, 0.3);
+    }
+
+    body.dark-mode .clase-pill.completed {
+        background: rgba(59, 130, 246, 0.15);
+        color: #93c5fd;
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    body.dark-mode .clase-pill.cancelled {
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .clase-back-btn {
+        background: #b71c1c;
+        color: #fff;
+        border-radius: 0.75em;
+        padding: 0.6em 1.05em;
+        font-size: 0.9em;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        box-shadow: 0 6px 16px rgba(183, 28, 28, 0.2);
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .clase-back-btn:hover {
+        background: #951414;
+        color: #fff;
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    body.dark-mode .clase-back-btn {
+        background: #6ec6ff;
+        color: #1c2430;
+        box-shadow: 0 6px 16px rgba(110, 198, 255, 0.2);
+    }
+
+    body.dark-mode .clase-back-btn:hover {
+        background: #8ad4ff;
+        color: #1c2430;
+    }
+
+    .clase-info-panel {
+        border-radius: 1.1em;
+        background: #ffffff;
+        border: 1px solid #eceff3;
+        box-shadow: 0 10px 28px rgba(20, 25, 35, 0.07);
+        padding: 1.3em;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9em;
+    }
+
+    body.dark-mode .clase-info-panel {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .clase-subtitle {
+        margin: 0;
+        color: #7c8491;
+        font-size: 0.95em;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .clase-subtitle {
+        color: #aeb8c9;
+    }
+
+    .clase-spec-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65em;
+        margin-top: 0.4em;
+    }
+
+    .clase-spec-card {
+        border: 1px solid #e8edf4;
+        background: #f9fbfe;
+        border-radius: 0.8em;
+        padding: 0.7em 0.8em;
+    }
+
+    body.dark-mode .clase-spec-card {
+        border-color: #3a4658;
+        background: #252d3a;
+    }
+
+    .clase-spec-label {
+        font-size: 0.76em;
+        font-weight: 700;
+        letter-spacing: 0.45px;
+        text-transform: uppercase;
+        color: #8a93a0;
+        margin-bottom: 0.25em;
+    }
+
+    .clase-spec-value {
+        font-size: 0.97em;
+        font-weight: 700;
+        color: #212936;
+    }
+
+    body.dark-mode .clase-spec-label {
+        color: #9eabc0;
+    }
+
+    body.dark-mode .clase-spec-value {
+        color: #e2eaf7;
+    }
+
+    .clase-desc-box {
+        border: 1px solid #e8edf4;
+        background: #f9fbfe;
+        border-radius: 0.9em;
+        padding: 0.85em 0.9em;
+        color: #39414d;
+        font-size: 0.97em;
+        line-height: 1.55;
+    }
+
+    body.dark-mode .clase-desc-box {
+        border-color: #3a4658;
+        background: #252d3a;
+        color: #d4deee;
+    }
+
+    .clase-status-message {
+        border-radius: 0.9em;
+        padding: 0.9em 1em;
+        font-size: 0.95em;
+        line-height: 1.5;
+        border-left: 4px solid;
+    }
+
+    .clase-status-message.success {
+        background: #f0fdf4;
+        border-color: #22c55e;
+        color: #15803d;
+    }
+
+    .clase-status-message.warning {
+        background: #fffbeb;
+        border-color: #f59e0b;
+        color: #92400e;
+    }
+
+    .clase-status-message.danger {
+        background: #fef2f2;
+        border-color: #ef4444;
+        color: #991b1b;
+    }
+
+    body.dark-mode .clase-status-message.success {
+        background: rgba(34, 197, 94, 0.12);
+        border-color: #4ade80;
+        color: #86efac;
+    }
+
+    body.dark-mode .clase-status-message.warning {
+        background: rgba(245, 158, 11, 0.12);
+        border-color: #fbbf24;
+        color: #fcd34d;
+    }
+
+    body.dark-mode .clase-status-message.danger {
+        background: rgba(239, 68, 68, 0.12);
+        border-color: #f87171;
+        color: #fca5a5;
+    }
+
+    .clase-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6em;
+        margin-top: auto;
+        padding-top: 0.6em;
+        border-top: 1px solid #e8edf4;
+    }
+
+    body.dark-mode .clase-actions {
+        border-top-color: #3a4658;
+    }
+
+    .clase-btn-join {
+        border: none;
+        border-radius: 0.8em;
+        padding: 0.72em 1.25em;
+        font-size: 1em;
+        font-weight: 700;
+        color: #fff;
+        background: linear-gradient(120deg, #b71c1c 0%, #8b1515 100%);
+        box-shadow: 0 8px 18px rgba(183, 28, 28, 0.26);
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .clase-btn-join:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 10px 20px rgba(183, 28, 28, 0.34);
+        text-decoration: none;
+        color: #fff;
+    }
+
+    .clase-btn-join.disabled {
+        background: #d1d5db;
+        color: #9ca3af;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        cursor: not-allowed;
+    }
+
+    .clase-btn-join.disabled:hover {
+        transform: none;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .clase-btn-edit {
+        border-radius: 0.8em;
+        padding: 0.65em 1.05em;
+        font-weight: 700;
+        color: #7a2222;
+        background: #f5eaea;
+        border: 1px solid #e8d8d8;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .clase-btn-edit:hover {
+        color: #5a1818;
+        background: #ead9d9;
+        text-decoration: none;
+    }
+
+    .clase-btn-delete {
+        border-radius: 0.8em;
+        padding: 0.65em 1.05em;
+        font-weight: 700;
+        color: #b71c1c;
+        background: #fbeaea;
+        border: 1px solid #f2d8d8;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .clase-btn-delete:hover {
+        color: #8b1515;
+        background: #f5d5d5;
+        text-decoration: none;
+    }
+
+    @media (max-width: 991px) {
+        .clase-hero-title {
+            font-size: 1.5em;
+        }
+
+        .clase-spec-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 575px) {
+        .clase-hero {
+            padding: 0.85em;
+        }
+
+        .clase-info-panel {
+            padding: 1em;
+        }
+
+        .clase-hero-head {
+            flex-direction: column;
+        }
+
+        .clase-hero-title {
+            font-size: 1.3em;
+        }
+
+        .clase-spec-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .clase-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .clase-btn-join,
+        .clase-btn-edit,
+        .clase-btn-delete {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-11">
+            <div class="clase-hero">
+                <div class="clase-hero-head">
+                    <div>
+                        <h1 class="clase-hero-title">{{ clase.titulo }}</h1>
+                        <p class="clase-subtitle">Clase privada de flamenco</p>
+                        <div class="clase-hero-badges">
+                            <span class="clase-pill {% if clase.estado == 'confirmada' %}confirmed{% elif clase.estado == 'realizada' %}completed{% elif clase.estado == 'cancelada' %}cancelled{% endif %}">
+                                <i class="fa-solid fa-circle-{% if clase.estado == 'pendiente' %}exclamation{% elif clase.estado == 'confirmada' %}check{% elif clase.estado == 'realizada' %}check{% elif clase.estado == 'cancelada' %}times{% endif %}"></i>
+                                {{ clase.get_estado_display|title }}
+                            </span>
+                        </div>
+                    </div>
+                    <a href="{% url 'guitarra:claseprivada_list' %}" class="clase-back-btn">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-7">
+                        <div class="clase-info-panel">
+                            <div>
+                                <h2 style="font-size: 1.2em; font-weight: 700; color: #1f2531; margin: 0 0 0.8em 0;">
+                                    <i class="fa-solid fa-info-circle me-2" style="color: #b71c1c;"></i> Información de la clase
+                                </h2>
+                            </div>
+
+                            <div class="clase-spec-grid">
+                                <div class="clase-spec-card">
+                                    <div class="clase-spec-label"><i class="fa-solid fa-user-tie me-1"></i> Profesor</div>
+                                    <div class="clase-spec-value">{{ clase.profesor.get_full_name|default:clase.profesor.username }}</div>
+                                </div>
+                                <div class="clase-spec-card">
+                                    <div class="clase-spec-label"><i class="fa-solid fa-user me-1"></i> Alumno</div>
+                                    <div class="clase-spec-value">{{ clase.alumno.get_full_name|default:clase.alumno.username }}</div>
+                                </div>
+                                <div class="clase-spec-card">
+                                    <div class="clase-spec-label"><i class="fa-solid fa-guitar me-1"></i> Palo Flamenco</div>
+                                    <div class="clase-spec-value">{{ clase.palo_flamenco|title }}</div>
+                                </div>
+                                <div class="clase-spec-card">
+                                    <div class="clase-spec-label"><i class="fa-solid fa-clock me-1"></i> Duración</div>
+                                    <div class="clase-spec-value">{{ clase.duracion|default:"N/A" }} min</div>
+                                </div>
+                            </div>
+
+                            <div style="background: linear-gradient(120deg, #fff5f5 0%, #fffbf0 100%); border: 1px solid #f0e8e2; border-radius: 0.9em; padding: 0.9em; margin-top: 0.5em;">
+                                <div style="font-size: 0.85em; font-weight: 700; color: #8a5a00; text-transform: uppercase; letter-spacing: 0.3px; margin-bottom: 0.4em;">
+                                    <i class="fa-solid fa-calendar me-1"></i> Fecha y horario
+                                </div>
+                                <div style="font-size: 1.1em; font-weight: 600; color: #212936;">
+                                    {{ clase.fecha_inicio|date:'d \d\e F \d\e Y' }}
+                                </div>
+                                <div style="font-size: 0.95em; color: #5f6368; margin-top: 0.3em;">
+                                    Inicio: <strong>{{ clase.fecha_inicio|date:'H:i' }}</strong> | Fin: <strong>{{ clase.fecha_fin|date:'H:i' }}</strong>
+                                </div>
+                            </div>
+
+                            {% if clase.descripcion %}
+                            <div>
+                                <div class="clase-desc-box">
+                                    <strong style="display: block; margin-bottom: 0.4em; font-size: 0.9em; text-transform: uppercase; color: #5f6368;">Descripción</strong>
+                                    <span style="white-space:pre-line;">{{ clase.descripcion }}</span>
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <!-- Status Message -->
+                            {% if estado_videollamada == 'activa' %}
+                            <div class="clase-status-message success">
+                                <i class="fa-solid fa-check-circle me-2"></i>
+                                <strong>¡La clase está activa!</strong> Puedes acceder a la videollamada ahora.
+                            </div>
+                            {% elif estado_videollamada == 'pendiente' %}
+                            <div class="clase-status-message warning">
+                                <i class="fa-solid fa-clock me-2"></i>
+                                La clase aún no ha comenzado. Podrás acceder a partir de las <strong>{{ clase.fecha_inicio|date:'H:i' }}</strong>.
+                            </div>
+                            {% elif estado_videollamada == 'cancelada' %}
+                            <div class="clase-status-message danger">
+                                <i class="fa-solid fa-ban me-2"></i>
+                                <strong>Clase cancelada.</strong> No hay acceso a videollamada.
+                            </div>
+                            {% else %}
+                            <div class="clase-status-message danger">
+                                <i class="fa-solid fa-times-circle me-2"></i>
+                                <strong>Videollamada finalizada.</strong> La clase ya ha terminado.
+                            </div>
+                            {% endif %}
+
+                            <div class="clase-actions">
+                                {% if estado_videollamada == 'activa' %}
+                                <a href="{{ jitsi_join_url }}" class="clase-btn-join">
+                                    <i class="fa-solid fa-video"></i> Entrar a la llamada
+                                </a>
+                                {% else %}
+                                <button type="button" class="clase-btn-join disabled" disabled>
+                                    <i class="fa-solid fa-video"></i> Entrar a la llamada
+                                </button>
+                                {% endif %}
+
+                                {% if user.is_staff or user.is_superuser %}
+                                <a class="clase-btn-edit" href="{% url 'guitarra:claseprivada_update' clase.pk %}">
+                                    <i class="fa-solid fa-pen"></i> Editar
+                                </a>
+                                <a class="clase-btn-delete" href="{% url 'guitarra:claseprivada_delete' clase.pk %}" data-delete-label="la clase '{{ clase.titulo }}'">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="clase-info-panel" style="background: linear-gradient(135deg, #fff9f7 0%, #fffbf0 100%); border-color: #f0e8e2; display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h3 style="font-size: 1.1em; font-weight: 700; color: #1f2531; margin: 0 0 1em 0;">
+                                    <i class="fa-solid fa-hourglass-end me-2" style="color: #b71c1c;"></i> Estado de la clase
+                                </h3>
+
+                                <div style="display: grid; gap: 0.7em;">
+                                    <!-- Estado Timeline -->
+                                    <div style="display: flex; align-items: center; gap: 1em; padding: 0.8em; background: #fff; border-radius: 0.7em; border: 1px solid #f0e8e2;">
+                                        <div style="width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 1.2em; color: #fff; {% if clase.estado == 'pendiente' %}background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%); color: #8a5a00;{% elif clase.estado == 'confirmada' %}background: linear-gradient(135deg, #10b981 0%, #34d399 100%);{% elif clase.estado == 'realizada' %}background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);{% else %}background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);{% endif %}">
+                                            {% if clase.estado == 'pendiente' %}P{% elif clase.estado == 'confirmada' %}C{% elif clase.estado == 'realizada' %}R{% else %}X{% endif %}
+                                        </div>
+                                        <div>
+                                            <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.2em;">Estado actual</div>
+                                            <div style="font-size: 1.05em; font-weight: 700; color: #212936;">{{ clase.get_estado_display|title }}</div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Información adicional -->
+                                    <div style="padding: 0.8em; background: #f9fbfe; border-radius: 0.7em; border: 1px solid #e8edf4;">
+                                        <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.3em;">
+                                            <i class="fa-solid fa-key me-1"></i> ID de clase
+                                        </div>
+                                        <div style="font-family: monospace; font-size: 0.9em; color: #212936; word-break: break-all;">{{ clase.pk }}</div>
+                                    </div>
+
+                                    <div style="padding: 0.8em; background: #f9fbfe; border-radius: 0.7em; border: 1px solid #e8edf4;">
+                                        <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.3em;">
+                                            <i class="fa-solid fa-video me-1"></i> Estado videollamada
+                                        </div>
+                                        <div style="display: inline-flex; align-items: center; gap: 0.4em; padding: 0.35em 0.65em; background: {% if estado_videollamada == 'activa' %}#d1fae5{% elif estado_videollamada == 'pendiente' %}#fffbeb{% elif estado_videollamada == 'cancelada' %}#fee2e2{% else %}#fee2e2{% endif %}; border-radius: 999px; font-size: 0.85em; font-weight: 700; color: {% if estado_videollamada == 'activa' %}#065f46{% elif estado_videollamada == 'pendiente' %}#92400e{% else %}#7f1d1d{% endif %};">
+                                            <i class="fa-solid fa-circle {% if estado_videollamada == 'activa' %}text-success{% elif estado_videollamada == 'pendiente' %}text-warning{% else %}text-danger{% endif %}" style="font-size: 0.65em;"></i>
+                                            {{ estado_videollamada|title }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-{% if user.is_staff or user.is_superuser %}
-    <a class="btn btn-xs btn-edit-dark mt-3" style="background:#f5eaea; color:#7a2222; font-weight:500; border-radius:0.5em; min-width:70px; font-size:0.92em; padding:0.25em 0.7em;" href="{% url 'guitarra:claseprivada_update' clase.pk %}"><i class="fa-solid fa-pen"></i> Editar</a>
-    <a class="btn btn-xs btn-delete-dark mt-3" style="background:#fbeaea; color:#b71c1c; font-weight:500; border-radius:0.5em; min-width:70px; font-size:0.92em; padding:0.25em 0.7em;" href="{% url 'guitarra:claseprivada_delete' clase.pk %}" data-delete-label="la clase '{{ clase.titulo }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
-{% endif %}
-<a href="{% url 'guitarra:claseprivada_list' %}" class="btn btn-secondary mt-3">Volver al listado</a>
 {% endblock %}

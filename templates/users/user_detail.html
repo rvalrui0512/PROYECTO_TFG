@@ -1,28 +1,511 @@
 {% extends 'base.html' %}
-{% block title %}Detalle usuario{% endblock %}
+{% block title %}{{ user.username }}{% endblock %}
 {% block content %}
-<div class="card p-4" style="max-width:540px;margin:0 auto 2em auto;border-radius:1.2em;background:#faf9f7;box-shadow:0 2px 8px #bbb2;">
-    <div class="d-flex align-items-center mb-3">
-        {% if user.profile and user.profile.avatar %}
-            <img src="{{ user.profile.avatar.url }}" alt="Avatar" class="rounded-circle" style="width:48px;height:48px;object-fit:cover;margin-right:0.7em;">
-        {% else %}
-            <i class="fa-solid fa-user" style="font-size:2.2em;color:#888;margin-right:0.7em;"></i>
-        {% endif %}
-        <h1 class="h4 mb-0" style="font-weight:700;letter-spacing:1px;">{{ user.username }}</h1>
-    </div>
-    <ul class="list-unstyled mb-4">
-        <li class="mb-2"><i class="fa-solid fa-envelope" style="color:#888;margin-right:0.5em;"></i><strong>Email:</strong> {{ user.email }}</li>
-        {% if user.profile %}
-            <li class="mb-2"><i class="fa-solid fa-id-card" style="color:#888;margin-right:0.5em;"></i><strong>Nombre visible:</strong> {{ user.profile.display_name }}</li>
-            <li class="mb-2"><i class="fa-solid fa-flag" style="color:#888;margin-right:0.5em;"></i><strong>País:</strong> {{ user.profile.pais }}</li>
-            <li class="mb-2"><i class="fa-solid fa-book" style="color:#888;margin-right:0.5em;"></i><strong>Biografía:</strong> <span style="white-space:pre-line">{{ user.profile.bio|default:'-' }}</span></li>
-        {% endif %}
-    </ul>
-    <a class="btn" style="background:#e7bcbc; color:#7a2222; font-weight:500; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c11; padding:0.5em 1.3em;" href="{% url 'guitarra:user_list' %}"><i class="fa-solid fa-arrow-left me-2"></i>Volver</a>
+<style>
+    .user-hero {
+        background: linear-gradient(145deg, #fff7f4 0%, #ffffff 50%, #f8fafc 100%);
+        border-radius: 1.3em;
+        box-shadow: 0 12px 40px rgba(28, 33, 45, 0.12);
+        border: 1px solid #f0e8e2;
+        padding: 1.4em;
+    }
 
+    body.dark-mode .user-hero {
+        background: linear-gradient(145deg, #1f262f 0%, #252d3a 100%);
+        border-color: #303a4a;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.4);
+    }
+
+    .user-hero-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1em;
+        margin-bottom: 1.1em;
+    }
+
+    .user-hero-title {
+        margin: 0;
+        font-family: 'Montserrat', Arial, sans-serif;
+        font-size: 1.8em;
+        font-weight: 800;
+        color: #1f2531;
+        line-height: 1.2;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .user-hero-title {
+        color: #e7ecff;
+    }
+
+    .user-hero-badges {
+        display: flex;
+        gap: 0.55em;
+        flex-wrap: wrap;
+        margin-top: 0.65em;
+    }
+
+    .user-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35em;
+        border-radius: 999px;
+        padding: 0.45em 0.95em;
+        font-size: 0.82em;
+        font-weight: 700;
+        letter-spacing: 0.3px;
+        text-transform: uppercase;
+    }
+
+    .user-pill.superuser {
+        background: linear-gradient(120deg, #b71c1c 0%, #7a2222 100%);
+        color: #fff;
+        border: 1px solid rgba(183, 28, 28, 0.4);
+        box-shadow: 0 2px 8px rgba(183, 28, 28, 0.25);
+    }
+
+    .user-pill.staff {
+        background: linear-gradient(120deg, #f59e0b 0%, #d97706 100%);
+        color: #fff;
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+
+    .user-pill.user {
+        background: #dbeafe;
+        color: #0c4a6e;
+        border: 1px solid #bae6fd;
+    }
+
+    body.dark-mode .user-pill.superuser {
+        background: rgba(183, 28, 28, 0.15);
+        color: #fca5a5;
+        border-color: rgba(183, 28, 28, 0.3);
+    }
+
+    body.dark-mode .user-pill.staff {
+        background: rgba(245, 158, 11, 0.15);
+        color: #fcd34d;
+        border-color: rgba(245, 158, 11, 0.3);
+    }
+
+    body.dark-mode .user-pill.user {
+        background: rgba(59, 130, 246, 0.15);
+        color: #93c5fd;
+        border-color: rgba(59, 130, 246, 0.3);
+    }
+
+    .user-back-btn {
+        background: #b71c1c;
+        color: #fff;
+        border-radius: 0.75em;
+        padding: 0.6em 1.05em;
+        font-size: 0.9em;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        box-shadow: 0 6px 16px rgba(183, 28, 28, 0.2);
+        transition: all 0.2s ease;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .user-back-btn:hover {
+        background: #951414;
+        color: #fff;
+        transform: translateY(-1px);
+        text-decoration: none;
+    }
+
+    body.dark-mode .user-back-btn {
+        background: #6ec6ff;
+        color: #1c2430;
+        box-shadow: 0 6px 16px rgba(110, 198, 255, 0.2);
+    }
+
+    body.dark-mode .user-back-btn:hover {
+        background: #8ad4ff;
+        color: #1c2430;
+    }
+
+    .user-info-panel {
+        border-radius: 1.1em;
+        background: #ffffff;
+        border: 1px solid #eceff3;
+        box-shadow: 0 10px 28px rgba(20, 25, 35, 0.07);
+        padding: 1.3em;
+        display: flex;
+        flex-direction: column;
+        gap: 0.9em;
+    }
+
+    body.dark-mode .user-info-panel {
+        background: #1f262f;
+        border-color: #333d4d;
+        box-shadow: 0 10px 28px rgba(0, 0, 0, 0.34);
+    }
+
+    .user-avatar-large {
+        width: 140px;
+        height: 140px;
+        border-radius: 50%;
+        margin: 0 auto 1.2em;
+        overflow: hidden;
+        background: linear-gradient(135deg, #f7f7f9 0%, #eceff3 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 4px solid #fff;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+
+    .user-avatar-large img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .user-avatar-fallback-large {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5em;
+        color: #b71c1c;
+    }
+
+    body.dark-mode .user-avatar-large {
+        border-color: #333d4d;
+    }
+
+    .user-subtitle {
+        margin: 0;
+        color: #7c8491;
+        font-size: 0.95em;
+        font-weight: 600;
+        letter-spacing: 0.2px;
+    }
+
+    body.dark-mode .user-subtitle {
+        color: #aeb8c9;
+    }
+
+    .user-spec-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.65em;
+        margin-top: 0.4em;
+    }
+
+    .user-spec-card {
+        border: 1px solid #e8edf4;
+        background: #f9fbfe;
+        border-radius: 0.8em;
+        padding: 0.7em 0.8em;
+    }
+
+    body.dark-mode .user-spec-card {
+        border-color: #3a4658;
+        background: #252d3a;
+    }
+
+    .user-spec-label {
+        font-size: 0.76em;
+        font-weight: 700;
+        letter-spacing: 0.45px;
+        text-transform: uppercase;
+        color: #8a93a0;
+        margin-bottom: 0.25em;
+    }
+
+    .user-spec-value {
+        font-size: 0.97em;
+        font-weight: 700;
+        color: #212936;
+        word-break: break-word;
+    }
+
+    body.dark-mode .user-spec-label {
+        color: #9eabc0;
+    }
+
+    body.dark-mode .user-spec-value {
+        color: #e2eaf7;
+    }
+
+    .user-bio-box {
+        border: 1px solid #e8edf4;
+        background: #f9fbfe;
+        border-radius: 0.9em;
+        padding: 0.85em 0.9em;
+        color: #39414d;
+        font-size: 0.97em;
+        line-height: 1.55;
+    }
+
+    body.dark-mode .user-bio-box {
+        border-color: #3a4658;
+        background: #252d3a;
+        color: #d4deee;
+    }
+
+    .user-actions {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.6em;
+        margin-top: auto;
+        padding-top: 0.6em;
+        border-top: 1px solid #e8edf4;
+    }
+
+    body.dark-mode .user-actions {
+        border-top-color: #3a4658;
+    }
+
+    .user-btn-edit {
+        border-radius: 0.8em;
+        padding: 0.65em 1.05em;
+        font-weight: 700;
+        color: #7a2222;
+        background: #f5eaea;
+        border: 1px solid #e8d8d8;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .user-btn-edit:hover {
+        color: #5a1818;
+        background: #ead9d9;
+        text-decoration: none;
+    }
+
+    .user-btn-delete {
+        border-radius: 0.8em;
+        padding: 0.65em 1.05em;
+        font-weight: 700;
+        color: #b71c1c;
+        background: #fbeaea;
+        border: 1px solid #f2d8d8;
+        text-decoration: none;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5em;
+    }
+
+    .user-btn-delete:hover {
+        color: #8b1515;
+        background: #f5d5d5;
+        text-decoration: none;
+    }
+
+    @media (max-width: 991px) {
+        .user-hero-title {
+            font-size: 1.5em;
+        }
+
+        .user-spec-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+    }
+
+    @media (max-width: 575px) {
+        .user-hero {
+            padding: 0.85em;
+        }
+
+        .user-info-panel {
+            padding: 1em;
+        }
+
+        .user-hero-head {
+            flex-direction: column;
+        }
+
+        .user-hero-title {
+            font-size: 1.3em;
+        }
+
+        .user-spec-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .user-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .user-btn-edit,
+        .user-btn-delete {
+            width: 100%;
+            text-align: center;
+            justify-content: center;
+        }
+    }
+</style>
+
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-xl-11">
+            <div class="user-hero">
+                <div class="user-hero-head">
+                    <div>
+                        <h1 class="user-hero-title">{{ user.username }}</h1>
+                        <p class="user-subtitle">Perfil de usuario</p>
+                        <div class="user-hero-badges">
+                            {% if user.is_superuser %}
+                                <span class="user-pill superuser">
+                                    <i class="fa-solid fa-crown"></i> Superuser
+                                </span>
+                            {% elif user.is_staff %}
+                                <span class="user-pill staff">
+                                    <i class="fa-solid fa-shield"></i> Staff
+                                </span>
+                            {% else %}
+                                <span class="user-pill user">
+                                    <i class="fa-solid fa-user"></i> Usuario
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <a href="{% url 'guitarra:user_list' %}" class="user-back-btn">
+                        <i class="fa-solid fa-arrow-left"></i> Volver
+                    </a>
+                </div>
+
+                <div class="row g-4 align-items-stretch">
+                    <div class="col-lg-7">
+                        <div class="user-info-panel">
+                            <div>
+                                <h2 style="font-size: 1.2em; font-weight: 700; color: #1f2531; margin: 0 0 0.8em 0;">
+                                    <i class="fa-solid fa-info-circle me-2" style="color: #b71c1c;"></i> Información de cuenta
+                                </h2>
+                            </div>
+
+                            <div class="user-spec-grid">
+                                <div class="user-spec-card">
+                                    <div class="user-spec-label"><i class="fa-solid fa-at me-1"></i> Usuario</div>
+                                    <div class="user-spec-value">{{ user.username }}</div>
+                                </div>
+                                <div class="user-spec-card">
+                                    <div class="user-spec-label"><i class="fa-solid fa-envelope me-1"></i> Email</div>
+                                    <div class="user-spec-value">{{ user.email }}</div>
+                                </div>
+                                {% if user.first_name %}
+                                <div class="user-spec-card">
+                                    <div class="user-spec-label"><i class="fa-solid fa-person me-1"></i> Nombre</div>
+                                    <div class="user-spec-value">{{ user.first_name }}</div>
+                                </div>
+                                {% endif %}
+                                {% if user.last_name %}
+                                <div class="user-spec-card">
+                                    <div class="user-spec-label"><i class="fa-solid fa-person me-1"></i> Apellido</div>
+                                    <div class="user-spec-value">{{ user.last_name }}</div>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            {% if user.profile %}
+                            <div style="margin-top: 0.5em;">
+                                <h3 style="font-size: 1em; font-weight: 700; color: #1f2531; margin: 0 0 0.8em 0;">
+                                    <i class="fa-solid fa-id-card me-2" style="color: #b71c1c;"></i> Perfil
+                                </h3>
+
+                                <div class="user-spec-grid">
+                                    <div class="user-spec-card" style="grid-column: 1 / -1;">
+                                        <div class="user-spec-label"><i class="fa-solid fa-user-tag me-1"></i> Nombre visible</div>
+                                        <div class="user-spec-value">{{ user.profile.display_name|default:"No especificado" }}</div>
+                                    </div>
+                                    <div class="user-spec-card">
+                                        <div class="user-spec-label"><i class="fa-solid fa-flag me-1"></i> País</div>
+                                        <div class="user-spec-value">{{ user.profile.pais|default:"No especificado" }}</div>
+                                    </div>
+                                </div>
+
+                                {% if user.profile.bio %}
+                                <div style="margin-top: 0.65em;">
+                                    <div class="user-bio-box">
+                                        <strong style="display: block; margin-bottom: 0.4em; font-size: 0.9em; text-transform: uppercase; color: #5f6368;">Biografía</strong>
+                                        <span style="white-space:pre-line;">{{ user.profile.bio }}</span>
+                                    </div>
+                                </div>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+
+                            <div class="user-actions">
+                                <a class="user-btn-edit" href="{% url 'guitarra:user_update' user.pk %}">
+                                    <i class="fa-solid fa-pen"></i> Editar
+                                </a>
+                                {% if request.user.is_staff or request.user.is_superuser %}
+                                <a class="user-btn-delete" href="{% url 'guitarra:user_delete' user.pk %}" data-delete-label="el usuario '{{ user.username }}'">
+                                    <i class="fa-solid fa-trash"></i> Eliminar
+                                </a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-5">
+                        <div class="user-info-panel" style="background: linear-gradient(135deg, #fff9f7 0%, #fffbf0 100%); border-color: #f0e8e2; display: flex; flex-direction: column; justify-content: space-between; align-items: center;">
+                            <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+                                <div class="user-avatar-large">
+                                    {% if user.profile and user.profile.avatar %}
+                                        <img src="{{ user.profile.avatar.url }}" alt="Avatar de {{ user.username }}" />
+                                    {% else %}
+                                        <div class="user-avatar-fallback-large">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                    {% endif %}
+                                </div>
+
+                                <h3 style="font-size: 1.2em; font-weight: 700; color: #1f2531; margin: 0 0 1.2em 0; text-align: center;">
+                                    {{ user.username }}
+                                </h3>
+
+                                <div style="display: grid; gap: 0.7em; width: 100%;">
+                                    <!-- Estado de la cuenta -->
+                                    <div style="padding: 0.9em; background: #fff; border-radius: 0.7em; border: 1px solid #f0e8e2; text-align: center;">
+                                        <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.5em;">
+                                            <i class="fa-solid fa-circle-check me-1"></i> Estado de cuenta
+                                        </div>
+                                        <div style="display: inline-flex; align-items: center; gap: 0.4em; padding: 0.35em 0.65em; background: #d1fae5; border-radius: 999px; font-size: 0.85em; font-weight: 700; color: #065f46;">
+                                            <i class="fa-solid fa-circle text-success" style="font-size: 0.65em;"></i>
+                                            Activo
+                                        </div>
+                                    </div>
+
+                                    <!-- Información adicional -->
+                                    <div style="padding: 0.9em; background: #f9fbfe; border-radius: 0.7em; border: 1px solid #e8edf4;">
+                                        <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.4em;">
+                                            <i class="fa-solid fa-id me-1"></i> ID de usuario
+                                        </div>
+                                        <div style="font-family: monospace; font-size: 0.9em; color: #212936; word-break: break-all;">{{ user.pk }}</div>
+                                    </div>
+
+                                    <div style="padding: 0.9em; background: #f9fbfe; border-radius: 0.7em; border: 1px solid #e8edf4;">
+                                        <div style="font-size: 0.85em; color: #8a93a0; text-transform: uppercase; font-weight: 700; letter-spacing: 0.3px; margin-bottom: 0.4em;">
+                                            <i class="fa-solid fa-calendar me-1"></i> Miembro desde
+                                        </div>
+                                        <div style="font-size: 0.95em; color: #212936; font-weight: 600;">
+                                            {{ user.date_joined|date:'d \d\e F \d\e Y' }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<a class="btn btn-secondary mt-4" href="{% url 'guitarra:user_list' %}">Volver</a>
-{% if request.user.is_staff or request.user.is_superuser %}
-<a class="btn btn-danger mt-3" href="{% url 'guitarra:user_delete' user.pk %}" data-delete-label="el usuario '{{ user.username }}'">Eliminar usuario</a>
-{% endif %}
 {% endblock %}
