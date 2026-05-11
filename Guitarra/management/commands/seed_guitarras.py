@@ -32,11 +32,14 @@ class Command(BaseCommand):
             if Guitarra.objects.filter(marca=marca, modelo=modelo, precio=precio).exists():
                 self.stdout.write(self.style.WARNING(f'Ya existe: {marca} {modelo} {precio}'))
                 continue
+            color_value = (color.capitalize() if color else 'Clara')
+            if color_value not in dict(Guitarra.COLOR_CHOICES):
+                color_value = 'Clara'
             guitarra = Guitarra(
                 marca=marca,
                 modelo=modelo,
-                tipo='Clásica',  # Puedes ajustar esto si tienes lógica para el tipo
-                descripcion=f'{marca} {modelo} {color}'.strip(),
+                color=color_value,
+                descripcion=f'{marca} {modelo} {color_value}'.strip(),
                 precio=precio,
                 stock=1,
                 imagen=f'guitarras/{archivo}'

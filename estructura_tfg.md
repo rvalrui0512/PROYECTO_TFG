@@ -25,7 +25,7 @@ Este documento resume el estado actual del proyecto web de guitarra flamenca bas
 - `ClasePrivada`: reserva de clase con `profesor`, `alumno`, `titulo`, `descripcion`, `palo_flamenco`, `fecha_inicio`, `fecha_fin` y `estado`.
 
 ### 1.5. Catálogo de guitarras
-- `Guitarra`: catálogo con `marca`, `modelo`, `tipo`, `descripcion`, `precio`, `stock` e `imagen`.
+- `Guitarra`: catálogo con `marca`, `modelo`, `color`, `descripcion`, `precio`, `stock` e `imagen`.
 
 ### 1.6. IA y contenido flamenco
 - `ArticuloFlamenco`: artículos informativos por categoría.
@@ -72,7 +72,7 @@ Panel administrativo para gestionar usuarios, perfiles, vídeos, comentarios, cl
 - Avisos automáticos al crear o modificar clases privadas.
 
 ### 4.4. Sección guitarras
-- Listado con filtros por modelo, tipo y precio.
+- Listado con filtros por modelo, color y precio.
 - Detalle de guitarra.
 - Carrito de compra simulado con sesión.
 

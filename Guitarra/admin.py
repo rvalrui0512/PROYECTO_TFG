@@ -125,13 +125,13 @@ class ClasePrivadaAdmin(admin.ModelAdmin):
 
 @admin.register(Guitarra)
 class GuitarraAdmin(admin.ModelAdmin):
-    list_display = ('marca', 'tipo', 'modelo', 'precio', 'stock')
-    search_fields = ('marca', 'tipo', 'modelo', 'precio')
-    list_filter = ('marca', 'tipo', 'precio')
+    list_display = ('marca', 'color', 'modelo', 'precio', 'stock')
+    search_fields = ('marca', 'color', 'modelo', 'precio')
+    list_filter = ('marca', 'color', 'precio')
 
     fieldsets = [
         ('Guitarra', {
-            'fields': ['marca', 'tipo', 'modelo', 'precio', 'stock', 'descripcion', 'imagen'],
+            'fields': ['marca', 'color', 'modelo', 'precio', 'stock', 'descripcion', 'imagen'],
         })
     ]
 

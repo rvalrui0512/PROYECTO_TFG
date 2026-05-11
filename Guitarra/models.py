@@ -216,24 +216,24 @@ class ClasePrivada(models.Model):
 
 # Catalogo de guitarras
 class Guitarra(models.Model):
-
-    TIPO_CHOICES = [
-        ('Acústica', 'Acústica'),
-        ('Eléctrica', 'Eléctrica'),
-        ('Clásica', 'Clásica'),
-        ('Flamenca', 'Flamenca'),
+    
+    COLOR_CHOICES = [
+        ('Clara', 'Clara'),
+        ('Oscura', 'Oscura'),
+        ('Roja', 'Roja'),
+        ('Naranja', 'Naranja'),
     ]
 
     marca = models.CharField(max_length=100)
     modelo = models.CharField(max_length=100)
-    tipo = models.CharField(max_length=20, choices=TIPO_CHOICES)
+    color = models.CharField(max_length=20, choices=COLOR_CHOICES, default='Clara')
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.PositiveIntegerField(default=0)
     imagen = models.ImageField(upload_to='guitarras/', blank=True, null=True)
 
     def __str__(self):
-        return f"{self.marca} {self.modelo} | Tipo: {self.tipo} | Precio: ${self.precio}"
+        return f"{self.marca} {self.modelo} | Color: {self.color} | Precio: ${self.precio}"
 
     class Meta:
         verbose_name = 'Guitarra'

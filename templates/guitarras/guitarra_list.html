@@ -25,11 +25,11 @@
                 </select>
             </div>
             <div class="mb-3">
-                <label for="tipo" class="form-label">Tipo</label>
-                <select id="tipo" name="tipo" class="form-select">
+                <label for="color" class="form-label">Color</label>
+                <select id="color" name="color" class="form-select">
                     <option value="">Todos</option>
-                    {% for key, value in tipos %}
-                        <option value="{{ key }}" {% if request.GET.tipo == key %}selected{% endif %}>{{ value }}</option>
+                    {% for key, value in colores %}
+                        <option value="{{ key }}" {% if request.GET.color == key %}selected{% endif %}>{{ value }}</option>
                     {% endfor %}
                 </select>
             </div>
@@ -66,7 +66,7 @@
                         {% endif %}
                     </div>
                     <div class="catalogo-card-title">{{ g.marca }} {{ g.modelo }}</div>
-                    <div class="catalogo-card-desc">{{ g.tipo }}<br>Precio: {{ g.precio }}€</div>
+                    <div class="catalogo-card-desc">{{ g.color }}<br>Precio: {{ g.precio }}€</div>
                 </a>
                 <div class="catalogo-card-actions" style="margin-top:1.2em; justify-content:center; gap:0.3em;">
                     {% if request.user.is_staff or request.user.is_superuser %}
