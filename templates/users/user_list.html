@@ -228,7 +228,7 @@
 </style>
 
 <div class="user-list-header">
-    <h1 class="h3 mb-0"><i class="fa-solid fa-users me-2"></i> Usuarios</h1>
+    <h1 class="h3 section-display-title"><i class="fa-solid fa-users"></i> Usuarios</h1>
     {% if request.user.is_staff or request.user.is_superuser %}
     <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:user_create' %}"><i class="fa-solid fa-plus me-1"></i> Nuevo usuario</a>
     {% endif %}

@@ -404,7 +404,7 @@
 </style>
 
 <section class="clases-header">
-    <h1 class="h3 mb-0"><i class="fa-solid fa-phone-volume me-2"></i>Clases</h1>
+    <h1 class="h3 section-display-title"><i class="fa-solid fa-phone-volume"></i> Clases</h1>
     {% if user.is_staff or user.is_superuser %}
         <a class="btn" style="background:#b71c1c; color:#fff; font-weight:600; border-radius:0.7em; box-shadow:0 2px 8px #b71c1c22; padding:0.5em 1.3em;" href="{% url 'guitarra:claseprivada_create' %}"><i class="fa-solid fa-plus me-1"></i> Nueva clase</a>
     {% endif %}
