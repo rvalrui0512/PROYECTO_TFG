@@ -11,7 +11,7 @@ from .views import *
 app_name = 'guitarra'
 
 urlpatterns = [
-    path('', VideoListView.as_view(), name='home'),
+    path('', HomeView.as_view(), name='home'),
     path('usuarios/', UserListView.as_view(), name='user_list'),
     path('usuarios/nuevo/', UserCreateView.as_view(), name='user_create'),
     path('usuarios/<int:pk>/', UserDetailView.as_view(), name='user_detail'),

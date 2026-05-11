@@ -165,6 +165,7 @@ from .models import Profile, PaloFlamenco, Video, Like, Comentario, ChatRoom, Ch
 from django.contrib.auth import get_user_model
 User = get_user_model()
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.views.generic import TemplateView
 from django.urls import reverse_lazy
 from .forms import RegistroUsuarioForm, ProfileForm, ClasePrivadaForm, VideoForm
 
@@ -344,6 +345,20 @@ class VideoListView(LoginRequiredMixin, ListView):
         # Palos flamencos para el filtro
         from .models import PaloFlamenco
         context['palos'] = [ (k, v) for k, v in PaloFlamenco.NOMBRE_CHOICES ]
+        return context
+
+
+class HomeView(TemplateView):
+    template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        # Características principales mostradas en la página de inicio
+        context['features'] = [
+            {'title': 'Catálogo de guitarras', 'desc': 'Consulta nuestros modelos, filtra por color y compara especificaciones.', 'url': reverse_lazy('guitarra:guitarra_list')},
+            {'title': 'Clases privadas', 'desc': 'Reserva clases online con profesores especializados en flamenco.', 'url': reverse_lazy('guitarra:claseprivada_list')},
+            {'title': 'Biblioteca de vídeos', 'desc': 'Aprende técnicas y palos con vídeos seleccionados por nivel.', 'url': reverse_lazy('guitarra:video_list')},
+        ]
         return context
 
 class VideoDetailView(LoginRequiredMixin, DetailView):
