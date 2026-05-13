@@ -50,6 +50,63 @@ def claseprivada_videollamada(request, pk):
         'return_url': return_url,
     }
     return render(request, 'clases/videollamada.html', context)
+
+
+def video_stream(request, pk):
+    """Serve video files with HTTP Range support so the browser can seek freely.
+
+    Usage: wire this view to a URL and use it as the <source> for the <video> tag.
+    """
+    import os
+    import mimetypes
+    import re
+    from django.http import StreamingHttpResponse, FileResponse, Http404
+
+    video = get_object_or_404(Video, pk=pk)
+    if not video.archivo:
+        raise Http404("No hay archivo de vídeo asociado.")
+
+    file_path = video.archivo.path
+    if not os.path.exists(file_path):
+        raise Http404("Archivo no encontrado.")
+
+    file_size = os.path.getsize(file_path)
+    content_type = mimetypes.guess_type(file_path)[0] or 'application/octet-stream'
+
+    range_header = request.META.get('HTTP_RANGE', '') or request.headers.get('Range', '')
+    range_match = re.match(r'bytes=(\d+)-(\d*)', range_header) if range_header else None
+
+    if range_match:
+        start = int(range_match.group(1))
+        end = range_match.group(2)
+        end = int(end) if end else file_size - 1
+        if end >= file_size:
+            end = file_size - 1
+        length = end - start + 1
+
+        def stream_range(path, offset, length, chunk_size=8192):
+            with open(path, 'rb') as f:
+                f.seek(offset)
+                remaining = length
+                while remaining > 0:
+                    read_size = min(chunk_size, remaining)
+                    data = f.read(read_size)
+                    if not data:
+                        break
+                    remaining -= len(data)
+                    yield data
+
+        resp = StreamingHttpResponse(stream_range(file_path, start, length), status=206, content_type=content_type)
+        resp['Content-Range'] = f'bytes {start}-{end}/{file_size}'
+        resp['Accept-Ranges'] = 'bytes'
+        resp['Content-Length'] = str(length)
+        return resp
+    else:
+        # No range requested — return full file with Accept-Ranges header
+        response = FileResponse(open(file_path, 'rb'), content_type=content_type)
+        response['Content-Length'] = str(file_size)
+        response['Accept-Ranges'] = 'bytes'
+        return response
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .mixins import AdminRequiredLoginMixin, OwnerOrAdminRequiredMixin
 from django.views.generic import ListView
@@ -391,8 +448,16 @@ class VideoDetailView(LoginRequiredMixin, DetailView):
             comentario.usuario = request.user
             comentario.video = self.object
             comentario.save()
-            # Redirige al ancla de comentarios para mantener el scroll
-            return redirect(f"{request.path}#comentarios-lista")
+            # Guardar tiempo de vídeo (si se envía) y redirigir, preservando posición
+            video_time = request.POST.get('video_time', '')
+            try:
+                t = int(float(video_time))
+            except Exception:
+                t = None
+            if t is not None:
+                return redirect(f"{request.path}?t={t}#comentarios-lista")
+            else:
+                return redirect(f"{request.path}#comentarios-lista")
         # Si hay error, mostrar el formulario con errores
         context = self.get_context_data(comentario_form=comentario_form)
         return self.render_to_response(context)

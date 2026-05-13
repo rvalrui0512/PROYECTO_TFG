@@ -21,6 +21,7 @@ urlpatterns = [
     path('videos/', VideoListView.as_view(), name='video_list'),
     path('videos/nuevo/', VideoCreateView.as_view(), name='video_create'),
     path('videos/<int:pk>/', VideoDetailView.as_view(), name='video_detail'),
+    path('videos/<int:pk>/stream/', video_stream, name='video_stream'),
     path('videos/<int:pk>/editar/', VideoUpdateView.as_view(), name='video_update'),
     path('videos/<int:pk>/eliminar/', VideoDeleteView.as_view(), name='video_delete'),
     path('videos/<int:pk>/toggle-like/', toggle_like, name='video_toggle_like'),

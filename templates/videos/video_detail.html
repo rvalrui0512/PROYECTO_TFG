@@ -427,8 +427,8 @@
 
                 <div class="ratio ratio-16x9 video-player-wrapper" style="min-height: 540px;">
                     {% if video.archivo %}
-                        <video id="main-video" controls>
-                            <source src="{{ video.archivo.url }}" type="video/mp4">
+                        <video id="main-video" controls preload="metadata">
+                            <source src="{% url 'guitarra:video_stream' video.pk %}" type="video/mp4">
                             Tu navegador no soporta la reproducción de video.
                         </video>
                     {% endif %}
@@ -482,8 +482,9 @@
 
                 <div class="comments-foot">
                     {% if user.is_authenticated %}
-                        <form method="post" action="" class="comment-form">
+                        <form method="post" action="" class="comment-form" id="commentForm">
                             {% csrf_token %}
+                            <input type="hidden" name="video_time" id="video_time_input" value="">
                             <div class="comment-input-wrap">
                                 {{ comentario_form.texto }}
                                 {% if comentario_form.texto.errors %}
@@ -565,6 +566,28 @@
                         });
                     });
                 })();
+            </script>
+
+            <script>
+            document.addEventListener('DOMContentLoaded', function(){
+                var video = document.getElementById('main-video');
+                function getParam(name){ try{ return new URL(window.location.href).searchParams.get(name); }catch(e){ return null; } }
+                var tparam = getParam('t');
+                if(video && tparam){
+                    var t = Number(tparam);
+                    if(!isNaN(t)){
+                        if(video.readyState >= 1){ try{ video.currentTime = t; }catch(e){ console.warn('seek restore failed', e); } }
+                        else { video.addEventListener('loadedmetadata', function(){ try{ video.currentTime = t; }catch(e){} }); }
+                    }
+                }
+                var form = document.getElementById('commentForm');
+                if(form && video){
+                    form.addEventListener('submit', function(){
+                        var input = document.getElementById('video_time_input');
+                        if(input){ try{ input.value = Math.floor(video.currentTime); }catch(e){ input.value = ''; } }
+                    });
+                }
+            });
             </script>
         {% endblock %}
         {% load static %}
