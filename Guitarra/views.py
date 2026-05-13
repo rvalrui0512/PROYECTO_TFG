@@ -117,7 +117,7 @@ from django.template.loader import render_to_string
 from django.views import View
 from django.utils import timezone
 from django.views.decorators.http import require_POST
-from django.db import models
+from django.db import models, connection, transaction, IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -367,10 +367,49 @@ class UserUpdateView(UpdateView):
         else:
             return self.render_to_response(self.get_context_data(form=form))
 
-class UserDeleteView(DeleteView):
+class UserDeleteView(AdminRequiredLoginMixin, DeleteView):
     model = User
     template_name = 'users/user_confirm_delete.html'
     success_url = reverse_lazy('guitarra:user_list')
+
+    def _cleanup_legacy_user_references(self, user_id):
+        """Clean up rows in legacy SQLite tables that still reference auth_user.
+
+        Some historical tables in this project use DB-level NO ACTION constraints,
+        which can cause FOREIGN KEY errors even when Django models use CASCADE.
+        """
+        if connection.vendor != 'sqlite':
+            return
+
+        with connection.cursor() as cursor:
+            cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%'")
+            tables = [row[0] for row in cursor.fetchall() if row[0] != 'auth_user']
+
+            for table in tables:
+                cursor.execute(f'PRAGMA foreign_key_list("{table}")')
+                fks = cursor.fetchall()
+                user_fk_columns = [fk[3] for fk in fks if fk[2] == 'auth_user']
+                for col in user_fk_columns:
+                    cursor.execute(f'DELETE FROM "{table}" WHERE "{col}" = %s', [user_id])
+
+    def form_valid(self, form):
+        # DeleteView procesa POST mediante form_valid(), no mediante delete().
+        self.object = self.get_object()
+        if self.object == self.request.user:
+            messages.error(self.request, 'No puedes eliminar tu propio usuario desde esta vista.')
+            return redirect(self.success_url)
+
+        success_url = self.get_success_url()
+        try:
+            with transaction.atomic():
+                self._cleanup_legacy_user_references(self.object.pk)
+                self.object.delete()
+        except IntegrityError:
+            messages.error(self.request, 'No se pudo eliminar el usuario por dependencias relacionadas.')
+            return redirect(self.success_url)
+
+        messages.success(self.request, 'Usuario eliminado correctamente.')
+        return redirect(success_url)
 
 
 from django.contrib.auth.mixins import LoginRequiredMixin

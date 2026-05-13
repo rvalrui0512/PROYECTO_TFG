@@ -22,7 +22,7 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-  var deleteLinks = document.querySelectorAll('.btn-delete-dark, .btn-danger[href*="eliminar"], .btn-danger[href*="delete"]');
+  var deleteLinks = document.querySelectorAll('a[href][data-delete-label], .btn-delete-dark, .btn-danger[href*="eliminar"], .btn-danger[href*="delete"]');
   var confirmDeleteModal = document.getElementById('confirmDeleteModal');
   var confirmDeleteForm = document.getElementById('confirmDeleteForm');
   var deleteTargetName = document.getElementById('deleteTargetName');

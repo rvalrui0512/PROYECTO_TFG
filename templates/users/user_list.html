@@ -264,7 +264,7 @@
             <a class="user-btn user-btn-view" href="{% url 'guitarra:user_detail' u.pk %}"><i class="fa-solid fa-eye"></i> Ver</a>
             <a class="user-btn user-btn-edit" href="{% url 'guitarra:user_update' u.pk %}"><i class="fa-solid fa-pen"></i> Editar</a>
             {% if request.user.is_staff or request.user.is_superuser %}
-                <a class="user-btn user-btn-delete" href="{% url 'guitarra:user_delete' u.pk %}" data-delete-label="el usuario '{{ u.username }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
+                <a class="user-btn user-btn-delete btn-delete-dark" href="{% url 'guitarra:user_delete' u.pk %}" data-delete-label="el usuario '{{ u.username }}'"><i class="fa-solid fa-trash"></i> Eliminar</a>
             {% endif %}
         </div>
     </div>

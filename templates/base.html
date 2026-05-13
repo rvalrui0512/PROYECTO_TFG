@@ -384,6 +384,7 @@
                     </a>
                     <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="profileDropdown">
                         <li><a class="dropdown-item" href="{% url 'guitarra:user_detail' user.pk %}" tabindex="0">Mi perfil</a></li>
+                        <li><a class="dropdown-item" href="{% url 'guitarra:my_orders' %}" tabindex="0">Mis pedidos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
                             <form method="post" action="{% url 'logout' %}" style="display:inline;">{% csrf_token %}<button type="submit" class="dropdown-item" tabindex="0">Cerrar sesión</button></form>

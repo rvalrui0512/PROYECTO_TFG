@@ -135,8 +135,9 @@
         justify-content: space-between;
         align-items: flex-start;
         gap: 0.7em;
-        padding-bottom: 0.4em;
+        padding: 0.55em 0.6em;
         border-bottom: 1px dashed #e6ebf2;
+        border-radius: 0.55em;
     }
 
     .order-item-row:last-child {
@@ -146,6 +147,23 @@
 
     body.dark-mode .order-item-row {
         border-bottom-color: #3a4658;
+    }
+
+    /* Striped rows for better readability */
+    .order-items .order-item-row:nth-child(odd) {
+        background: #f9fbff;
+    }
+
+    .order-items .order-item-row:nth-child(even) {
+        background: #ffffff;
+    }
+
+    body.dark-mode .order-items .order-item-row:nth-child(odd) {
+        background: #283141;
+    }
+
+    body.dark-mode .order-items .order-item-row:nth-child(even) {
+        background: #232c3a;
     }
 
     .order-item-name {
