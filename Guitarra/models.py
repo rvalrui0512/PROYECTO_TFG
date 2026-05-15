@@ -47,7 +47,6 @@ class PaloFlamenco(models.Model):
         ('Tanguillo', 'Tanguillo'),
         ('Fandango', 'Fandango'),
         ('Rumba', 'Rumba'),
-        ('Canción Famosa', 'Canción Famosa'),
     ]
 
     nombre = models.CharField(max_length=100, choices=NOMBRE_CHOICES)
