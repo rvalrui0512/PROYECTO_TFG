@@ -1,112 +1,429 @@
-
 # Estructura Detallada del Proyecto TFG Flamenco
 
-Este documento resume el estado actual del proyecto web de guitarra flamenca basado en Django.
+Aplicación web de guitarra flamenca desarrollada con Django que integra un catálogo de guitarras, videotutoriales, clases privadas con videollamadas y un módulo de IA conversacional.
 
 ---
 
-## 1. Modelos (`models.py`)
+## 1. Descripción General
 
-### 1.1. Autenticación y perfil
-- `User`: modelo estándar de Django.
-- `Profile`: perfil ampliado con `display_name`, `bio`, `avatar` y `pais`.
+**TFG Flamenco** es una plataforma educativa y comercial de guitarra flamenca que proporciona:
 
-### 1.2. Palos y vídeos
-- `PaloFlamenco`: catálogo de palos con `nombre`, `descripcion` y `slug`.
-- `Video`: vídeos con `titulo`, `descripcion`, `palo_flamenco`, `autor`, `miniatura`, `archivo`, `duracion`, `fecha_publicacion`, `visibilidad` y `slug`.
-
-### 1.3. Interacción social
-- `Like`: likes por usuario y vídeo.
-- `Comentario`: comentarios sobre vídeos con soporte de respuestas anidadas mediante `padre`.
-- `ChatRoom` y `ChatMessage`: base de datos para salas y mensajes asociados a vídeos.
-
-### 1.4. Clases privadas
-- `DisponibilidadProfesor`: franjas de disponibilidad del profesor.
-- `ClasePrivada`: reserva de clase con `profesor`, `alumno`, `titulo`, `descripcion`, `palo_flamenco`, `fecha_inicio`, `fecha_fin` y `estado`.
-
-### 1.5. Catálogo de guitarras
-- `Guitarra`: catálogo con `marca`, `modelo`, `color`, `descripcion`, `precio`, `stock` e `imagen`.
-
-### 1.6. IA y contenido flamenco
-- `ArticuloFlamenco`: artículos informativos por categoría.
-- `PreguntaIA`: historial de preguntas y respuestas del buscador IA.
-
-### 1.7. Notificaciones
-- `Notification`: avisos para usuarios con `message`, `url`, `created_at` y `read`.
+- 📹 **Biblioteca de vídeos tutoriales** clasificados por palos flamencos
+- 🎓 **Sistema de clases privadas** con videollamadas embebidas (Jitsi Meet)
+- 🎸 **Catálogo de guitarras** con carrito de compra y pasarela de pago simulada
+- 🤖 **Asistente IA conversacional** para consultas sobre flamenco
+- 💬 **Sistema de comentarios anidados** en vídeos
+- 🔔 **Sistema de notificaciones** en tiempo real
+- 👤 **Gestión de perfiles** con avatares y localización
 
 ---
 
-## 2. Administración (`admin.py`)
+## 2. Arquitectura Técnica
 
-Panel administrativo para gestionar usuarios, perfiles, vídeos, comentarios, clases privadas, guitarras, artículos, preguntas IA y notificaciones.
+### 2.1. Stack Tecnológico
 
----
+| Componente | Tecnología |
+|---|---|
+| **Framework backend** | Django 6.0 |
+| **Base de datos** | SQLite |
+| **ORM** | Django ORM |
+| **Frontend templating** | Django Templates + Bootstrap |
+| **Multimedia** | Manejo de archivos (vídeos, imágenes) |
+| **Videollamadas** | Jitsi Meet External API |
+| **Carrito** | Django Session Storage |
+| **Autenticación** | Django Authentication Framework |
 
-## 3. Formularios (`forms.py`) y validaciones
+### 2.2. Estructura de carpetas
 
-- `RegistroUsuarioForm`: registro de usuario y creación del perfil asociado.
-- `ProfileForm`: edición de perfil.
-- `VideoForm`: creación y edición de vídeos.
-- `ComentarioForm`: gestión de comentarios.
-- `ClasePrivadaForm`: creación y edición de clases privadas.
-- `GuitarraForm`: gestión del catálogo de guitarras.
-
----
-
-## 4. Vistas (`views.py`) y funcionalidad
-
-### 4.1. Sección vídeos
-- Listado de vídeos con filtros.
-- Detalle de vídeo con reproductor y comentarios.
-- Subida, edición y eliminación de vídeos para usuarios con permisos de administración.
-
-### 4.2. Sección clases privadas
-- Listado, detalle, alta, edición y borrado de clases privadas.
-- Videollamada embebida con Jitsi Meet.
-- Control de acceso por estado de la clase y usuario autenticado.
-- Avisos visuales cuando una clase está cancelada, caducada o todavía no ha empezado.
-
-### 4.3. Sección notificaciones
-- Listado de notificaciones para cada usuario.
-- Indicador de notificaciones no leídas en la interfaz.
-- Avisos automáticos al crear o modificar clases privadas.
-
-### 4.4. Sección guitarras
-- Listado con filtros por modelo, color y precio.
-- Detalle de guitarra.
-- Carrito de compra simulado con sesión.
-
-### 4.5. Sección IA flamenca
-- Buscador de preguntas sobre guitarras, palos, historia y artículos.
-- Guarda el historial de consultas y respuestas.
-
-### 4.6. Interacción social
-- Gestión de comentarios sobre vídeos.
-- Base preparada para chat por vídeo con `ChatRoom` y `ChatMessage`.
+```
+TFG_FLAMENCO/
+├── Guitarra/              # App principal
+│   ├── models.py          # Definición de modelos
+│   ├── views.py           # Vistas y lógica de negocio
+│   ├── urls.py            # Enrutamiento
+│   ├── forms.py           # Formularios
+│   ├── admin.py           # Panel administrativo
+│   ├── mixins.py          # Mixins de autenticación
+│   ├── middleware.py      # Middleware personalizado
+│   ├── management/commands/ # Comandos de gestión
+│   └── templates/         # Plantillas HTML
+├── TFG_FLAMENCO/          # Configuración del proyecto
+│   ├── settings.py        # Configuración
+│   ├── urls.py            # Enrutamiento global
+│   └── wsgi.py            # Configuración WSGI
+├── static/                # Archivos estáticos (CSS, JS)
+├── media/                 # Archivos de usuario (vídeos, imágenes)
+└── manage.py              # Utilidad de administración
+```
 
 ---
 
-## 5. Tecnologías y arquitectura
+## 3. Modelos de Datos
 
-- Django y Django ORM.
-- Django Templates y Bootstrap.
-- SQLite como base de datos principal.
-- Gestión de ficheros multimedia con `MEDIA_URL` y `MEDIA_ROOT`.
-- Integración de videollamada embebida con Jitsi Meet External API.
-- JavaScript para interacciones de interfaz y notificaciones.
+### 3.1. Autenticación y Perfil de Usuario
+
+**`User`** (modelo estándar de Django)
+- Autenticación y autorización centralizada
+- Relación 1:1 con `Profile`
+
+**`Profile`**
+- `display_name` (str): Nombre para mostrar
+- `bio` (text): Biografía breve
+- `avatar` (image): Foto de perfil (SVG o imagen)
+- `pais` (str): País de residencia (50+ opciones)
+
+### 3.2. Contenido de Vídeos
+
+**`PaloFlamenco`**
+- Catálogo de palos: Bulería, Alegrías, Tangos, Soleá, Tanguillo, Fandango, Rumba
+- Vinculado a vídeos para filtrado
+
+**`Video`**
+- `titulo` (str): Título del vídeo
+- `descripcion` (text): Descripción detallada
+- `palo_flamenco` (str): Palo enseñado
+- `autor` (FK User): Creador del vídeo
+- `miniatura` (image): Portada
+- `archivo` (file): Archivo multimedia (mp4, webm, etc.)
+- `duracion` (duration): Duración del vídeo
+- `fecha_publicacion` (datetime): Publicación automática
+- `visibilidad` (bool): Visible públicamente
+- `slug` (slug): URL amigable única
+
+**`Like`**
+- Relación M:M entre usuario y vídeo
+- Constraint única: no se puede hacer like duplicado
+
+**`Comentario`**
+- Soporte de comentarios anidados (respuestas a comentarios)
+- `texto` (text): Contenido
+- `padre` (FK self): Respuesta a otro comentario
+- Timestamps: creación y actualización
+
+**`ChatRoom` y `ChatMessage`**
+- Base estructural para futuro chat por vídeo
+- Asociados a vídeos específicos
+
+### 3.3. Clases Privadas y Videollamadas
+
+**`DisponibilidadProfesor`**
+- Franjas horarias de disponibilidad por día de la semana
+- Base para reserva de clases
+
+**`ClasePrivada`**
+- `profesor` (FK User): Instructor
+- `alumno` (FK User): Estudiante
+- `titulo`, `descripcion`: Información de la clase
+- `palo_flamenco` (str): Palo a enseñar
+- `fecha_inicio`, `fecha_fin` (datetime): Horario
+- `estado` (str): Pendiente → Confirmada → Realizada / Cancelada
+- Métodos helper:
+  - `puede_acceder(user)`: Control de acceso
+  - `esta_activa(ahora)`: ¿Está en curso?
+  - `get_jitsi_room_name()`: Nombre único de sala Jitsi
+  - `get_jitsi_join_url()`: URL de unión a Jitsi
+
+### 3.4. Catálogo de Guitarras
+
+**`Guitarra`**
+- `marca` (str): Ej. Alhambra
+- `modelo` (str): Ej. 10FC
+- `color` (choice): Clara, Oscura, Roja, Naranja
+- `descripcion` (text): Especificaciones
+- `precio` (decimal): Precio en EUR
+- `stock` (int): Inventario disponible
+- `imagen` (image): Foto del producto
+
+### 3.5. Carrito y Compras
+
+**`Order`**
+- `usuario` (FK User): Comprador
+- `fecha_creacion` (datetime): Auto
+- `estado` (choice): Pendiente → Confirmada → Enviada → Entregada / Cancelada
+- `total` (decimal): Suma de items
+- Datos de envío: nombre, email, teléfono, dirección, ciudad, código postal, país
+- `notas` (text): Comentarios adicionales
+
+**`OrderItem`**
+- `order` (FK Order): Orden asociada
+- `guitarra` (FK Guitarra): Producto
+- `cantidad` (int): Unidades compradas
+- `precio_unitario` (decimal): Precio al momento de compra
+- Método: `get_subtotal()` = cantidad × precio
+
+### 3.6. IA y Contenido Educativo
+
+**`ArticuloFlamenco`**
+- `titulo`, `contenido` (text): Artículos informativos
+- `categoria` (choice): Historia, Guitarras, Palos, Artistas
+- `slug` (slug): URL amigable
+
+**`PreguntaIA`**
+- `usuario` (FK User): Quién preguntó
+- `pregunta` (text): Consulta del usuario
+- `respuesta` (text): Respuesta generada
+- `timestamp` (datetime): Fecha de la pregunta
+- Historial para análisis y mejora
+
+### 3.7. Notificaciones
+
+**`Notification`**
+- `user` (FK User): Destinatario
+- `message` (str): Contenido del aviso
+- `url` (str): Enlace a recurso (opcional)
+- `created_at` (datetime): Fecha automática
+- `read` (bool): Leída o no
 
 ---
 
-## 6. Apartados de la memoria
+## 4. Formularios y Validación
 
-- Introducción y motivación.
-- Análisis de requisitos funcionales y no funcionales.
-- Diseño general de la aplicación.
-- Implementación por módulos.
-- Pruebas y validación.
-- Despliegue y configuración.
-- Conclusiones y trabajo futuro.
+| Formulario | Propósito |
+|---|---|
+| `RegistroUsuarioForm` | Registro + creación de Profile |
+| `ProfileForm` | Edición de avatar, bio, país |
+| `VideoForm` | Creación/edición de vídeos |
+| `ComentarioForm` | Comentarios en vídeos |
+| `ClasePrivadaForm` | Creación/edición de clases |
+| `CheckoutForm` | Datos de envío (checkout) |
+| `FakePaymentForm` | Simulación de pago |
 
 ---
 
-Este documento refleja el estado actual del proyecto: vídeos, clases privadas, videollamada Jitsi, notificaciones, catálogo de guitarras, IA y administración.
+## 5. Vistas y Funcionalidad
+
+### 5.1. Usuarios
+
+- **Registro**: Creación con perfil asociado automático
+- **Listado**: Solo admin ve todos; usuario ve su registro
+- **Detalle**: Información pública (owner/admin)
+- **Edición**: Avatar predefinido o subido, bio, país
+- **Eliminación**: Admin con limpieza de referencias en BD
+
+### 5.2. Vídeos
+
+- **Listado**: Filtros por palo y duración
+- **Detalle**: Reproductor con soporte Range, comentarios, likes
+- **Subida**: Solo admin; campos: título, descripción, palo, archivo, miniatura
+- **Edición**: Metadatos + archivo
+- **Eliminación**: Solo admin
+- **Toggle Like**: AJAX, devuelve JSON con conteo
+
+### 5.3. Clases Privadas
+
+- **Listado**: Admin ve todas; usuario ve sus clases (como profesor o alumno)
+- **Detalle**: Estado, información, botón de videollamada
+- **Creación**: Admin; genera notificaciones automáticas
+- **Videollamada**: Acceso embebido a Jitsi con validaciones de:
+  - Permisos (profesor, alumno, admin)
+  - Fecha/hora (no empezada, activa, caducada)
+  - Estado (no cancelada)
+- **Cambio de estado**: POST JSON; valida transiciones (pendiente → confirmada → realizada/cancelada)
+- **Edición**: Solo admin
+- **Eliminación**: Solo admin
+
+### 5.4. Guitarras
+
+- **Listado**: Filtros por modelo, color, precio
+- **Detalle**: Especificaciones, precio, stock
+- **Creación**: Admin
+- **Edición**: Admin (marca, modelo, color, precio, stock, descripción)
+- **Eliminación**: Admin
+
+### 5.5. Carrito y Checkout
+
+**Carrito**
+- Almacenado en sesión (`request.session['cart']`)
+- Añadir: POST a `/carrito/agregar/<id>/` → incrementa cantidad
+- Eliminar: POST a `/carrito/eliminar/<id>/` → borra del carrito
+- Vista: muestra items, precios, subtotal
+
+**Checkout** (flujo de 3 pasos)
+1. **Paso 1 - Checkout**: Formulario de envío; pre-llena con datos de usuario
+2. **Paso 2 - Confirmar**: Resumen de orden; validación final
+3. **Paso 3 - Pago**: Simulación de pasarela (sin cobro real); crea `Order` + `OrderItem`, descuenta stock
+4. **Éxito**: Página de confirmación con número de pedido
+
+### 5.6. IA Conversacional
+
+- **GET**: Muestra formulario vacío
+- **POST**: Procesa pregunta; tipos de consulta:
+  - Saludos/despedidas
+  - Información sobre guitarras (modelos Alhambra con especificaciones)
+  - Palos flamencos (Bulería, Soleá, Tangos, etc.)
+  - Artículos flamencos
+- Guarda en `PreguntaIA` para historial
+
+### 5.7. Notificaciones
+
+- **Listado**: Muestra últimas 10 notificaciones del usuario
+- **AJAX**: Soporte para `?ajax=1` (HTML) y `?count=1` (JSON con contador)
+- **Automáticas**: Creadas al asignar/cambiar clases privadas
+- **Lectura**: Marcadas como leídas al acceder
+
+---
+
+## 6. Tabla Completa de Endpoints
+
+| **Path** | **Métodos** | **Nombre** | **Vista** | **Auth** | **Descripción** |
+|---|---|---|---|---|---|
+| / | GET | `guitarra:home` | `HomeView` | Public | Página principal con accesos a secciones. |
+| /usuarios/ | GET | `guitarra:user_list` | `UserListView` | Login | Listado de usuarios. |
+| /usuarios/nuevo/ | GET, POST | `guitarra:user_create` | `UserCreateView` | Public | Registro de usuario + Profile. |
+| /usuarios/<int:pk>/ | GET | `guitarra:user_detail` | `UserDetailView` | Login+owner | Detalle de usuario. |
+| /usuarios/<int:pk>/editar/ | GET, POST | `guitarra:user_update` | `UserUpdateView` | Login+owner | Edición de usuario y perfil. |
+| /usuarios/<int:pk>/eliminar/ | POST | `guitarra:user_delete` | `UserDeleteView` | Admin | Eliminación de usuario. |
+| /videos/ | GET | `guitarra:video_list` | `VideoListView` | Login | Listado con filtros. |
+| /videos/nuevo/ | GET, POST | `guitarra:video_create` | `VideoCreateView` | Admin | Crear vídeo. |
+| /videos/<int:pk>/ | GET, POST | `guitarra:video_detail` | `VideoDetailView` | Login | Detalle + comentarios. |
+| /videos/<int:pk>/stream/ | GET | `guitarra:video_stream` | `video_stream` | Public | Servir archivo con Range. |
+| /videos/<int:pk>/editar/ | GET, POST | `guitarra:video_update` | `VideoUpdateView` | Admin | Editar vídeo. |
+| /videos/<int:pk>/eliminar/ | POST | `guitarra:video_delete` | `VideoDeleteView` | Admin | Eliminar vídeo. |
+| /videos/<int:pk>/toggle-like/ | POST | `guitarra:video_toggle_like` | `toggle_like` | Login | Alternar like (AJAX). |
+| /guitarras/ | GET | `guitarra:guitarra_list` | `GuitarraListView` | Login | Catálogo con filtros. |
+| /guitarras/nueva/ | GET, POST | `guitarra:guitarra_create` | `GuitarraCreateView` | Admin | Añadir guitarra. |
+| /guitarras/<int:pk>/ | GET | `guitarra:guitarra_detail` | `GuitarraDetailView` | Login | Ficha de producto. |
+| /guitarras/<int:pk>/editar/ | GET, POST | `guitarra:guitarra_update` | `GuitarraUpdateView` | Admin | Editar guitarra. |
+| /guitarras/<int:pk>/eliminar/ | POST | `guitarra:guitarra_delete` | `GuitarraDeleteView` | Admin | Eliminar guitarra. |
+| /clases/ | GET | `guitarra:claseprivada_list` | `ClasePrivadaListView` | Login | Listado de clases. |
+| /clases/nueva/ | GET, POST | `guitarra:claseprivada_create` | `ClasePrivadaCreateView` | Admin | Crear clase. |
+| /clases/<int:pk>/ | GET | `guitarra:claseprivada_detail` | `ClasePrivadaDetailView` | Login | Detalle de clase. |
+| /clases/<int:pk>/videollamada/ | GET | `guitarra:claseprivada_videollamada` | `claseprivada_videollamada` | Login | Acceso a Jitsi. |
+| /clases/<int:pk>/cambiar-estado/ | POST | `guitarra:cambiar_estado_clase` | `cambiar_estado_clase` | Login | Cambiar estado (JSON). |
+| /clases/<int:pk>/editar/ | GET, POST | `guitarra:claseprivada_update` | `ClasePrivadaUpdateView` | Admin | Editar clase. |
+| /clases/<int:pk>/eliminar/ | POST | `guitarra:claseprivada_delete` | `ClasePrivadaDeleteView` | Admin | Eliminar clase. |
+| /ia/ | GET, POST | `guitarra:ia_busqueda` | `IABusquedaView` | Login | Buscador IA. |
+| /notificaciones/ | GET | `guitarra:notification_list` | `NotificationPopupView` | Login | Popup notificaciones. |
+| /carrito/ | GET | `guitarra:cart_view` | `cart_view` | Public | Ver carrito. |
+| /carrito/agregar/<int:guitarra_id>/ | POST | `guitarra:add_to_cart` | `add_to_cart` | Public | Añadir al carrito. |
+| /carrito/eliminar/<int:guitarra_id>/ | POST | `guitarra:remove_from_cart` | `remove_from_cart` | Public | Eliminar del carrito. |
+| /checkout/ | GET, POST | `guitarra:checkout` | `checkout_view` | Login | Formulario de envío. |
+| /checkout/confirmar/ | GET, POST | `guitarra:checkout_confirm` | `checkout_confirm_view` | Login | Resumen de orden. |
+| /checkout/pago/ | GET, POST | `guitarra:checkout_payment` | `checkout_payment_view` | Login | Pago simulado. |
+| /checkout/exito/<int:order_id>/ | GET | `guitarra:checkout_success` | `checkout_success_view` | Login | Confirmación. |
+| /mis-pedidos/ | GET | `guitarra:my_orders` | `my_orders_view` | Login | Historial de pedidos. |
+| /pedidos/<int:order_id>/ | GET | `guitarra:order_detail` | `order_detail_view` | Login | Detalle de pedido. |
+| /admin/ | GET, POST | `admin` | Django admin | Admin | Panel administrativo. |
+| /accounts/login/ | GET, POST | `login` | Django auth | Public | Login. |
+| /accounts/logout/ | GET | `logout` | Django auth | Login | Logout. |
+| /accounts/password_change/ | GET, POST | `password_change` | Django auth | Login | Cambiar contraseña. |
+| /accounts/password_change/done/ | GET | `password_change_done` | Django auth | Login | Confirmación. |
+| /accounts/password_reset/ | GET, POST | `password_reset` | Django auth | Public | Reset contraseña. |
+| /accounts/password_reset/done/ | GET | `password_reset_done` | Django auth | Public | Confirmación envío. |
+| /accounts/reset/<uid>/<token>/ | GET, POST | `password_reset_confirm` | Django auth | Public | Confirmar reset. |
+| /accounts/reset/done/ | GET | `password_reset_complete` | Django auth | Public | Reset completado. |
+| (Catch-all) | GET | — | `handler_404` | Public | Página 404. |
+
+### 6.1. Leyenda de Autenticación
+
+- **Public**: Sin autenticación
+- **Login**: Usuario autenticado
+- **Login+owner**: Propietario del recurso o admin
+- **Admin**: Staff/Superuser
+
+### 6.2. Notas Técnicas
+
+- **Namespace**: `guitarra:` para todas las rutas de la app
+- **AJAX endpoints**: `/videos/<id>/toggle-like/`, `/clases/<id>/cambiar-estado/`, `/notificaciones/?ajax=1`
+- **Streaming**: `/videos/<id>/stream/` soporta HTTP Range headers
+- **Carrito**: Sesión (sin BD), flujo: agregar → eliminar → checkout
+- **Checkout**: 3 pasos (formulario → confirmar → pago → success)
+- **Notificaciones**: Se crean automáticamente al crear/modificar clases
+
+---
+
+## 7. Seguridad y Autenticación
+
+- **Django Authentication**: Contraseñas hashadas con PBKDF2
+- **Login Required Mixin**: Protección de vistas
+- **Mixins personalizados**:
+  - `AdminRequiredLoginMixin`: Solo admin
+  - `OwnerOrAdminRequiredMixin`: Propietario o admin
+- **CSRF Protection**: Todos los formularios POST protegidos
+- **Permission checks**: En vistas sensibles (videollamadas, eliminación, etc.)
+
+---
+
+## 8. Gestión de Archivos Multimedia
+
+- **Vídeos**: Carpeta `media/videos/` con soporte Range header (streaming)
+- **Imágenes**: Miniaturas (`media/miniaturas/`), guitarras (`media/guitarras/`), avatares (`media/avatars/`)
+- **Almacenamiento**: Sistema de archivos local (adaptable a S3 en producción)
+
+---
+
+## 9. Flujos de Usuario Principales
+
+### 9.1. Usuario estudiante
+
+1. Registro y creación de perfil
+2. Visualiza catálogo de vídeos (filtrado por palo)
+3. Ve vídeos, comenta, da likes
+4. Se inscribe en clases privadas (si admin las crea)
+5. Accede a videollamada Jitsi en horario
+6. Navega catálogo de guitarras
+7. Compra guitarras (carrito → checkout → pago simulado)
+
+### 9.2. Profesor
+
+1. Registro
+2. Sube vídeos tutoriales
+3. Recibe notificaciones de clases asignadas
+4. Accede a videollamadas Jitsi
+5. Puede ver órdenes (si admin)
+
+### 9.3. Administrador
+
+1. Acceso a panel Django completo
+2. Gestión de usuarios, vídeos, clases, guitarras, órdenes
+3. Edición de artículos IA
+4. Visualización de historial de preguntas IA
+
+---
+
+## 10. Base de Datos
+
+**SQLite** (`db.sqlite3`)
+
+Modelos:
+- `auth_user` (Django)
+- `guitarra_profile`
+- `guitarra_paloflamenco`
+- `guitarra_video`, `guitarra_like`, `guitarra_comentario`
+- `guitarra_chatroom`, `guitarra_chatmessage`
+- `guitarra_disponibilidadprofesor`, `guitarra_claseprivada`
+- `guitarra_guitarra`
+- `guitarra_notification`
+- `guitarra_articuloflamenco`, `guitarra_preguntaia`
+- `guitarra_order`, `guitarra_orderitem`
+
+---
+
+## 11. Configuración del Proyecto (`settings.py`)
+
+### Aplicaciones instaladas
+- `django.contrib.admin`
+- `django.contrib.auth`
+- `django.contrib.contenttypes`
+- `django.contrib.sessions`
+- `django.contrib.messages`
+- `django.contrib.staticfiles`
+- `Guitarra` (app principal)
+
+### Bases de datos
+- SQLite (desarrollo)
+
+### Configuración de archivos
+- `MEDIA_URL = '/media/'`
+- `MEDIA_ROOT = BASE_DIR / 'media'`
+- `STATIC_URL = '/static/'`
+
+### Jitsi Meet (si aplicable)
+- `JITSI_MEET_DOMAIN` (ajustable en settings)
+- `JITSI_MEET_EXTERNAL_API_URL`
+
+---
+
+## 12. Conclusión
+
+TFG Flamenco es una plataforma educativa completa que integra múltiples módulos (vídeos, clases, tienda, IA) en un único ecosistema Django profesional, con gestión robusta de usuarios, contenido multimedia y transacciones simuladas.
