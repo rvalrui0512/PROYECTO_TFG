@@ -66,82 +66,6 @@ TFG_FLAMENCO/
 - Autenticación y autorización centralizada
 - Relación 1:1 con `Profile`
 
-**`Profile`**
-- `display_name` (str): Nombre para mostrar
-- `bio` (text): Biografía breve
-- `avatar` (image): Foto de perfil (SVG o imagen)
-- `pais` (str): País de residencia (50+ opciones)
-
-### 3.2. Contenido de Vídeos
-
-**`PaloFlamenco`**
-- Catálogo de palos: Bulería, Alegrías, Tangos, Soleá, Tanguillo, Fandango, Rumba
-- Vinculado a vídeos para filtrado
-
-**`Video`**
-- `titulo` (str): Título del vídeo
-- `descripcion` (text): Descripción detallada
-- `palo_flamenco` (str): Palo enseñado
-- `autor` (FK User): Creador del vídeo
-- `miniatura` (image): Portada
-- `archivo` (file): Archivo multimedia (mp4, webm, etc.)
-- `duracion` (duration): Duración del vídeo
-- `fecha_publicacion` (datetime): Publicación automática
-- `visibilidad` (bool): Visible públicamente
-- `slug` (slug): URL amigable única
-
-**`Like`**
-- Relación M:M entre usuario y vídeo
-- Constraint única: no se puede hacer like duplicado
-
-**`Comentario`**
-- Soporte de comentarios anidados (respuestas a comentarios)
-- `texto` (text): Contenido
-- `padre` (FK self): Respuesta a otro comentario
-- Timestamps: creación y actualización
-
-**`ChatRoom` y `ChatMessage`**
-- Base estructural para futuro chat por vídeo
-- Asociados a vídeos específicos
-
-### 3.3. Clases Privadas y Videollamadas
-
-**`DisponibilidadProfesor`**
-- Franjas horarias de disponibilidad por día de la semana
-- Base para reserva de clases
-
-**`ClasePrivada`**
-- `profesor` (FK User): Instructor
-- `alumno` (FK User): Estudiante
-- `titulo`, `descripcion`: Información de la clase
-- `palo_flamenco` (str): Palo a enseñar
-- `fecha_inicio`, `fecha_fin` (datetime): Horario
-- `estado` (str): Pendiente → Confirmada → Realizada / Cancelada
-- Métodos helper:
-  - `puede_acceder(user)`: Control de acceso
-  - `esta_activa(ahora)`: ¿Está en curso?
-  - `get_jitsi_room_name()`: Nombre único de sala Jitsi
-  - `get_jitsi_join_url()`: URL de unión a Jitsi
-
-### 3.4. Catálogo de Guitarras
-
-**`Guitarra`**
-- `marca` (str): Ej. Alhambra
-- `modelo` (str): Ej. 10FC
-- `color` (choice): Clara, Oscura, Roja, Naranja
-- `descripcion` (text): Especificaciones
-- `precio` (decimal): Precio en EUR
-- `stock` (int): Inventario disponible
-- `imagen` (image): Foto del producto
-
-### 3.5. Carrito y Compras
-
-**`Order`**
-- `usuario` (FK User): Comprador
-- `fecha_creacion` (datetime): Auto
-- `estado` (choice): Pendiente → Confirmada → Enviada → Entregada / Cancelada
-- `total` (decimal): Suma de items
-- Datos de envío: nombre, email, teléfono, dirección, ciudad, código postal, país
 - `notas` (text): Comentarios adicionales
 
 **`OrderItem`**
@@ -427,3 +351,78 @@ Modelos:
 ## 12. Conclusión
 
 TFG Flamenco es una plataforma educativa completa que integra múltiples módulos (vídeos, clases, tienda, IA) en un único ecosistema Django profesional, con gestión robusta de usuarios, contenido multimedia y transacciones simuladas.
+
+---
+
+## 17. Despliegue con Docker
+
+Para un despliegue profesional y sencillo en Windows, el proyecto puede ejecutarse con Docker Desktop y Docker Compose. Antes de arrancar la aplicación, instala Docker Desktop y asegúrate de que esté abierto y funcionando.
+
+### 17.1. Instalación de Docker en Windows
+
+```powershell
+winget install --id Docker.DockerDesktop -e
+```
+
+Si prefieres Chocolatey:
+
+```powershell
+choco install docker-desktop -y
+```
+
+Después de instalarlo, abre Docker Desktop manualmente y comprueba que el motor esté activo:
+
+```powershell
+docker version
+docker compose version
+```
+
+### 17.2. Preparación del proyecto
+
+```powershell
+Copy-Item .env.example .env
+```
+
+Edita `.env` si quieres cambiar la clave secreta o los hosts permitidos.
+
+### 17.3. Comandos de despliegue
+
+```powershell
+docker compose up --build -d
+```
+
+Para crear el superusuario del panel admin:
+
+```powershell
+docker compose exec web python manage.py createsuperuser
+```
+
+Para ver los logs en tiempo real:
+
+```powershell
+docker compose logs -f web
+```
+
+Para detener la aplicación:
+
+```powershell
+docker compose down
+```
+
+Si quieres borrar también los volúmenes de datos:
+
+```powershell
+docker compose down -v
+```
+
+### 17.4. Puertos y acceso
+
+- Aplicación web: `http://localhost:8000`
+- Panel de administración: `http://localhost:8000/admin/`
+
+### 17.5. Notas importantes
+
+- La base de datos se ejecuta en un contenedor PostgreSQL.
+- Los archivos estáticos se recopilan automáticamente al arrancar el contenedor `web`.
+- Los archivos multimedia se guardan en un volumen Docker para no perderlos al recrear contenedores.
+- En Windows, Docker Desktop debe estar abierto para que `docker compose` funcione correctamente.

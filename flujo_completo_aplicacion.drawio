@@ -1,0 +1,654 @@
+<mxfile host="65bd71144e">
+    <diagram id="flujo-principal" name="Flujo principal">
+        <mxGraphModel dx="1572" dy="3117" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3200" pageHeight="2000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Visitante" style="ellipse;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="-15" width="120" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="ForceLoginMiddleware&#xa;si no hay sesión&#xa;redirige a login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="230" y="-30" width="250" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="/accounts/login/&#xa;LoginView&#xa;registration/login.html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="-30" width="250" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Usuario autenticado" style="ellipse;whiteSpace=wrap;html=1;fillColor=#cfe2f3;strokeColor=#3c78d8;" parent="1" vertex="1">
+                    <mxGeometry x="910" y="-15" width="170" height="60" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Home / Dashboard&#xa;/&#xa;HomeView&#xa;index.html&#xa;atajos a las secciones" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="1150" y="40" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Sección 1&#xa;Guitarras&#xa;/guitarras/&#xa;listado + filtros" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="240" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Sección 2&#xa;Vídeos&#xa;/videos/&#xa;listado + filtros" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="310" y="240" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Sección 3&#xa;Clases privadas&#xa;/clases/&#xa;agenda + videollamada" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="240" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Sección 5&lt;br&gt;IA / contenido flamenco&lt;br&gt;/ia/&lt;br&gt;artículos, palos, guitarras" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="1145" y="235" width="270" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Accesos globales&lt;br&gt;carrito&lt;br&gt;notificaciones&lt;div&gt;&lt;font color=&quot;#000000&quot;&gt;pedidos&lt;br&gt;&lt;/font&gt;perfil/usuarios&lt;br&gt;admin&lt;/div&gt;&lt;div&gt;enlaces directos a las secciones&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="1440" y="225" width="280" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Administrador / Staff&lt;br&gt;CRUD completo&lt;br&gt;usuarios, videos, guitarras, clases&lt;div&gt;(creación, eliminación, actualización de registros..., permisos para ver todo)&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1750" y="235" width="270" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Capa visual&#xa;templates/base.html&#xa;menú de navegación&#xa;header y footer comunes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="130" y="420" width="340" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Persistencia y archivos&lt;br&gt;db.sqlite3 local&lt;br&gt;PostgreSQL&lt;br&gt;media/ y static/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="540" width="280" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Validación general&#xa;LoginRequiredMixin&#xa;AdminRequiredLoginMixin&#xa;OwnerOrAdminRequiredMixin&#xa;OnlyAnonymousRequiredMixin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="1210" y="415" width="360" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="13" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="13" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="Sección 4&lt;br&gt;Usuarios&lt;br&gt;/usuarios/&lt;br&gt;usuarios + detalles" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#647687;strokeColor=#314354;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="240" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="1145" y="90" as="sourcePoint"/>
+                        <mxPoint x="990" y="240" as="targetPoint"/>
+                        <Array as="points">
+                            <mxPoint x="990" y="90"/>
+                            <mxPoint x="990" y="240"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="seccion-guitarras" name="Guitarras y checkout">
+        <mxGraphModel dx="1737" dy="2957" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3200" pageHeight="2000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="/guitarras/&#xa;GuitarraListView&#xa;filtros: modelo, color, precio" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="-10" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle guitarra&#xa;/guitarras/&lt;pk&gt;/&#xa;GuitarraDetailView" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="420" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Admin CRUD&#xa;/guitarras/nueva/&#xa;/guitarras/&lt;pk&gt;/editar/&#xa;/guitarras/&lt;pk&gt;/eliminar/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="710" y="-5" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Add to cart&#xa;/carrito/agregar/&lt;guitarra_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="410" y="-230" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Carrito en sesión&#xa;/carrito/&#xa;cart_view&#xa;total + subtotales" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="980" y="140" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Remove from cart&#xa;/carrito/eliminar/&lt;guitarra_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="260" width="250" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Checkout&#xa;/checkout/&#xa;CheckoutForm&#xa;datos de envío" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="140" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Confirmación&#xa;/checkout/confirmar/&#xa;resumen del pedido" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="45" y="430" width="220" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Pago ficticio&#xa;/checkout/pago/&#xa;FakePaymentForm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="430" width="220" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Crear pedido&#xa;Order + OrderItem&#xa;descontar stock&#xa;limpiar sesión" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="830" y="425" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Éxito&#xa;/checkout/exito/&lt;order_id&gt;/&#xa;confirmación final" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1170" y="430" width="230" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Mis pedidos&#xa;/mis-pedidos/&#xa;historial del usuario" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1175" y="600" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="Detalle pedido&#xa;/pedidos/&lt;order_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1450" y="600" width="210" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Validaciones&#xa;stock disponible&#xa;carrito no vacío&#xa;forms.clean" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="590" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="10" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="11" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="12" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="13" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="11" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="videos-clases-ia" name="Vídeos, clases e IA">
+        <mxGraphModel dx="1431" dy="788" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3400" pageHeight="2100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Vídeos&#xa;/videos/&#xa;VideoListView&#xa;filtros por palo y duración" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="100" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle vídeo&#xa;/videos/&lt;pk&gt;/&#xa;VideoDetailView" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="380" y="110" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Like / unlike&#xa;/videos/&lt;pk&gt;/toggle-like/&#xa;AJAX JSON" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="160" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="ComentarioForm&#xa;comentarios anidados&#xa;validación ofensiva" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1160" y="15" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Admin vídeos&#xa;nuevo / editar / eliminar&#xa;VideoForm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1470" y="20" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Clases privadas&#xa;/clases/&#xa;listado de propias o admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="320" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Detalle clase&#xa;/clases/&lt;pk&gt;/&#xa;estado videollamada&#xa;jitsi_join_url" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="360" y="315" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Videollamada&#xa;/clases/&lt;pk&gt;/videollamada/&#xa;espera / activa / caducada / cancelada" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="390" width="320" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Cambiar estado&#xa;/clases/&lt;pk&gt;/cambiar-estado/&#xa;JSON + notificación" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="240" width="200" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Admin clases&#xa;nueva / editar / eliminar&#xa;ClasePrivadaForm" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1050" y="320" width="250" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="IA&#xa;/ia/&#xa;IABusquedaView&#xa;guitarras, palos, artículos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="60" y="560" width="300" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="PreguntaIA&#xa;pregunta / respuesta&#xa;historial de consultas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="565" width="260" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Notificaciones&#xa;/notificaciones/&#xa;popup AJAX / listado&#xa;clase creada / estado cambiado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="560" width="300" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="Control de acceso&#xa;LoginRequiredMixin&#xa;AdminRequiredLoginMixin&#xa;OwnerOrAdminRequiredMixin&#xa;ForceLoginMiddleware" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="630" width="320" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="Contenido flamenco&#xa;PaloFlamenco&#xa;ArticuloFlamenco&#xa;datos que alimentan IA" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="490" width="280" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="29" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="13" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="14" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="15" target="16" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="15" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="IpL87M5RklBgx8aYnOtf-32" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" edge="1" parent="1" source="3" target="4">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="600" y="160" as="sourcePoint"/>
+                        <mxPoint x="900" y="150" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="4" value="Stream vídeo&#xa;/videos/&lt;pk&gt;/stream/&#xa;HTTP Range" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="640" y="110" width="220" height="100" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="modelo-datos" name="Modelo de datos">
+        <mxGraphModel dx="1737" dy="957" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3400" pageHeight="2200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="User" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1f4e79;fontColor=#ffffff;strokeColor=#17375e;" parent="1" vertex="1">
+                    <mxGeometry x="1380" y="50" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Profile&#xa;1:1 User&#xa;display_name&#xa;bio&#xa;avatar&#xa;pais" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1600" y="155" width="240" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Video&#xa;autor FK User&#xa;palo_flamenco&#xa;miniatura&#xa;archivo&#xa;duracion&#xa;visibilidad&#xa;slug" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="140" width="300" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Like&#xa;usuario FK User&#xa;video FK Video&#xa;unique(usuario, video)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry y="400" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Comentario&#xa;usuario FK User&#xa;video FK Video&#xa;padre self FK&#xa;respuestas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="400" width="240" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="ChatRoom&#xa;video FK Video&#xa;nombre&#xa;es_publico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="400" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="ChatMessage&#xa;chatroom FK ChatRoom&#xa;usuario FK User&#xa;mensaje&#xa;timestamp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="500" y="530" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="PaloFlamenco&#xa;nombre&#xa;descripcion&#xa;slug" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="1370" y="580" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="ClasePrivada&#xa;profesor FK User&#xa;alumno FK User&#xa;palo_flamenco&#xa;estado&#xa;fechas&#xa;Jitsi room/url" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="1315" y="300" width="330" height="130" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="DisponibilidadProfesor&#xa;profesor FK User&#xa;dia_semana&#xa;hora_inicio/hora_fin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="2120" y="160" width="260" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Guitarra&#xa;marca&#xa;modelo&#xa;color&#xa;descripcion&#xa;precio&#xa;stock&#xa;imagen" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;direction=south;" parent="1" vertex="1">
+                    <mxGeometry x="1040" y="640" width="100" height="240" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="Order&#xa;usuario FK User&#xa;estado&#xa;total&#xa;datos de envío" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="140" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="OrderItem&#xa;order FK Order&#xa;guitarra FK Guitarra&#xa;cantidad&#xa;precio_unitario" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="650" y="700" width="260" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="Notification&#xa;user FK User&#xa;message&#xa;url&#xa;created_at&#xa;read" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="995" y="140" width="240" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" value="ArticuloFlamenco&#xa;titulo&#xa;contenido&#xa;categoria&#xa;slug" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1865" y="330" width="230" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" value="PreguntaIA&#xa;usuario FK User&#xa;pregunta&#xa;respuesta&#xa;timestamp" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1860" y="160" width="240" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="19" value="Flujos que generan notificaciones&#xa;crear clase&#xa;cambiar estado clase&#xa;acciones administrativas" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="320" width="330" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="31" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="32" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="7" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="13" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="40" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="12" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="41" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="13" target="14" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="15" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="16" target="17" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="45" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="15" target="19" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detalle-guitarras" name="Detalle de guitarras">
+        <mxGraphModel dx="1871" dy="1031" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2800" pageHeight="1200" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Listado de guitarras&#xa;/guitarras/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="60" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle de guitarra&#xa;/guitarras/&lt;pk&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#bf9000;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="210" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Añadir al carrito&#xa;/carrito/agregar/&lt;guitarra_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="350" y="320" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Volver al listado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="310" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Carrito&#xa;/carrito/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="470" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Checkout&#xa;/checkout/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="90" y="640" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Confirmación&#xa;/checkout/exito/&lt;order_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="640" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Mis pedidos&#xa;/mis-pedidos/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="700" y="640" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Detalle del pedido&#xa;/pedidos/&lt;order_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="950" y="640" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="7" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detalle-videos" name="Detalle de vídeos">
+        <mxGraphModel dx="1737" dy="957" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Listado de vídeos&#xa;/videos/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="610" y="40" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle del vídeo&#xa;/videos/&lt;pk&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ead1dc;strokeColor=#a64d79;" parent="1" vertex="1">
+                    <mxGeometry x="605" y="170" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Like / unlike&#xa;/videos/&lt;pk&gt;/toggle-like/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="220" y="320" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Comentarios&#xa;crear y responder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="615" y="455" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Volver al listado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1000" y="320" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="5" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detalle-usuarios" name="Detalle de usuarios">
+        <mxGraphModel dx="1431" dy="788" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2200" pageHeight="900" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Listado de usuarios&#xa;/usuarios/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;" parent="1" vertex="1">
+                    <mxGeometry x="600" y="70" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle del usuario&#xa;/usuarios/&lt;pk&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#647687;fontColor=#ffffff;strokeColor=#314354;" parent="1" vertex="1">
+                    <mxGeometry x="300" y="300" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Actualizar usuario y perfil&#xa;/usuarios/&lt;pk&gt;/editar/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="580" y="500" width="260" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Volver al listado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="940" y="300" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detalle-carrito-pedidos" name="Carrito y pedidos">
+        <mxGraphModel dx="2702" dy="1489" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3000" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Carrito&#xa;/carrito/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="900" y="30" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Eliminar producto" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="570" y="160" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Ir a checkout&#xa;/checkout/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1220" y="150" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Confirmar pedido" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="270" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Pago simulado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fce5cd;strokeColor=#b45f06;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="420" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Pedido creado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="1160" y="420" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="Mis pedidos&#xa;/mis-pedidos/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1400" y="420" width="190" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Detalle del pedido&#xa;/pedidos/&lt;order_id&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1650" y="420" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="5" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="7" target="8" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+    <diagram id="detalle-clases-ia" name="Clases privadas e IA">
+        <mxGraphModel dx="1431" dy="788" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="3000" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Clases privadas&#xa;/clases/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="670" y="30" width="190" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Detalle de clase&#xa;/clases/&lt;pk&gt;/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="210" y="160" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="Ver estado de videollamada" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9d2e9;strokeColor=#674ea7;" parent="1" vertex="1">
+                    <mxGeometry x="460" y="340" width="220" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="Entrar en Jitsi" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="800" y="160" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Cambiar estado&#xa;profesor o admin" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="840" y="340" width="210" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Notificación al alumno" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f4cccc;strokeColor=#cc0000;" parent="1" vertex="1">
+                    <mxGeometry x="1100" y="340" width="200" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="IA&#xa;/ia/" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="520" y="690" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="Consulta sobre guitarras, palos o artículos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d0e0e3;strokeColor=#45818e;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="510" width="300" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Resultado generado" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d9ead3;strokeColor=#6aa84f;" parent="1" vertex="1">
+                    <mxGeometry x="630" y="510" width="180" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Guardar historial" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="920" y="510" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Revisar consultas anteriores" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eeeeee;strokeColor=#999999;" parent="1" vertex="1">
+                    <mxGeometry x="1180" y="510" width="240" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="4" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="8" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="10" target="11" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;strokeColor=#666666;" parent="1" source="11" target="12" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
