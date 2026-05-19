@@ -3,107 +3,107 @@
 {% block title %}Inicio - Mundo Flamenco{% endblock %}
 
 {% block content %}
-<section class="flamenco-hero" role="region" aria-label="Presentación" style="max-width:1220px; margin:1.8rem auto 0 auto; background:#fff; border:1px solid #f2dede; border-top:6px solid #b71c1c; padding:2.2rem 1.35rem 1.5rem 1.35rem; border-radius:1.05rem; box-shadow:0 12px 34px rgba(90,10,24,0.08);">
-    <div style="display:grid; grid-template-columns:1.4fr 1fr; gap:1.2rem; align-items:center;">
-        <div style="color:#1a1a1a; padding:0.25rem 0 0.25rem 0;">
-            <div style="display:inline-flex; align-items:center; gap:0.55rem; background:#fff7f7; color:#7c111a; border:1px solid #f0d7d7; border-radius:999px; padding:0.45rem 0.9rem; font-weight:700; letter-spacing:0.35px;">
-                <i class="fa-solid fa-circle-info"></i>
-                Portal oficial de la aplicación
-            </div>
-            <h1 style="font-size:3.05em; margin:0.85rem 0 0.35rem 0; color:#1a1a1a; text-shadow:none; font-weight:800; line-height:1.05;">Mundo Flamenco</h1>
-            <p style="font-size:1.08rem; color:#2f2f2f; max-width:760px; margin:0; font-weight:500; line-height:1.65;">Aprendizaje, guitarras y clases privadas en un mismo lugar. Esta web reúne varias funciones que normalmente estarían separadas, para que el usuario pueda consultar información, aprender y gestionar su actividad sin perderse entre pantallas innecesarias.</p>
-            <p style="margin-top:0.95rem; color:#5a5a5a; line-height:1.7; max-width:740px;">La navegación principal ya está arriba. Esta portada sirve como presentación del proyecto y explica, de forma clara, qué ofrece cada parte de la aplicación. La idea es que cualquier persona entienda rápido para qué sirve la web y cómo se usa.</p>
-            <div style="display:flex; flex-wrap:wrap; gap:0.9rem; margin-top:1.25rem; color:#1a1a1a;">
-                <div style="background:#fff; border:1px solid #f0d7d7; border-radius:0.85rem; padding:0.85rem 1rem; min-width:180px; box-shadow:0 8px 20px rgba(0,0,0,0.05);">
-                    <div style="font-size:1.4em; font-weight:800; line-height:1;">4</div>
-                    <div style="font-size:0.93rem; color:#5a5a5a;">áreas principales</div>
-                </div>
-                <div style="background:#fff7f7; color:#7c111a; border-radius:0.85rem; padding:0.85rem 1rem; min-width:180px; box-shadow:0 8px 22px rgba(0,0,0,0.06); border:1px solid #f0dddd;">
-                    <div style="font-size:1.4em; font-weight:800; line-height:1;">Catálogo + Clases</div>
-                    <div style="font-size:0.93rem; color:#5a5a5a;">contenido, compra y formación</div>
-                </div>
-            </div>
+
+<!-- Sección Hero Minimalista -->
+<section style="max-width:1220px; margin:2rem auto 0 auto; background:#fff; border:1px solid #e8e8e8; border-top:4px solid #b71c1c; padding:3rem 2.5rem; border-radius:0.5rem; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+    <div style="text-align:center; color:#1a1a1a;">
+        <p style="margin:0 0 0.8rem 0; color:#7c111a; font-weight:600; letter-spacing:0.3px; font-size:0.95rem;">BIENVENIDO A</p>
+        <h1 style="font-size:2.8rem; margin:0 0 1rem 0; color:#1a1a1a; font-weight:800; line-height:1.1;">Mundo Flamenco</h1>
+        <p style="font-size:1.05rem; color:#2f2f2f; max-width:700px; margin:0 auto; line-height:1.7; font-weight:500;">Portal informativo sobre la guitarra flamenca</p>
+        <p style="color:#5a5a5a; max-width:800px; margin:1rem auto 0 auto; line-height:1.7; font-size:0.95rem;">Explora un amplio catálogo de guitarras, accede a clases privadas con profesionales y aprende con vídeos educativos de calidad.</p>
+    </div>
+</section>
+
+<!-- Estadísticas principales -->
+<section style="max-width:1220px; margin:2rem auto 0 auto;">
+    <div style="display:grid; grid-template-columns:repeat(4, 1fr); gap:1.2rem;">
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:1.8rem 1.5rem; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+            <div style="font-size:2.4rem; font-weight:800; color:#b71c1c; margin-bottom:0.5rem;">+50</div>
+            <div style="color:#2f2f2f; font-size:0.95rem; line-height:1.6;">Guitarras<br>en catálogo</div>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.9rem; align-items:stretch;">
-            <div style="background:#fff; color:#6f0f18; border-radius:1rem; padding:1.15rem; box-shadow:0 10px 28px rgba(0,0,0,0.08); min-height:148px; border:1px solid #f3e0e0;">
-                <i class="fa-solid fa-guitar" style="font-size:1.75rem;"></i>
-                <h2 style="margin:0.55rem 0 0.35rem 0; font-size:1.08rem; color:#1a1a1a;">Guitarras</h2>
-                <p style="margin:0; color:#2f2f2f; font-size:0.95rem; line-height:1.55;">Modelos, fichas técnicas, colores y detalles para comparar con criterio.</p>
-            </div>
-            <div style="background:#fff; color:#1a2233; border-radius:1rem; padding:1.15rem; box-shadow:0 10px 28px rgba(0,0,0,0.08); min-height:148px; border:1px solid #f0e4e4;">
-                <i class="fa-solid fa-chalkboard-user" style="font-size:1.75rem; color:#b71c1c;"></i>
-                <h2 style="margin:0.55rem 0 0.35rem 0; font-size:1.08rem; color:#1a1a1a;">Clases privadas</h2>
-                <p style="margin:0; color:#2f2f2f; font-size:0.95rem; line-height:1.55;">Seguimiento personalizado, conexión online y orientación profesional.</p>
-            </div>
-            <div style="background:#fff; color:#1a2233; border-radius:1rem; padding:1.15rem; box-shadow:0 10px 28px rgba(0,0,0,0.08); min-height:148px; border:1px solid #f0e4e4;">
-                <i class="fa-solid fa-video" style="font-size:1.75rem; color:#b71c1c;"></i>
-                <h2 style="margin:0.55rem 0 0.35rem 0; font-size:1.08rem; color:#1a1a1a;">Vídeos</h2>
-                <p style="margin:0; color:#2f2f2f; font-size:0.95rem; line-height:1.55;">Recursos visuales para aprender técnicas, palos y repertorio flamenco.</p>
-            </div>
-            <div style="background:linear-gradient(180deg,#fff,#fff7f7); color:#1a2233; border-radius:1rem; padding:1.15rem; box-shadow:0 10px 28px rgba(0,0,0,0.08); min-height:148px; border:1px solid #f2dddd;">
-                <i class="fa-solid fa-cart-shopping" style="font-size:1.75rem; color:#7c111a;"></i>
-                <h2 style="margin:0.55rem 0 0.35rem 0; font-size:1.08rem; color:#1a1a1a;">Compra segura</h2>
-                <p style="margin:0; color:#2f2f2f; font-size:0.95rem; line-height:1.55;">Proceso de pedido estructurado, claro y orientado a la confianza.</p>
-            </div>
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:1.8rem 1.5rem; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+            <div style="font-size:2.4rem; font-weight:800; color:#b71c1c; margin-bottom:0.5rem;">Clases</div>
+            <div style="color:#2f2f2f; font-size:0.95rem; line-height:1.6;">Formación<br>personalizada</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:1.8rem 1.5rem; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+            <div style="font-size:2.4rem; font-weight:800; color:#b71c1c; margin-bottom:0.5rem;">Vídeos</div>
+            <div style="color:#2f2f2f; font-size:0.95rem; line-height:1.6;">Tutoriales<br>en línea</div>
+        </div>
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:1.8rem 1.5rem; text-align:center; box-shadow:0 2px 6px rgba(0,0,0,0.04);">
+            <div style="font-size:2.4rem; font-weight:800; color:#b71c1c; margin-bottom:0.5rem;">Tienda</div>
+            <div style="color:#2f2f2f; font-size:0.95rem; line-height:1.6;">Compra<br>segura</div>
         </div>
     </div>
 </section>
 
-<section style="max-width:1220px; margin:1.8rem auto 0 auto; display:grid; grid-template-columns:1.25fr 0.95fr; gap:1.2rem;">
-    <div style="background:#fff; border-radius:1rem; box-shadow:0 8px 28px rgba(0,0,0,0.06); padding:1.35rem; border:1px solid #f2e4e4;">
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.9rem; color:#7c111a; font-weight:800; letter-spacing:0.2px;">
-            <i class="fa-solid fa-compass"></i>
-            Cómo funciona la web
+<!-- Sección: Guitarras Flamencas -->
+<section style="max-width:1220px; margin:2.5rem auto 0 auto;">
+    <h2 style="font-size:1.8rem; color:#1a1a1a; margin:0 0 1.5rem 0; font-weight:700; padding-bottom:1rem; border-bottom:2px solid #b71c1c;">Guitarras Flamencas</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:center;">
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <h3 style="color:#b71c1c; font-size:1.35rem; margin:0 0 1.2rem 0; font-weight:700;">Explora nuestro catálogo</h3>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">Contamos con una amplia selección de guitarras flamencas de diferentes modelos, colores y características técnicas.</p>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">Encontrarás instrumentos pensados tanto para estudio como para directo, con un enfoque claro en el sonido flamenco.</p>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 0.5rem 0;">Cada guitarra incluye ficha técnica detallada, fotografías de alta calidad y especificaciones completas para ayudarte a tomar la mejor decisión.</p>
         </div>
-        <div style="display:grid; grid-template-columns:repeat(2,1fr); gap:0.9rem;">
-            <div style="background:#fff8f8; border-radius:0.85rem; padding:1rem; border:1px solid #f1dede;">
-                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;"><i class="fa-solid fa-magnifying-glass" style="color:#7c111a;"></i><strong style="color:#1a1a1a;">Explora</strong></div>
-                <p style="margin:0; color:#303030; line-height:1.55;">Localiza guitarras, clases, vídeos y contenido útil desde una interfaz ordenada.</p>
-            </div>
-            <div style="background:#fff; border-radius:0.85rem; padding:1rem; border:1px solid #f3e8e8;">
-                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;"><i class="fa-solid fa-list-check" style="color:#7c111a;"></i><strong style="color:#1a1a1a;">Comprende</strong></div>
-                <p style="margin:0; color:#303030; line-height:1.55;">Cada módulo explica su utilidad dentro de la aplicación.</p>
-            </div>
-            <div style="background:#fff; border-radius:0.85rem; padding:1rem; border:1px solid #f3e8e8;">
-                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;"><i class="fa-solid fa-book-open" style="color:#7c111a;"></i><strong style="color:#1a1a1a;">Aprende</strong></div>
-                <p style="margin:0; color:#303030; line-height:1.55;">IA, vídeos y clases se combinan para acompañar el aprendizaje.</p>
-            </div>
-            <div style="background:#fff7f7; border-radius:0.85rem; padding:1rem; border:1px solid #f1dede;">
-                <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.4rem;"><i class="fa-solid fa-shield-halved" style="color:#7c111a;"></i><strong style="color:#1a1a1a;">Gestiona</strong></div>
-                <p style="margin:0; color:#303030; line-height:1.55;">Pedidos, perfiles, favoritos y reservas en un flujo coherente.</p>
-            </div>
-        </div>
-    </div>
-    <div style="background:linear-gradient(180deg,#a71924 0%, #6f0f18 100%); border-radius:1rem; box-shadow:0 10px 30px rgba(90,10,24,0.2); color:#fff; padding:1.35rem;">
-        <div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:0.9rem; font-weight:800; letter-spacing:0.2px;">
-            <i class="fa-solid fa-circle-nodes"></i>
-            Ecosistema de la aplicación
-        </div>
-        <p style="color:rgba(255,255,255,0.94); margin-bottom:1rem; line-height:1.6;">La plataforma reúne aprendizaje, catálogo y gestión en un mismo entorno. La navegación superior concentra los accesos y esta portada resume el contenido principal.</p>
-        <div style="display:grid; gap:0.75rem;">
-            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.16); border-radius:0.85rem; padding:0.8rem;">
-                <i class="fa-solid fa-star" style="margin-top:0.2rem;"></i>
-                <div><strong>Catálogo selecto</strong><div style="color:rgba(255,255,255,0.92); line-height:1.5;">Guitarras flamencas organizadas por color y características.</div></div>
-            </div>
-            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.16); border-radius:0.85rem; padding:0.8rem;">
-                <i class="fa-solid fa-graduation-cap" style="margin-top:0.2rem;"></i>
-                <div><strong>Formación guiada</strong><div style="color:rgba(255,255,255,0.92); line-height:1.5;">Clases y recursos para acompañar tu evolución musical.</div></div>
-            </div>
-            <div style="display:flex; gap:0.7rem; align-items:flex-start; background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.16); border-radius:0.85rem; padding:0.8rem;">
-                <i class="fa-solid fa-basket-shopping" style="margin-top:0.2rem;"></i>
-                <div><strong>Compra integrada</strong><div style="color:rgba(255,255,255,0.92); line-height:1.5;">Carrito y pedido final en un flujo unificado.</div></div>
-            </div>
+        <div style="background:#f5f5f5; border-radius:0.5rem; padding:1rem; text-align:center; min-height:320px; display:flex; align-items:center; justify-content:center; border:1px solid #e8e8e8; overflow:hidden;">
+            <img src="/media/guitarras/guitarraAlhambra10FC2220.jpg" alt="Guitarra flamenca de la tienda" style="width:100%; height:100%; max-height:320px; object-fit:cover; border-radius:0.35rem; display:block;">
         </div>
     </div>
 </section>
 
-<section style="max-width:1220px; margin:1rem auto 0 auto; background:#fff; border-radius:1rem; box-shadow:0 8px 24px rgba(0,0,0,0.05); padding:1.25rem; border:1px solid #f2e5e5;">
-    <div style="display:flex; align-items:center; gap:0.7rem; margin-bottom:0.8rem; color:#7c111a; font-weight:800;">
-        <i class="fa-solid fa-pen-nib"></i>
-        Idea principal de la web
+<!-- Sección: Clases Privadas -->
+<section style="max-width:1220px; margin:2.5rem auto 0 auto;">
+    <h2 style="font-size:1.8rem; color:#1a1a1a; margin:0 0 1.5rem 0; font-weight:700; padding-bottom:1rem; border-bottom:2px solid #b71c1c;">Clases Privadas</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:center;">
+        <div style="background:linear-gradient(145deg, #fff7f7 0%, #fbe4e4 100%); border-radius:0.5rem; padding:1rem; text-align:center; min-height:320px; display:flex; align-items:center; justify-content:center; border:1px solid #e8e8e8; overflow:hidden;">
+            <div style="width:100%; height:100%; min-height:300px; display:flex; align-items:center; justify-content:center; color:#b71c1c;">
+                <i class="fa-solid fa-chalkboard-user" style="font-size:7rem; text-shadow:0 6px 18px rgba(183,28,28,0.18);"></i>
+            </div>
+        </div>
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <h3 style="color:#b71c1c; font-size:1.35rem; margin:0 0 1.2rem 0; font-weight:700;">Formación personalizada</h3>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">Accede a clases particulares impartidas por profesionales especializados. Cada sesión se adapta a tu nivel actual y necesidades específicas de aprendizaje.</p>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">Las clases combinan técnica, acompañamiento y corrección en tiempo real para avanzar con seguridad.</p>
+            <p style="color:#2f2f2f; font-size:0.95rem; font-weight:600; margin:0 0 0.7rem 0;">Incluye:</p>
+            <ul style="color:#2f2f2f; line-height:2; margin:0 0 1.5rem 1.5rem; padding:0; font-size:0.95rem;">
+                <li>Conexión en línea por videoconferencia</li>
+                <li>Seguimiento de tu progreso</li>
+                <li>Horarios flexibles y adaptados</li>
+                <li>Orientación profesional continua</li>
+            </ul>
+        </div>
     </div>
-    <p style="margin:0; color:#2f2f2f; line-height:1.75;">Mundo Flamenco nace como una plataforma que combina catálogo, formación y gestión. Está pensada para personas que quieren aprender sobre guitarra flamenca, consultar contenidos de interés y disponer de un espacio donde todo esté reunido y bien explicado. La portada actúa como una presentación breve del proyecto, pero el valor real está en la estructura interna: cada apartado tiene una función concreta y un estilo homogéneo.</p>
-    <p style="margin:0.9rem 0 0 0; color:#2f2f2f; line-height:1.75;">Por eso la web prioriza la claridad, el orden y una identidad visual basada en blanco, rojo y tonos neutros. La intención es que el usuario perciba una herramienta seria, cómoda y cercana, sin elementos innecesarios ni distracciones.</p>
+</section>
+
+<!-- Sección: Vídeos Educativos -->
+<section style="max-width:1220px; margin:2.5rem auto 0 auto;">
+    <h2 style="font-size:1.8rem; color:#1a1a1a; margin:0 0 1.5rem 0; font-weight:700; padding-bottom:1rem; border-bottom:2px solid #b71c1c;">Vídeos Educativos</h2>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:2.5rem; align-items:center;">
+        <div style="background:#fff; border:1px solid #e8e8e8; border-radius:0.5rem; padding:2rem; box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+            <h3 style="color:#b71c1c; font-size:1.35rem; margin:0 0 1.2rem 0; font-weight:700;">Aprende a tu ritmo</h3>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">Accede a una biblioteca completa de vídeos educativos que abarcan técnica, palos flamencos tradicionales y repertorio clásico.</p>
+            <p style="color:#2f2f2f; line-height:1.8; margin:0 0 1rem 0;">El contenido está organizado para que puedas aprender por niveles y revisar los puntos más importantes con facilidad.</p>
+            <p style="color:#2f2f2f; font-size:0.95rem; font-weight:600; margin:0 0 0.7rem 0;">Contenido incluido:</p>
+            <ul style="color:#2f2f2f; line-height:2; margin:0 0 1.5rem 1.5rem; padding:0; font-size:0.95rem;">
+                <li>Técnicas fundamentales de guitarra</li>
+                <li>Palos del flamenco tradicional</li>
+                <li>Interpretación de obras clásicas</li>
+                <li>Ejercicios prácticos y progresivos</li>
+            </ul>
+        </div>
+        <div style="background:#f5f5f5; border-radius:0.5rem; padding:1rem; text-align:center; min-height:320px; display:flex; align-items:center; justify-content:center; border:1px solid #e8e8e8; overflow:hidden;">
+            <img src="/media/miniaturas/videotangos.png" alt="Miniatura de vídeo educativo" style="width:100%; height:100%; max-height:320px; object-fit:cover; border-radius:0.35rem; display:block;">
+        </div>
+    </div>
+</section>
+
+<!-- Sección: Información sobre Mundo Flamenco -->
+<section style="max-width:1220px; margin:2.5rem auto 0 auto; background:#f9f9f9; border-radius:0.5rem; padding:2.5rem; border:1px solid #e8e8e8; margin-bottom:3rem;">
+    <h2 style="font-size:1.6rem; color:#1a1a1a; margin:0 0 1.2rem 0; font-weight:700;">Sobre Mundo Flamenco</h2>
+    <p style="margin:0 0 1rem 0; color:#2f2f2f; line-height:1.8;">Mundo Flamenco es una plataforma integral que reúne catálogo de guitarras, formación personalizada y contenido educativo en un único espacio. Hemos diseñado esta web pensando en personas que desean aprender sobre guitarra flamenca, consultar información de interés y gestionar su actividad de formación sin complicaciones innecesarias.</p>
+    <p style="margin:0 0 1rem 0; color:#2f2f2f; line-height:1.8;">Además, incorpora un carrito para reunir tus guitarras favoritas, notificaciones para seguir la actividad de la cuenta, una IA integrada para resolver dudas, un área de pedidos para controlar tus compras y un módulo de usuarios para organizar la comunidad.</p>
+    <p style="margin:0; color:#2f2f2f; line-height:1.8;">La plataforma prioriza la claridad y el orden, con una identidad visual limpia basada en blanco, rojo y tonos neutros. Es una herramienta seria, profesional y accesible, diseñada para que cualquier usuario encuentre rápidamente lo que busca.</p>
 </section>
 
 {% endblock %}
