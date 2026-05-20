@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: tfg-flamenco
+    env: python
+    plan: free
+    pythonVersion: 3.12
+    
+    # Rama de Git a desplegar
+    branch: main
+    
+    # Comando para ejecutar la aplicación
+    startCommand: gunicorn TFG_FLAMENCO.wsgi:application --bind 0.0.0.0:$PORT --workers 2
+    
+    # Variables de entorno
+    envVars:
+      - key: DEBUG
+        value: "False"
+      - key: PYTHON_VERSION
+        value: "3.12"
+      - key: ALLOWED_HOSTS
+        value: "proyecto-tfg-wm96.onrender.com"
+      - key: CSRF_TRUSTED_ORIGINS
+        value: "https://proyecto-tfg-wm96.onrender.com"
+    
+    # Build command - ejecuta migraciones y recolecta archivos estáticos
+    buildCommand: pip install -r requirements.txt && python manage.py migrate && python manage.py collectstatic --noinput
