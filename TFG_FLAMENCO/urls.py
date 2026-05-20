@@ -29,12 +29,10 @@ urlpatterns = [
     re_path(r'^(?!admin/)(?!accounts/)(?!static/)(?!media/).*$', guitarra_views.handler_404),
 ]
 
-# Servir archivos media en desarrollo y producción para imágenes subidas o incluidas en el proyecto
+# Servir archivos estáticos y media también en producción para Render
+# Esto garantiza que logos, header.css, avatares, miniaturas y vídeos se vean sin depender de collectstatic.
+urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-# Servir archivos estáticos solo en desarrollo
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
 
 # Registrar el handler para uso en producción (DEBUG=False)
 handler404 = 'Guitarra.views.handler_404'
