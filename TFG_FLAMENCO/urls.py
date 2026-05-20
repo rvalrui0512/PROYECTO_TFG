@@ -29,9 +29,11 @@ urlpatterns = [
     re_path(r'^(?!admin/)(?!accounts/)(?!static/)(?!media/).*$', guitarra_views.handler_404),
 ]
 
-# Servir archivos media y estáticos en desarrollo
+# Servir archivos media en desarrollo y producción para imágenes subidas o incluidas en el proyecto
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Servir archivos estáticos solo en desarrollo
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
 
 # Registrar el handler para uso en producción (DEBUG=False)
