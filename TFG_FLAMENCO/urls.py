@@ -18,21 +18,19 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path, re_path
 from django.conf import settings
-from django.conf.urls.static import static
+from django.views.static import serve
 from Guitarra import views as guitarra_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
     path('', include('Guitarra.urls')),
+    # Servir static/media también con DEBUG=False (Render) para garantizar assets visibles en la entrega
+    re_path(r'^static/(?P<path>.*)$', serve, {'document_root': settings.BASE_DIR / 'static'}),
+    re_path(r'^media/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # Catch-all (development): redirige a handler_404 para ver la plantilla personalizada
     re_path(r'^(?!admin/)(?!accounts/)(?!static/)(?!media/).*$', guitarra_views.handler_404),
 ]
-
-# Servir archivos estáticos y media también en producción para Render
-# Esto garantiza que logos, header.css, avatares, miniaturas y vídeos se vean sin depender de collectstatic.
-urlpatterns += static(settings.STATIC_URL, document_root=settings.BASE_DIR / 'static')
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # Registrar el handler para uso en producción (DEBUG=False)
 handler404 = 'Guitarra.views.handler_404'
