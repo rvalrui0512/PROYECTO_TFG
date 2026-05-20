@@ -35,8 +35,6 @@ wheels/
 *.log
 db.sqlite3
 staticfiles/
-/media/
-/static/
 
 # IDE
 .vscode/
@@ -50,4 +48,3 @@ staticfiles/
 Thumbs.db
 
 # Render
-render.yaml
