@@ -354,75 +354,13 @@ TFG Flamenco es una plataforma educativa completa que integra múltiples módulo
 
 ---
 
-## 17. Despliegue con Docker
+## 13. Despliegue en Render (resumen explicativo)
 
-Para un despliegue profesional y sencillo en Windows, el proyecto puede ejecutarse con Docker Desktop y Docker Compose. Antes de arrancar la aplicación, instala Docker Desktop y asegúrate de que esté abierto y funcionando.
+Este proyecto se ha preparado para desplegarse en Render mediante ajustes en la configuración y en las dependencias. En producción se utiliza `gunicorn` como servidor WSGI y `WhiteNoise` para servir los archivos estáticos empaquetados; las credenciales y ajustes sensibles se leen desde variables de entorno para no almacenarlas en el código.
 
-### 17.1. Instalación de Docker en Windows
+En el repositorio se incluyen orientaciones para Render (por ejemplo `render.yaml`, `Procfile` y `.env.example`), pero la parte esencial es garantizar que las dependencias de producción estén en `requirements.txt`, que la aplicación ejecute las migraciones al desplegarse y que `collectstatic` genere los assets estáticos. Para la persistencia de datos se recomienda usar una base de datos gestionada (por ejemplo PostgreSQL) y, para los archivos subidos por usuarios, un almacenamiento externo (S3, Cloudinary u otro), ya que el sistema de ficheros de Render no es persistente entre despliegues.
 
-```powershell
-winget install --id Docker.DockerDesktop -e
-```
+Se han restaurado en el repositorio los activos necesarios en `static/` y `media/` para que la fase de empaquetado disponga de los recursos visuales requeridos. Además, se añadió `gunicorn` a las dependencias para garantizar que el servicio arranque correctamente y se configuró `WhiteNoise` en la capa de middleware para atender recursos estáticos cuando la aplicación se ejecuta con `DEBUG` desactivado.
 
-Si prefieres Chocolatey:
+En términos generales, el despliegue en Render consiste en proveer las variables de entorno necesarias desde el panel de Render, asegurar las dependencias en `requirements.txt`, utilizar una base de datos gestionada para producción y emplear un almacenamiento externo para `MEDIA` si se necesita persistencia. Estas decisiones garantizan seguridad, rendimiento y persistencia apropiados para una entrega en producción alojada en Render.
 
-```powershell
-choco install docker-desktop -y
-```
-
-Después de instalarlo, abre Docker Desktop manualmente y comprueba que el motor esté activo:
-
-```powershell
-docker version
-docker compose version
-```
-
-### 17.2. Preparación del proyecto
-
-```powershell
-Copy-Item .env.example .env
-```
-
-Edita `.env` si quieres cambiar la clave secreta o los hosts permitidos.
-
-### 17.3. Comandos de despliegue
-
-```powershell
-docker compose up --build -d
-```
-
-Para crear el superusuario del panel admin:
-
-```powershell
-docker compose exec web python manage.py createsuperuser
-```
-
-Para ver los logs en tiempo real:
-
-```powershell
-docker compose logs -f web
-```
-
-Para detener la aplicación:
-
-```powershell
-docker compose down
-```
-
-Si quieres borrar también los volúmenes de datos:
-
-```powershell
-docker compose down -v
-```
-
-### 17.4. Puertos y acceso
-
-- Aplicación web: `http://localhost:8000`
-- Panel de administración: `http://localhost:8000/admin/`
-
-### 17.5. Notas importantes
-
-- La base de datos se ejecuta en un contenedor PostgreSQL.
-- Los archivos estáticos se recopilan automáticamente al arrancar el contenedor `web`.
-- Los archivos multimedia se guardan en un volumen Docker para no perderlos al recrear contenedores.
-- En Windows, Docker Desktop debe estar abierto para que `docker compose` funcione correctamente.
